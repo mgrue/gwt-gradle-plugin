@@ -1,0 +1,30 @@
+ext {
+	jettyVersion = '9.2.2.v20140723'
+	slf4jVersion = '1.6.6'
+}
+
+apply plugin: 'eclipse'
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'fr.putnami.pwt'
+version = '0.1.0-SNAPSHOT'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	compile gradleApi()
+	compile "com.google.guava:guava:18.0"
+  compile "org.eclipse.jetty:jetty-runner:9.2.2.v20140723"
+}
+
+eclipse {
+	classpath {
+		downloadSources=true
+	}
+}
