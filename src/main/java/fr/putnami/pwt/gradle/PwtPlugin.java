@@ -14,24 +14,35 @@
  */
 package fr.putnami.pwt.gradle;
 
+import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.WarPlugin;
 
-import fr.putnami.pwt.gradle.task.PwtCompileTask;
-import fr.putnami.pwt.gradle.task.PwtDevTask;
-import fr.putnami.pwt.gradle.task.PwtRunTask;
+import fr.putnami.pwt.gradle.extension.PwtExtension;
+import fr.putnami.pwt.gradle.task.GwtCompileTask;
+import fr.putnami.pwt.gradle.task.GwtDevTask;
+import fr.putnami.pwt.gradle.task.GwtRunTask;
 
 public class PwtPlugin implements Plugin<Project> {
 
 	@Override
-	public void apply(Project project) {
+	public void apply(final Project project) {
 		project.getPlugins().apply(PwtLibPlugin.class);
 		project.getPlugins().apply(WarPlugin.class);
 
-		project.getTasks().create(PwtCompileTask.NAME, PwtCompileTask.class);
-		project.getTasks().create(PwtDevTask.NAME, PwtDevTask.class);
-		project.getTasks().create(PwtRunTask.NAME, PwtRunTask.class);
+		project.getTasks().create(GwtCompileTask.NAME, GwtCompileTask.class);
+		project.getTasks().create(GwtDevTask.NAME, GwtDevTask.class);
+		project.getTasks().create(GwtRunTask.NAME, GwtRunTask.class);
+
+		final PwtExtension extension = project.getExtensions().getByType(PwtExtension.class);
+
+		project.getTasks().withType(GwtCompileTask.class, new Action<GwtCompileTask>() {
+			@Override
+			public void execute(final GwtCompileTask task) {
+				task.configure(project, extension.getCompile());
+			}
+		});
 
 	}
 

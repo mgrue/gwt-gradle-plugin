@@ -17,6 +17,7 @@ package fr.putnami.pwt.gradle.utli;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+import java.io.File;
 import java.util.List;
 
 public class JavaCommandBuilder {
@@ -40,9 +41,43 @@ public class JavaCommandBuilder {
 		return this;
 	}
 
-	public JavaCommandBuilder addArgs(String args) {
-		this.args.add(args);
+	public JavaCommandBuilder addArg(String argName) {
+		this.args.add(argName);
 		return this;
+	}
+
+	public JavaCommandBuilder addArg(String argName, File value) {
+		if (value != null) {
+			this.args.add(argName);
+			this.args.add(value.getAbsolutePath());
+		}
+		return this;
+	}
+
+	public JavaCommandBuilder addArg(String argName, Object value) {
+		if (value != null) {
+			this.args.add(argName);
+			this.args.add(value.toString());
+		}
+		return this;
+	}
+
+	public JavaCommandBuilder addArg(String argName, String value) {
+		if (!Strings.isNullOrEmpty(value)) {
+			this.args.add(argName);
+			this.args.add(value);
+		}
+		return this;
+	}
+
+	public void addArgIf(boolean condition, String ifTrue, String ifFalse) {
+		this.args.add(condition ? ifTrue : ifFalse);
+	}
+
+	public void addArgIf(boolean condition, String value) {
+		if (condition) {
+			this.args.add(value);
+		}
 	}
 
 	@Override

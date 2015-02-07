@@ -14,12 +14,16 @@
  */
 package fr.putnami.pwt.gradle.extension;
 
+import org.gradle.util.ConfigureUtil;
+
+import groovy.lang.Closure;
 
 public class PwtExtension {
 	public static final String PWT_EXTENSION = "pwt";
 
 	private String gwtVersion = "2.7.0";
 
+	private CompilerOptions compile = new CompilerOptions();
 	private CodeServerOption dev = new CodeServerOption();
 
 	public String getGwtVersion() {
@@ -38,5 +42,22 @@ public class PwtExtension {
 		this.dev = dev;
 	}
 
+	public PwtExtension dev(Closure<CodeServerOption> c) {
+		ConfigureUtil.configure(c, dev);
+		return this;
+	}
+
+	public CompilerOptions getCompile() {
+		return compile;
+	}
+
+	public void setCompile(CompilerOptions compile) {
+		this.compile = compile;
+	}
+
+	public PwtExtension compile(Closure<CompilerOptions> c) {
+		ConfigureUtil.configure(c, compile);
+		return this;
+	}
 
 }

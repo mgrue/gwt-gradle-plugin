@@ -18,7 +18,7 @@ import org.gradle.api.DefaultTask;
 
 public class AbstractPwtTask extends DefaultTask {
 
-	public static final String PWT_GROUP = "Putnami Tasks";
+	public static final String PWT_GROUP = "Putnami";
 
 	public AbstractPwtTask() {
 		setGroup(PWT_GROUP);

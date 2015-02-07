@@ -17,7 +17,9 @@ package fr.putnami.pwt.gradle.task;
 import com.google.common.collect.ImmutableMap;
 
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskAction;
@@ -29,13 +31,15 @@ import fr.putnami.pwt.gradle.action.JavaAction;
 import fr.putnami.pwt.gradle.utli.JavaCommandBuilder;
 import fr.putnami.pwt.gradle.utli.ResourceUtils;
 
-public class PwtDevTask extends AbstractPwtTask {
+public class GwtRunTask extends AbstractPwtTask {
 
-	public static final String NAME = "pwtDev";
+	public static final String NAME = "gwtRun";
 
-	public PwtDevTask() {
+	public GwtRunTask() {
 		setName(NAME);
-		setDescription("Compile the GWT modules");
+		setDescription("Run jetty with the GW the GWT modules");
+
+		dependsOn(WarPlugin.WAR_TASK_NAME, JavaPlugin.COMPILE_JAVA_TASK_NAME, JavaPlugin.PROCESS_RESOURCES_TASK_NAME);
 	}
 
 	@TaskAction
@@ -73,7 +77,8 @@ public class PwtDevTask extends AbstractPwtTask {
 		JavaCommandBuilder builder = new JavaCommandBuilder();
 		builder.setMainClass("org.eclipse.jetty.runner.Runner");
 		builder.addClassPath(jettyClassPath);
-		builder.addArgs(jettyConf.getAbsolutePath());
+
+		builder.addArg(jettyConf.getAbsolutePath());
 
 		JavaAction runJettyAction = new JavaAction(builder.toString());
 		runJettyAction.execute(this);
@@ -84,11 +89,11 @@ public class PwtDevTask extends AbstractPwtTask {
 		builder = new JavaCommandBuilder();
 		builder.setMainClass("com.google.gwt.dev.codeserver.CodeServer");
 		builder.addClassPath(sdmConf.getAsPath());
-		builder.addArgs("-noprecompile");
-		builder.addArgs("-src src/main/java");
+		builder.addArg("-noprecompile");
+		builder.addArg("-src src/main/java");
 		// builder.addArgs("-src " + devSrcDir.getAbsolutePath());
-		builder.addArgs("-workDir " + workDir.getAbsolutePath());
-		builder.addArgs("fr.pwt.testplugin.TestDev");
+		builder.addArg("-workDir ", workDir);
+		builder.addArg("fr.pwt.testplugin.TestDev");
 
 		JavaAction sdmAction = new JavaAction(builder.toString());
 
