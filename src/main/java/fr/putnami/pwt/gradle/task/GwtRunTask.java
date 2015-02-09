@@ -28,8 +28,8 @@ import java.io.File;
 
 import fr.putnami.pwt.gradle.PwtLibPlugin;
 import fr.putnami.pwt.gradle.action.JavaAction;
-import fr.putnami.pwt.gradle.utli.JavaCommandBuilder;
-import fr.putnami.pwt.gradle.utli.ResourceUtils;
+import fr.putnami.pwt.gradle.util.JavaCommandBuilder;
+import fr.putnami.pwt.gradle.util.ResourceUtils;
 
 public class GwtRunTask extends AbstractPwtTask {
 

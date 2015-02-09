@@ -17,14 +17,13 @@ package fr.putnami.pwt.gradle.extension;
 import com.google.common.collect.Lists;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
 /**
  * GWT Compiler options.
  */
-public class CompilerOptions implements Serializable {
+public class CompilerOptions extends JavaOptions {
 
 	/**
 	 * The compiler's working directory for internal use (must be writeable; defaults to a system
@@ -118,7 +117,6 @@ public class CompilerOptions implements Serializable {
 	 * instead of JavaScript functions.
 	 */
 	private MethodNameDisplayMode methodNameDisplayMode = MethodNameDisplayMode.NONE;
-
 	/**
 	 * EXPERIMENTAL: Avoid adding implicit dependencies on "client" and "public" for modules that
 	 * don't define any dependencies.
@@ -146,6 +144,10 @@ public class CompilerOptions implements Serializable {
 		return logLevel;
 	}
 
+	public void setLogLevel(LogLevel logLevel) {
+		this.logLevel = logLevel;
+	}
+
 	public void logLevel(String logLevel) {
 		this.logLevel = LogLevel.valueOf(logLevel);
 	}
@@ -154,8 +156,12 @@ public class CompilerOptions implements Serializable {
 		return workDir;
 	}
 
-	public void workDir(File workDir) {
+	public void setWorkDir(File workDir) {
 		this.workDir = workDir;
+	}
+
+	public void workDir(String workDir) {
+		this.workDir = new File(workDir);
 	}
 
 	public boolean isCompileReport() {
@@ -186,15 +192,23 @@ public class CompilerOptions implements Serializable {
 		return gen;
 	}
 
-	public void gen(File gen) {
+	public void setGen(File gen) {
 		this.gen = gen;
+	}
+
+	public void gen(String gen) {
+		this.gen = new File(gen);
 	}
 
 	public File getMissingDepsFile() {
 		return missingDepsFile;
 	}
 
-	public void missingDepsFile(File missingDepsFile) {
+	public void missingDepsFile(String missingDepsFile) {
+		this.missingDepsFile = new File(missingDepsFile);
+	}
+
+	public void setMissingDepsFile(File missingDepsFile) {
 		this.missingDepsFile = missingDepsFile;
 	}
 
@@ -274,40 +288,61 @@ public class CompilerOptions implements Serializable {
 		return war;
 	}
 
-	public void war(File war) {
+	public void setWar(File war) {
 		this.war = war;
+	}
+
+	public void war(String war) {
+		this.war = new File(war);
 	}
 
 	public File getDeploy() {
 		return deploy;
 	}
 
-	public void deploy(File deploy) {
+	public void setDeploy(File deploy) {
 		this.deploy = deploy;
+	}
+
+	public void deploy(String deploy) {
+		this.deploy = new File(deploy);
 	}
 
 	public File getExtra() {
 		return extra;
 	}
 
-	public void extra(File extra) {
+	public void setExtra(File extra) {
 		this.extra = extra;
 	}
+
+	public void extra(String extra) {
+		this.extra = new File(extra);
+	}
+
 
 	public File getSaveSourceOutput() {
 		return saveSourceOutput;
 	}
 
-	public void saveSourceOutput(File saveSourceOutput) {
+	public void setSaveSourceOutput(File saveSourceOutput) {
 		this.saveSourceOutput = saveSourceOutput;
+	}
+
+	public void saveSourceOutput(String saveSourceOutput) {
+		this.saveSourceOutput = new File(saveSourceOutput);
 	}
 
 	public MethodNameDisplayMode getMethodNameDisplayMode() {
 		return methodNameDisplayMode;
 	}
 
-	public void methodNameDisplayMode(MethodNameDisplayMode methodNameDisplayMode) {
+	public void setMethodNameDisplayMode(MethodNameDisplayMode methodNameDisplayMode) {
 		this.methodNameDisplayMode = methodNameDisplayMode;
+	}
+
+	public void methodNameDisplayMode(String methodNameDisplayMode) {
+		this.methodNameDisplayMode = MethodNameDisplayMode.valueOf(methodNameDisplayMode);
 	}
 
 	public List<String> getModule() {

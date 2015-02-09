@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with pwt. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-package fr.putnami.pwt.gradle.utli;
+package fr.putnami.pwt.gradle.util;
 
 import com.google.common.io.ByteStreams;
 
@@ -28,8 +28,13 @@ public final class ResourceUtils {
 	}
 
 	public static File ensureDir(File parent, String path) {
-		File dir = new File(parent, path);
-		dir.mkdirs();
+		return ensureDir(new File(parent, path));
+	}
+
+	public static File ensureDir(File dir) {
+		if (dir != null) {
+			dir.mkdirs();
+		}
 		return dir;
 	}
 
@@ -40,8 +45,8 @@ public final class ResourceUtils {
 
 	public static File copy(String resourcePath, File targetDir, String targetName, Map<String, String> model)
 		throws IOException {
-		InputStream input = ResourceUtils.class.getResourceAsStream(resourcePath);
-		// InputStreamReader in = new InputStreamReader(input, Charsets.UTF_8);
+
+		InputStream input = ResourceUtils.class.getResource(resourcePath).openStream();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 		ByteStreams.copy(input, out);

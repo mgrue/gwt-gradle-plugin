@@ -16,6 +16,7 @@ package fr.putnami.pwt.gradle.task;
 
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.internal.ConventionMapping;
 import org.gradle.api.internal.IConventionAware;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.tasks.Input;
@@ -34,7 +35,8 @@ import fr.putnami.pwt.gradle.extension.CompilerOptions;
 import fr.putnami.pwt.gradle.extension.JsInteropMode;
 import fr.putnami.pwt.gradle.extension.LogLevel;
 import fr.putnami.pwt.gradle.extension.MethodNameDisplayMode;
-import fr.putnami.pwt.gradle.utli.JavaCommandBuilder;
+import fr.putnami.pwt.gradle.extension.PutnamiExtension;
+import fr.putnami.pwt.gradle.util.JavaCommandBuilder;
 
 public class GwtCompileTask extends AbstractPwtTask {
 
@@ -76,6 +78,7 @@ public class GwtCompileTask extends AbstractPwtTask {
 		setDescription("Compile the GWT modules");
 
 		dependsOn(JavaPlugin.COMPILE_JAVA_TASK_NAME, JavaPlugin.PROCESS_RESOURCES_TASK_NAME);
+
 	}
 
 	@TaskAction
@@ -83,7 +86,11 @@ public class GwtCompileTask extends AbstractPwtTask {
 		Configuration sdmConf = getProject().getConfigurations().getByName(PwtLibPlugin.CONF_GWT_SDM);
 		Configuration compileConf = getProject().getConfigurations().getByName(JavaPlugin.COMPILE_CONFIGURATION_NAME);
 
+		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
+
 		JavaCommandBuilder builder = new JavaCommandBuilder();
+		builder.configureJavaArgs(putnami.getDev());
+
 		builder.setMainClass("com.google.gwt.dev.Compiler");
 
 		builder.addClassPath("src/main/java");
@@ -139,185 +146,187 @@ public class GwtCompileTask extends AbstractPwtTask {
 
 		final File buildDir = new File(project.getBuildDir(), "putnami");
 
-		options.war(new File(buildDir, "war"));
-		options.workDir(new File(buildDir, "work"));
-		options.gen(new File(buildDir, "gen"));
-		options.deploy(new File(buildDir, "deploy"));
-		options.extra(new File(buildDir, "extra"));
-		options.saveSourceOutput(new File(buildDir, "extra/source"));
-		options.missingDepsFile(new File(buildDir, "extra/missingDepsFile"));
+		options.setWar(new File(buildDir, "war"));
+		options.setWorkDir(new File(buildDir, "work"));
+		options.setGen(new File(buildDir, "gen"));
+		options.setDeploy(new File(buildDir, "deploy"));
+		options.setExtra(new File(buildDir, "extra"));
+		options.setSaveSourceOutput(new File(buildDir, "extra/source"));
+		options.setMissingDepsFile(new File(buildDir, "extra/missingDepsFile"));
 		options.localWorkers(Runtime.getRuntime().availableProcessors());
 
-		((IConventionAware) this).getConventionMapping().map("modules", new Callable<List<String>>() {
+		ConventionMapping convention = ((IConventionAware) this).getConventionMapping();
+
+		convention.map("modules", new Callable<List<String>>() {
 			@Override
 			public List<String> call() throws Exception {
 				return options.getModule();
 			}
 		});
 
-		((IConventionAware) this).getConventionMapping().map("work", new Callable<File>() {
+		convention.map("work", new Callable<File>() {
 			@Override
 			public File call() throws Exception {
 				return options.getWorkDir();
 			}
 		});
-		((IConventionAware) this).getConventionMapping().map("gen", new Callable<File>() {
+		convention.map("gen", new Callable<File>() {
 			@Override
 			public File call() throws Exception {
 				return options.getGen();
 			}
 		});
-		((IConventionAware) this).getConventionMapping().map("war", new Callable<File>() {
+		convention.map("war", new Callable<File>() {
 			@Override
 			public File call() throws Exception {
 				return options.getWar();
 			}
 		});
-		((IConventionAware) this).getConventionMapping().map("deploy", new Callable<File>() {
+		convention.map("deploy", new Callable<File>() {
 			@Override
 			public File call() throws Exception {
 				return options.getDeploy();
 			}
 		});
-		((IConventionAware) this).getConventionMapping().map("extra", new Callable<File>() {
+		convention.map("extra", new Callable<File>() {
 			@Override
 			public File call() throws Exception {
 				return options.getExtra();
 			}
 		});
-		((IConventionAware) this).getConventionMapping().map("logLevel", new Callable<LogLevel>() {
+		convention.map("logLevel", new Callable<LogLevel>() {
 			@Override
 			public LogLevel call() throws Exception {
 				return options.getLogLevel();
 			}
 		});
-		((IConventionAware) this).getConventionMapping().map("compileReport", new Callable<Boolean>()
+		convention.map("compileReport", new Callable<Boolean>()
 		{
 			@Override
 			public Boolean call() throws Exception {
 				return options.isCompileReport();
 			}
 		});
-		((IConventionAware) this).getConventionMapping().map("draftCompile", new Callable<Boolean>()
+		convention.map("draftCompile", new Callable<Boolean>()
 		{
 			@Override
 			public Boolean call() throws Exception {
 				return options.isDraftCompile();
 			}
 		});
-		((IConventionAware) this).getConventionMapping().map("checkAssertions", new
+		convention.map("checkAssertions", new
 			Callable<Boolean>() {
 				@Override
 				public Boolean call() throws Exception {
 					return options.isCheckAssertions();
 				}
 			});
-		((IConventionAware) this).getConventionMapping().map("missingDepsFile", new Callable<File>()
+		convention.map("missingDepsFile", new Callable<File>()
 		{
 			@Override
 			public File call() throws Exception {
 				return options.getMissingDepsFile();
 			}
 		});
-		((IConventionAware) this).getConventionMapping().map("optimize", new Callable<Integer>() {
+		convention.map("optimize", new Callable<Integer>() {
 			@Override
 			public Integer call() throws Exception {
 				return options.getOptimize();
 			}
 		});
-		((IConventionAware) this).getConventionMapping().map("overlappingSourceWarnings", new
+		convention.map("overlappingSourceWarnings", new
 			Callable<Boolean>() {
 				@Override
 				public Boolean call() throws Exception {
 					return options.isOverlappingSourceWarnings();
 				}
 			});
-		((IConventionAware) this).getConventionMapping().map("saveSource", new Callable<Boolean>() {
+		convention.map("saveSource", new Callable<Boolean>() {
 			@Override
 			public Boolean call() throws Exception {
 				return options.isSaveSource();
 			}
 		});
-		((IConventionAware) this).getConventionMapping().map("style", new Callable<CodeStyle>() {
+		convention.map("style", new Callable<CodeStyle>() {
 			@Override
 			public CodeStyle call() throws Exception {
 				return options.getStyle();
 			}
 		});
-		((IConventionAware) this).getConventionMapping().map("failOnError", new Callable<Boolean>() {
+		convention.map("failOnError", new Callable<Boolean>() {
 			@Override
 			public Boolean call() throws Exception {
 				return options.isFailOnError();
 			}
 		});
-		((IConventionAware) this).getConventionMapping().map("validateOnly", new Callable<Boolean>()
+		convention.map("validateOnly", new Callable<Boolean>()
 		{
 			@Override
 			public Boolean call() throws Exception {
 				return options.isValidateOnly();
 			}
 		});
-		((IConventionAware) this).getConventionMapping().map("sourceLevel", new Callable<String>() {
+		convention.map("sourceLevel", new Callable<String>() {
 			@Override
 			public String call() throws Exception {
 				return options.getSourceLevel();
 			}
 		});
-		((IConventionAware) this).getConventionMapping().map("localWorkers", new Callable<Integer>()
+		convention.map("localWorkers", new Callable<Integer>()
 		{
 			@Override
 			public Integer call() throws Exception {
 				return options.getLocalWorkers();
 			}
 		});
-		((IConventionAware) this).getConventionMapping().map("incremental", new Callable<Boolean>() {
+		convention.map("incremental", new Callable<Boolean>() {
 			@Override
 			public Boolean call() throws Exception {
 				return options.isIncremental();
 			}
 		});
-		((IConventionAware) this).getConventionMapping().map("saveSourceOutput", new Callable<File>()
+		convention.map("saveSourceOutput", new Callable<File>()
 		{
 			@Override
 			public File call() throws Exception {
 				return options.getSaveSourceOutput();
 			}
 		});
-		((IConventionAware) this).getConventionMapping().map("methodNameDisplayMode",
+		convention.map("methodNameDisplayMode",
 			new Callable<MethodNameDisplayMode>() {
 				@Override
 				public MethodNameDisplayMode call() throws Exception {
 					return options.getMethodNameDisplayMode();
 				}
 			});
-		((IConventionAware) this).getConventionMapping().map("enforceStrictResources", new
+		convention.map("enforceStrictResources", new
 			Callable<Boolean>() {
 				@Override
 				public Boolean call() throws Exception {
 					return options.isEnforceStrictResources();
 				}
 			});
-		((IConventionAware) this).getConventionMapping().map("checkCasts", new Callable<Boolean>() {
+		convention.map("checkCasts", new Callable<Boolean>() {
 			@Override
 			public Boolean call() throws Exception {
 				return options.isCheckCasts();
 			}
 		});
-		((IConventionAware) this).getConventionMapping().map("classMetadata", new Callable<Boolean>()
+		convention.map("classMetadata", new Callable<Boolean>()
 		{
 			@Override
 			public Boolean call() throws Exception {
 				return options.isClassMetadata();
 			}
 		});
-		((IConventionAware) this).getConventionMapping().map("closureCompiler", new
+		convention.map("closureCompiler", new
 			Callable<Boolean>() {
 				@Override
 				public Boolean call() throws Exception {
 					return options.isClosureCompiler();
 				}
 			});
-		((IConventionAware) this).getConventionMapping().map("jsInteropMode", new
+		convention.map("jsInteropMode", new
 			Callable<JsInteropMode>() {
 				@Override
 				public JsInteropMode call() throws Exception {

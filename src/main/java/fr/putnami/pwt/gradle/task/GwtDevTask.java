@@ -15,86 +15,464 @@
 package fr.putnami.pwt.gradle.task;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 
+import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
-import org.gradle.api.plugins.JavaPluginConvention;
-import org.gradle.api.tasks.SourceSet;
-import org.gradle.api.tasks.SourceSetContainer;
+import org.gradle.api.internal.ConventionMapping;
+import org.gradle.api.internal.IConventionAware;
+import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.plugins.WarPlugin;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputFile;
+import org.gradle.api.tasks.OutputDirectory;
+import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.Callable;
 
 import fr.putnami.pwt.gradle.PwtLibPlugin;
 import fr.putnami.pwt.gradle.action.JavaAction;
-import fr.putnami.pwt.gradle.utli.JavaCommandBuilder;
-import fr.putnami.pwt.gradle.utli.ResourceUtils;
+import fr.putnami.pwt.gradle.extension.CodeServerOption;
+import fr.putnami.pwt.gradle.extension.JettyOption;
+import fr.putnami.pwt.gradle.extension.JsInteropMode;
+import fr.putnami.pwt.gradle.extension.LogLevel;
+import fr.putnami.pwt.gradle.extension.MethodNameDisplayMode;
+import fr.putnami.pwt.gradle.extension.PutnamiExtension;
+import fr.putnami.pwt.gradle.util.JavaCommandBuilder;
+import fr.putnami.pwt.gradle.util.ResourceUtils;
 
 public class GwtDevTask extends AbstractPwtTask {
 
 	public static final String NAME = "gwtDev";
 
+	/* Jetty */
+	private File jettyConf;
+	private File jettyWar;
+	private String jettyBindAddress;
+	private File jettyLogRequestFile;
+	private File jettyLogFile;
+	private int jettyPort;
+	private int jettyStopPort;
+	private String jettyStopKey;
+
+	/* SDM */
+	private File workDir;
+	private File launcherDir;
+
+	private List<String> modules = Lists.newArrayList();
+
+	private boolean allowMissingSrc = false;
+	private String bindAddress = "127.0.0.1";
+	private boolean compileTest = false;
+	private int compileTestRecompiles = 1000;
+	private boolean failOnError = false;
+	private boolean precompile = false;
+	private int sdmPort = 9876;
+	private List<String> src = Lists.newArrayList();
+	private boolean enforceStrictResources = false;
+	private boolean incremental = true;
+	private String sourceLevel = "";
+	private LogLevel logLevel = LogLevel.WARN;
+	private JsInteropMode jsInteropMode = JsInteropMode.NONE;
+	private MethodNameDisplayMode methodNameDisplayMode = MethodNameDisplayMode.NONE;
+
 	public GwtDevTask() {
 		setName(NAME);
 		setDescription("Compile the GWT modules");
+
+		dependsOn(WarPlugin.WAR_TASK_NAME, JavaPlugin.COMPILE_JAVA_TASK_NAME, JavaPlugin.PROCESS_RESOURCES_TASK_NAME);
 	}
 
 	@TaskAction
 	public void exec() throws Exception {
-		File buildDir = getProject().getBuildDir();
-		JavaPluginConvention javaPluginConvention = getProject().getConvention().getPlugin(JavaPluginConvention.class);
-		// WarPluginConvention warPluginConvention =
-		// getProject().getConvention().getPlugin(WarPluginConvention.class);
+		JavaAction jetty = execJetty();
+		execSdm();
+		jetty.join();
+	}
 
-		File workDir = ResourceUtils.ensureDir(buildDir, "pwt/work");
-		File jettyConfDir = ResourceUtils.ensureDir(buildDir, "pwt/jetty");
-
+	private JavaAction execJetty() throws IOException {
 		File webOverrideFile =
 			ResourceUtils.copy("/stub.web-override.xml",
-				jettyConfDir, "web-override.xml",
+				getJettyConf(), "web-override.xml",
 				new ImmutableMap.Builder<String, String>()
-					.put("__CODE_SERVER_PORT__", "9876")
+					.put("__CODE_SERVER_PORT__", getSdmPort() + "")
 					.build());
 		File jettyConf = ResourceUtils.copy("/stub.jetty-conf.xml",
-			jettyConfDir, "jetty-conf.xml",
+			getJettyConf(), "jetty-conf.xml",
 			new ImmutableMap.Builder<String, String>()
 				.put("__WEB_OVERRIDE__", webOverrideFile.getAbsolutePath())
-				.put("__WAR_FILE__", "build/libs/testplugin.war")
+				.put("__WAR_FILE__", getJettyWar().getAbsolutePath())
 				.build());
 
-		SourceSetContainer sourceSetContainer = javaPluginConvention.getSourceSets();
-
-		SourceSet mainSourceSet = sourceSetContainer.getByName("main");
-		System.out.println(mainSourceSet.getJava().getSrcDirs());
-		System.out.println(mainSourceSet.getResources().getSrcDirs());
+		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
 
 		String jettyClassPath =
 			getProject().getConfigurations().getByName(PwtLibPlugin.CONF_JETTY).getAsPath();
 
 		JavaCommandBuilder builder = new JavaCommandBuilder();
+		builder.configureJavaArgs(putnami.getJetty());
 		builder.setMainClass("org.eclipse.jetty.runner.Runner");
 		builder.addClassPath(jettyClassPath);
+		// builder.addArg("-help");
+		builder.addArg("--log", getJettyLogRequestFile());
+		builder.addArg("--out", getJettyLogFile());
+		builder.addArg("--host", getJettyBindAddress());
+		builder.addArg("--port", getJettyPort());
+		builder.addArg("--stop-port", getJettyStopPort());
+		builder.addArg("--stop-key", getJettyStopKey());
+
 		builder.addArg(jettyConf.getAbsolutePath());
 
-		JavaAction runJettyAction = new JavaAction(builder.toString());
-		runJettyAction.execute(this);
+		JavaAction jetty = new JavaAction(builder.toString());
+		jetty.execute(this);
 
+		return jetty;
+	}
+
+	private JavaAction execSdm() {
 		Configuration sdmConf =
 			getProject().getConfigurations().getByName(PwtLibPlugin.CONF_GWT_SDM);
 
-		builder = new JavaCommandBuilder();
+		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
+
+		JavaCommandBuilder builder = new JavaCommandBuilder();
+		builder.configureJavaArgs(putnami.getDev());
 		builder.setMainClass("com.google.gwt.dev.codeserver.CodeServer");
 		builder.addClassPath(sdmConf.getAsPath());
-		builder.addArg("-noprecompile");
-		builder.addArg("-src src/main/java");
-		// builder.addArgs("-src " + devSrcDir.getAbsolutePath());
-		builder.addArg("-workDir ", workDir);
-		builder.addArg("fr.pwt.testplugin.TestDev");
+
+		builder.addArg("-src", getSrc().get(0));
+		builder.addArgIf(isAllowMissingSrc(), "-allowMissingSrc", "-noallowMissingSrc");
+		builder.addArg("-bindAddress", getBindAddress());
+		builder.addArgIf(isCompileTest(), "-compileTest ", "-nocompileTest");
+		if (isCompileTest()) {
+			builder.addArg("-compileTestRecompiles", getCompileTestRecompiles());
+		}
+		builder.addArgIf(isFailOnError(), "-failOnError", "-nofailOnError");
+		builder.addArgIf(isPrecompile(), "-precompile", "-noprecompile");
+		builder.addArg("-port", getSdmPort());
+		builder.addArgIf(isEnforceStrictResources(), "-XenforceStrictResources ", "-XnoenforceStrictResources");
+		builder.addArg("-workDir", getWorkDir());
+		builder.addArg("-launcherDir", getLauncherDir());
+		builder.addArgIf(isPrecompile(), "-incremental", "-noincremental");
+		builder.addArg("-sourceLevel", getSourceLevel());
+		builder.addArg("-logLevel", getLogLevel());
+		builder.addArg("-XmethodNameDisplayMode", getMethodNameDisplayMode());
+		// builder.addArg("-jsInteropMode", getJsInteropMode());
+
+		for (String module : getModules()) {
+			builder.addArg(module);
+		}
 
 		JavaAction sdmAction = new JavaAction(builder.toString());
-
 		sdmAction.execute(this);
-		// sdmAction.join();
 
-		runJettyAction.join();
+		return sdmAction;
 	}
+
+	public void configureJetty(final Project project, final JettyOption options) {
+		final File buildDir = new File(project.getBuildDir(), "putnami");
+		final File logDir = ResourceUtils.ensureDir(buildDir, "logs");
+
+		options.setLogFile(new File(logDir, "request.log"));
+		options.setLogRequestFile(new File(logDir, "jetty.log"));
+
+		options.setJettyConf(ResourceUtils.ensureDir(buildDir, "jerryConf"));
+
+		ConventionMapping convention = ((IConventionAware) this).getConventionMapping();
+
+		convention.map("jettyConf", new Callable<File>() {
+			@Override
+			public File call() throws Exception {
+				return options.getJettyConf();
+			}
+		});
+		convention.map("jettyWar", new Callable<File>() {
+			@Override
+			public File call() throws Exception {
+				return options.getWar();
+			}
+		});
+		convention.map("jettyBindAddress", new Callable<String>() {
+			@Override
+			public String call() throws Exception {
+				return options.getBindAddress();
+			}
+		});
+		convention.map("jettyLogRequestFile", new Callable<File>() {
+			@Override
+			public File call() throws Exception {
+				return options.getLogRequestFile();
+			}
+		});
+		convention.map("jettyLogFile", new Callable<File>() {
+			@Override
+			public File call() throws Exception {
+				return options.getLogFile();
+			}
+		});
+		convention.map("jettyPort", new Callable<Integer>() {
+			@Override
+			public Integer call() throws Exception {
+				return options.getPort();
+			}
+		});
+		convention.map("jettyStopPort", new Callable<Integer>() {
+			@Override
+			public Integer call() throws Exception {
+				return options.getStopPort();
+			}
+		});
+		convention.map("jettyStopKey", new Callable<String>() {
+			@Override
+			public String call() throws Exception {
+				return options.getStopKey();
+			}
+		});
+	}
+
+	public void configureCodeServer(final Project project, final CodeServerOption options) {
+
+		final File buildDir = new File(project.getBuildDir(), "putnami");
+
+		options.setLauncherDir(ResourceUtils.ensureDir(buildDir, "launcher"));
+		options.setWorkDir(ResourceUtils.ensureDir(buildDir, "work"));
+		options.src("src/main/java");
+
+		ConventionMapping convention = ((IConventionAware) this).getConventionMapping();
+
+		convention.map("allowMissingSrc", new Callable<Boolean>() {
+			@Override
+			public Boolean call() throws Exception {
+				return options.isAllowMissingSrc();
+			}
+		});
+
+		convention.map("bindAddress", new Callable<String>() {
+			@Override
+			public String call() throws Exception {
+				return options.getBindAddress();
+			}
+		});
+		convention.map("compileTest", new Callable<Boolean>() {
+			@Override
+			public Boolean call() throws Exception {
+				return options.isCompileTest();
+			}
+		});
+		convention.map("compileTestRecompiles", new Callable<Integer>() {
+			@Override
+			public Integer call() throws Exception {
+				return options.getCompileTestRecompiles();
+			}
+		});
+		convention.map("failOnError", new Callable<Boolean>() {
+			@Override
+			public Boolean call() throws Exception {
+				return options.isFailOnError();
+			}
+		});
+		convention.map("precompile", new Callable<Boolean>() {
+			@Override
+			public Boolean call() throws Exception {
+				return options.isPrecompile();
+			}
+		});
+		convention.map("sdmPort", new Callable<Integer>() {
+			@Override
+			public Integer call() throws Exception {
+				return options.getPort();
+			}
+		});
+		convention.map("src", new Callable<List<String>>() {
+			@Override
+			public List<String> call() throws Exception {
+				return options.getSrc();
+			}
+		});
+		convention.map("enforceStrictResources", new Callable<Boolean>() {
+			@Override
+			public Boolean call() throws Exception {
+				return options.isEnforceStrictResources();
+			}
+		});
+		convention.map("workDir", new Callable<File>() {
+				@Override
+			public File call() throws Exception {
+				return options.getWorkDir();
+				}
+			});
+		convention.map("launcherDir", new Callable<File>() {
+			@Override
+			public File call() throws Exception {
+				return options.getLauncherDir();
+			}
+		});
+		convention.map("incremental", new Callable<Boolean>() {
+			@Override
+			public Boolean call() throws Exception {
+				return options.isIncremental();
+			}
+		});
+		convention.map("sourceLevel", new Callable<String>() {
+				@Override
+			public String call() throws Exception {
+				return options.getSourceLevel();
+				}
+			});
+		convention.map("logLevel", new Callable<LogLevel>() {
+			@Override
+			public LogLevel call() throws Exception {
+				return options.getLogLevel();
+			}
+		});
+		convention.map("jsInteropMode", new Callable<JsInteropMode>() {
+			@Override
+			public JsInteropMode call() throws Exception {
+				return options.getJsInteropMode();
+			}
+		});
+		convention.map("methodNameDisplayMode",
+			new Callable<MethodNameDisplayMode>() {
+			@Override
+				public MethodNameDisplayMode call() throws Exception {
+					return options.getMethodNameDisplayMode();
+			}
+		});
+		convention.map("modules", new Callable<List<String>>() {
+			@Override
+			public List<String> call() throws Exception {
+				return options.getModule();
+			}
+		});
+	}
+
+	@OutputDirectory
+	public File getJettyConf() {
+		return jettyConf;
+	}
+
+	@InputFile
+	public File getJettyWar() {
+		return jettyWar;
+	}
+
+	@Input
+	public String getJettyBindAddress() {
+		return jettyBindAddress;
+	}
+
+	@OutputFile
+	public File getJettyLogRequestFile() {
+		return jettyLogRequestFile;
+	}
+
+	@OutputFile
+	public File getJettyLogFile() {
+		return jettyLogFile;
+	}
+
+	@Input
+	public int getJettyPort() {
+		return jettyPort;
+	}
+
+	@Input
+	public int getJettyStopPort() {
+		return jettyStopPort;
+	}
+
+	@Input
+	public String getJettyStopKey() {
+		return jettyStopKey;
+	}
+
+	@OutputDirectory
+	public File getWorkDir() {
+		return workDir;
+	}
+
+	@OutputDirectory
+	public File getLauncherDir() {
+		return launcherDir;
+	}
+
+	@Input
+	public boolean isAllowMissingSrc() {
+		return allowMissingSrc;
+	}
+
+	@Input
+	public String getBindAddress() {
+		return bindAddress;
+	}
+
+	@Input
+	public boolean isCompileTest() {
+		return compileTest;
+	}
+
+	@Input
+	public int getCompileTestRecompiles() {
+		return compileTestRecompiles;
+	}
+
+	@Input
+	public boolean isFailOnError() {
+		return failOnError;
+	}
+
+	@Input
+	public boolean isPrecompile() {
+		return precompile;
+	}
+
+	@Input
+	public int getSdmPort() {
+		return sdmPort;
+	}
+
+	@Input
+	public List<String> getSrc() {
+		return src;
+	}
+
+	@Input
+	public boolean isEnforceStrictResources() {
+		return enforceStrictResources;
+	}
+
+	@Input
+	public boolean isIncremental() {
+		return incremental;
+	}
+
+	@Input
+	public String getSourceLevel() {
+		return sourceLevel;
+	}
+
+	@Input
+	public LogLevel getLogLevel() {
+		return logLevel;
+	}
+
+	@Input
+	public JsInteropMode getJsInteropMode() {
+		return jsInteropMode;
+	}
+
+	@Input
+	public MethodNameDisplayMode getMethodNameDisplayMode() {
+		return methodNameDisplayMode;
+	}
+
+	@Input
+	public List<String> getModules() {
+		return modules;
+	}
+
 }

@@ -12,13 +12,15 @@
  * You should have received a copy of the GNU Lesser General Public License along with pwt. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-package fr.putnami.pwt.gradle.utli;
+package fr.putnami.pwt.gradle.util;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import java.io.File;
 import java.util.List;
+
+import fr.putnami.pwt.gradle.extension.JavaOptions;
 
 public class JavaCommandBuilder {
 
@@ -117,6 +119,31 @@ public class JavaCommandBuilder {
 		}
 
 		return sb.toString();
+	}
+
+	public void configureJavaArgs(JavaOptions javaOptions) {
+		if (!Strings.isNullOrEmpty(javaOptions.getMinHeapSize())) {
+			addJavaArgs("-Xms" + javaOptions.getMinHeapSize());
+		}
+		if (!Strings.isNullOrEmpty(javaOptions.getMaxHeapSize())) {
+			addJavaArgs("-Xmx" + javaOptions.getMaxHeapSize());
+		}
+		if (!Strings.isNullOrEmpty(javaOptions.getMaxPermSize())) {
+			addJavaArgs("-XX:MaxPermSize" + javaOptions.getMaxPermSize());
+
+		}
+		if (javaOptions.isDebug()) {
+			StringBuffer sb = new StringBuffer();
+			sb.append("-Xdebug --Xrunjdwp:server=y, transport=dt_socket,address=");
+			sb.append(javaOptions.getDebugPort());
+			sb.append(", suspend=");
+			sb.append(javaOptions.isDebugSuspend() ? "y" : "n");
+			addJavaArgs(sb.toString());
+
+		}
+		for (String javaArg : javaOptions.getJavaArgs()) {
+			addJavaArgs(javaArg);
+		}
 	}
 
 }

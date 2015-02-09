@@ -17,9 +17,12 @@ package fr.putnami.pwt.gradle;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.MavenPlugin;
+import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.bundling.Jar;
 
-import fr.putnami.pwt.gradle.extension.PwtExtension;
+import fr.putnami.pwt.gradle.extension.PutnamiExtension;
 
 public class PwtLibPlugin implements Plugin<Project> {
 
@@ -33,7 +36,7 @@ public class PwtLibPlugin implements Plugin<Project> {
 		project.getPlugins().apply(MavenPlugin.class);
 
 		project.getExtensions()
-			.create(PwtExtension.PWT_EXTENSION, PwtExtension.class);
+			.create(PutnamiExtension.PWT_EXTENSION, PutnamiExtension.class);
 		// extension.init(project);
 
 		project.getConfigurations().create(CONF_GWT_SDM);
@@ -45,7 +48,14 @@ public class PwtLibPlugin implements Plugin<Project> {
 		project.getDependencies().add(CONF_JETTY, "fr.putnami.pwt:putnami-gradle-plugin:0.1.0-SNAPSHOT");
 
 		project.getDependencies().add("compile", "com.google.gwt:gwt-user:2.7.0");
+		// project.getDependencies().add("runtime",
+		// "fr.putnami.pwt:putnami-gradle-plugin:0.1.0-SNAPSHOT");
 
+		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
+		SourceSet mainSourset = javaConvention.getSourceSets().getByName("main");
+
+		Jar jarTask = project.getTasks().withType(Jar.class).getByName("jar");
+		jarTask.from(mainSourset.getAllSource());
 	}
 
 }

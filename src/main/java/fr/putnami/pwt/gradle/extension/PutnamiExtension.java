@@ -18,13 +18,14 @@ import org.gradle.util.ConfigureUtil;
 
 import groovy.lang.Closure;
 
-public class PwtExtension {
+public class PutnamiExtension {
 	public static final String PWT_EXTENSION = "pwt";
 
 	private String gwtVersion = "2.7.0";
 
 	private CompilerOptions compile = new CompilerOptions();
 	private CodeServerOption dev = new CodeServerOption();
+	private JettyOption jetty = new JettyOption();
 
 	public String getGwtVersion() {
 		return gwtVersion;
@@ -42,7 +43,7 @@ public class PwtExtension {
 		this.dev = dev;
 	}
 
-	public PwtExtension dev(Closure<CodeServerOption> c) {
+	public PutnamiExtension dev(Closure<CodeServerOption> c) {
 		ConfigureUtil.configure(c, dev);
 		return this;
 	}
@@ -55,8 +56,21 @@ public class PwtExtension {
 		this.compile = compile;
 	}
 
-	public PwtExtension compile(Closure<CompilerOptions> c) {
+	public PutnamiExtension compile(Closure<CompilerOptions> c) {
 		ConfigureUtil.configure(c, compile);
+		return this;
+	}
+
+	public JettyOption getJetty() {
+		return jetty;
+	}
+
+	public void setJetty(JettyOption jetty) {
+		this.jetty = jetty;
+	}
+
+	public PutnamiExtension jetty(Closure<JettyOption> c) {
+		ConfigureUtil.configure(c, jetty);
 		return this;
 	}
 
