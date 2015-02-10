@@ -16,11 +16,11 @@ package fr.putnami.pwt.gradle.task;
 
 import org.gradle.api.DefaultTask;
 
-public class AbstractPwtTask extends DefaultTask {
+public class AbstractTask extends DefaultTask {
 
 	public static final String PWT_GROUP = "Putnami";
 
-	public AbstractPwtTask() {
+	public AbstractTask() {
 		setGroup(PWT_GROUP);
 	}
 }

@@ -22,7 +22,7 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.internal.ConventionMapping;
 import org.gradle.api.internal.IConventionAware;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.WarPlugin;
+import org.gradle.api.plugins.WarPluginConvention;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.OutputDirectory;
@@ -45,7 +45,7 @@ import fr.putnami.pwt.gradle.extension.PutnamiExtension;
 import fr.putnami.pwt.gradle.util.JavaCommandBuilder;
 import fr.putnami.pwt.gradle.util.ResourceUtils;
 
-public class GwtDevTask extends AbstractPwtTask {
+public class GwtDevTask extends AbstractTask {
 
 	public static final String NAME = "gwtDev";
 
@@ -82,9 +82,9 @@ public class GwtDevTask extends AbstractPwtTask {
 
 	public GwtDevTask() {
 		setName(NAME);
-		setDescription("Compile the GWT modules");
+		setDescription("Run SDM");
 
-		dependsOn(WarPlugin.WAR_TASK_NAME, JavaPlugin.COMPILE_JAVA_TASK_NAME, JavaPlugin.PROCESS_RESOURCES_TASK_NAME);
+		dependsOn(JavaPlugin.COMPILE_JAVA_TASK_NAME, JavaPlugin.PROCESS_RESOURCES_TASK_NAME);
 	}
 
 	@TaskAction
@@ -95,21 +95,22 @@ public class GwtDevTask extends AbstractPwtTask {
 	}
 
 	private JavaAction execJetty() throws IOException {
+		WarPluginConvention warPluginConvention =
+			(WarPluginConvention) getProject().getConvention().getPlugins().get("war");
+
 		File webOverrideFile =
-			ResourceUtils.copy("/stub.web-override.xml",
-				getJettyConf(), "web-override.xml",
+			ResourceUtils.copy("/stub.web-dev-override.xml", getJettyConf(), "web-dev-override.xml",
 				new ImmutableMap.Builder<String, String>()
 					.put("__CODE_SERVER_PORT__", getSdmPort() + "")
 					.build());
-		File jettyConf = ResourceUtils.copy("/stub.jetty-conf.xml",
-			getJettyConf(), "jetty-conf.xml",
+		File jettyConf = ResourceUtils.copy("/stub.jetty-dev-conf.xml", getJettyConf(), "jetty-dev-conf.xml",
 			new ImmutableMap.Builder<String, String>()
 				.put("__WEB_OVERRIDE__", webOverrideFile.getAbsolutePath())
-				.put("__WAR_FILE__", getJettyWar().getAbsolutePath())
+				.put("__WAR_FILE__", warPluginConvention.getWebAppDirName())
 				.build());
 
-		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
-
+		PutnamiExtension putnami = getProject()
+			.getExtensions().getByType(PutnamiExtension.class);
 		String jettyClassPath =
 			getProject().getConfigurations().getByName(PwtLibPlugin.CONF_JETTY).getAsPath();
 
@@ -177,8 +178,8 @@ public class GwtDevTask extends AbstractPwtTask {
 		final File buildDir = new File(project.getBuildDir(), "putnami");
 		final File logDir = ResourceUtils.ensureDir(buildDir, "logs");
 
-		options.setLogFile(new File(logDir, "request.log"));
-		options.setLogRequestFile(new File(logDir, "jetty.log"));
+		options.setLogFile(new File(logDir, "jetty.log"));
+		options.setLogRequestFile(new File(logDir, "request.log"));
 
 		options.setJettyConf(ResourceUtils.ensureDir(buildDir, "jerryConf"));
 

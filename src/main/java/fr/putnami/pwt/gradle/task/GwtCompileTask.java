@@ -38,7 +38,7 @@ import fr.putnami.pwt.gradle.extension.MethodNameDisplayMode;
 import fr.putnami.pwt.gradle.extension.PutnamiExtension;
 import fr.putnami.pwt.gradle.util.JavaCommandBuilder;
 
-public class GwtCompileTask extends AbstractPwtTask {
+public class GwtCompileTask extends AbstractTask {
 
 	public static final String NAME = "gwtCompile";
 

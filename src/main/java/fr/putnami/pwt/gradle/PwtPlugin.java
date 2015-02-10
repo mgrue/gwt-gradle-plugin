@@ -39,6 +39,13 @@ public class PwtPlugin implements Plugin<Project> {
 
 	private void createRunTask(final Project project) {
 		project.getTasks().create(GwtRunTask.NAME, GwtRunTask.class);
+		final PutnamiExtension extension = project.getExtensions().getByType(PutnamiExtension.class);
+		project.getTasks().withType(GwtRunTask.class, new Action<GwtRunTask>() {
+			@Override
+			public void execute(final GwtRunTask task) {
+				task.configureJetty(project, extension.getJetty());
+			}
+		});
 	}
 
 	private void createCompileTask(final Project project) {
