@@ -24,9 +24,14 @@ import java.util.List;
 import groovy.lang.Closure;
 
 public class PutnamiExtension {
-	public static final String PWT_EXTENSION = "pwt";
+	public static final String PWT_EXTENSION = "putnami";
 
 	private String gwtVersion = "2.7.0";
+	private boolean gwtServletLib = false;
+	private boolean gwtDevLib = false;
+	private boolean gwtElementalLib = false;
+
+	private String jettyVersion = "9.2.7.v20150116";
 
 	/**
 	 * GWT Module to compile.
@@ -43,6 +48,38 @@ public class PutnamiExtension {
 
 	public void setGwtVersion(String gwtVersion) {
 		this.gwtVersion = gwtVersion;
+	}
+
+	public String getJettyVersion() {
+		return jettyVersion;
+	}
+
+	public void setJettyVersion(String jettyVersion) {
+		this.jettyVersion = jettyVersion;
+	}
+
+	public boolean isGwtServletLib() {
+		return gwtServletLib;
+	}
+
+	public void setGwtServletLib(boolean gwtServletLib) {
+		this.gwtServletLib = gwtServletLib;
+	}
+
+	public boolean isGwtDevLib() {
+		return gwtDevLib;
+	}
+
+	public void setGwtDevLib(boolean gwtDevLib) {
+		this.gwtDevLib = gwtDevLib;
+	}
+
+	public boolean isGwtElementalLib() {
+		return gwtElementalLib;
+	}
+
+	public void setGwtElementalLib(boolean gwtElementalLib) {
+		this.gwtElementalLib = gwtElementalLib;
 	}
 
 	public CodeServerOption getDev() {

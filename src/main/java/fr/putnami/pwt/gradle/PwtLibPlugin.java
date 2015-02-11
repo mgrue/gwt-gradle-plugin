@@ -14,11 +14,14 @@
  */
 package fr.putnami.pwt.gradle;
 
+import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.MavenPlugin;
+import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.bundling.Jar;
 
@@ -26,7 +29,9 @@ import fr.putnami.pwt.gradle.extension.PutnamiExtension;
 
 public class PwtLibPlugin implements Plugin<Project> {
 
-	public static final String CONF_GWT_SDM = "gwtSdmConf";
+	public static final String PLUGIN_VERSION = "0.1.0-SNAPSHOT";
+
+	public static final String CONF_GWT_SDM = "sdmConf";
 	public static final String CONF_JETTY = "jettyConf";
 
 	@Override
@@ -35,19 +40,50 @@ public class PwtLibPlugin implements Plugin<Project> {
 		project.getPlugins().apply(JavaPlugin.class);
 		project.getPlugins().apply(MavenPlugin.class);
 
-		project.getExtensions()
-			.create(PutnamiExtension.PWT_EXTENSION, PutnamiExtension.class);
+		final PutnamiExtension extention =
+			project.getExtensions().create(PutnamiExtension.PWT_EXTENSION, PutnamiExtension.class);
 
 		project.getConfigurations().create(CONF_GWT_SDM);
-		project.getDependencies().add(CONF_GWT_SDM, "com.google.gwt:gwt-codeserver:2.7.0");
-		project.getDependencies().add(CONF_GWT_SDM, "com.google.gwt:gwt-user:2.7.0");
-
 		project.getConfigurations().create(CONF_JETTY);
-		project.getDependencies().add(CONF_JETTY, "org.eclipse.jetty:jetty-runner:9.2.2.v20140723");
-		project.getDependencies().add(CONF_JETTY, "fr.putnami.pwt:putnami-gradle-plugin:0.1.0-SNAPSHOT");
 
-		project.getDependencies().add("compile", "com.google.gwt:gwt-user:2.7.0");
+		includeSourcesToJar(project);
 
+		project.afterEvaluate(new Action<Project>() {
+			@Override
+			public void execute(final Project project) {
+				String gwtVersion = extention.getGwtVersion();
+				String jettyVersion = extention.getJettyVersion();
+
+				DependencyHandler dependencies = project.getDependencies();
+
+				String providedConfiguration = project.getPlugins().hasPlugin("war") ?
+					WarPlugin.PROVIDED_COMPILE_CONFIGURATION_NAME : JavaPlugin.COMPILE_CONFIGURATION_NAME;
+
+				dependencies.add(CONF_GWT_SDM, "com.google.gwt:gwt-codeserver:" + gwtVersion);
+				dependencies.add(CONF_GWT_SDM, "com.google.gwt:gwt-user:" + gwtVersion);
+				dependencies.add(providedConfiguration
+					, "com.google.gwt:gwt-user:" + gwtVersion);
+				if (extention.isGwtElementalLib()) {
+					dependencies
+						.add(JavaPlugin.COMPILE_CONFIGURATION_NAME, "com.google.gwt:gwt-elemental:" + gwtVersion);
+				}
+				if (extention.isGwtServletLib()) {
+					dependencies
+						.add(JavaPlugin.COMPILE_CONFIGURATION_NAME, "com.google.gwt:gwt-servlet:" + gwtVersion);
+				}
+				if (extention.isGwtDevLib()) {
+					dependencies
+						.add(providedConfiguration, "com.google.gwt:gwt-dev:" + gwtVersion);
+				}
+
+				dependencies.add(CONF_JETTY, "org.eclipse.jetty:jetty-runner:" + jettyVersion);
+				dependencies.add(CONF_JETTY, "fr.putnami.pwt:putnami-gradle-plugin:" + PLUGIN_VERSION);
+
+			}
+		});
+	}
+
+	private void includeSourcesToJar(Project project) {
 		Jar jarTask = project.getTasks().withType(Jar.class).getByName("jar");
 		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
 		SourceSet mainSourset = javaConvention.getSourceSets().getByName("main");
