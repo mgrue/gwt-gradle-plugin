@@ -6,6 +6,7 @@ ext {
 apply plugin: 'eclipse'
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: 'signing'
 
 group = 'fr.putnami.pwt'
 version = '0.1.0-SNAPSHOT'
@@ -20,7 +21,57 @@ repositories {
 dependencies {
 	compile gradleApi()
 	compile "com.google.guava:guava:18.0"
-  compile "org.eclipse.jetty:jetty-runner:9.2.2.v20140723"
+}
+
+signing {
+	required { gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
+uploadArchives {
+	repositories {
+	    mavenDeployer {
+			beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+			//OSS Repository
+			if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword')) {
+				repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+					authentication(userName: ossrhUsername, password: ossrhPassword)
+				}
+				snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+					authentication(userName: ossrhUsername, password: ossrhPassword)
+				}
+			}
+			else {
+				repository(url : new File(rootProject.buildDir, 'repoRelease').toURI())
+			}
+    
+        	pom.project {
+				url 'http://pwt.putnami.org'
+				name project.name
+				description 'Putnami Gradle Plugin'
+				scm {
+					connection 'scm:git:git@github.com:Putnami/putnami-gradle-plugin.git'
+    	            developerConnection 'scm:git:git@github.com:Putnami/putnami-gradle-plugin.git'
+	                url 'git@github.com:Putnami/putnami-gradle-plugin.git'
+                }
+                licenses {
+                	license {
+            	        name 'GNU Lesser General Public License'
+        	            url 'http://www.gnu.org/licenses/lgpl-3.0.html'
+    	                distribution 'repo'
+	                }
+                }
+			 	developers {
+					developer {
+						id 'fdumay'
+						name 'Fabien Dumay'
+						email 'fabien.dumay@putnami.com'
+					}
+	        	}
+        	}
+    	}
+	}
 }
 
 eclipse {
