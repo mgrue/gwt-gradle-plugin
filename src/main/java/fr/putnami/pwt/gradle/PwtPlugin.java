@@ -37,17 +37,6 @@ public class PwtPlugin implements Plugin<Project> {
 		createRunTask(project);
 	}
 
-	private void createRunTask(final Project project) {
-		project.getTasks().create(GwtRunTask.NAME, GwtRunTask.class);
-		final PutnamiExtension extension = project.getExtensions().getByType(PutnamiExtension.class);
-		project.getTasks().withType(GwtRunTask.class, new Action<GwtRunTask>() {
-			@Override
-			public void execute(final GwtRunTask task) {
-				task.configureJetty(project, extension.getJetty());
-			}
-		});
-	}
-
 	private void createCompileTask(final Project project) {
 		project.getTasks().create(GwtCompileTask.NAME, GwtCompileTask.class);
 		final PutnamiExtension extension = project.getExtensions().getByType(PutnamiExtension.class);
@@ -58,6 +47,17 @@ public class PwtPlugin implements Plugin<Project> {
 			public void execute(final GwtCompileTask task) {
 				task.configure(project, extension.getCompile());
 				warTask.from(extension.getCompile().getWar());
+			}
+		});
+	}
+
+	private void createRunTask(final Project project) {
+		project.getTasks().create(GwtRunTask.NAME, GwtRunTask.class);
+		final PutnamiExtension extension = project.getExtensions().getByType(PutnamiExtension.class);
+		project.getTasks().withType(GwtRunTask.class, new Action<GwtRunTask>() {
+			@Override
+			public void execute(final GwtRunTask task) {
+				task.configureJetty(project, extension.getJetty());
 			}
 		});
 	}

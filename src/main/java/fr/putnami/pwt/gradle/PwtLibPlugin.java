@@ -37,7 +37,6 @@ public class PwtLibPlugin implements Plugin<Project> {
 
 		project.getExtensions()
 			.create(PutnamiExtension.PWT_EXTENSION, PutnamiExtension.class);
-		// extension.init(project);
 
 		project.getConfigurations().create(CONF_GWT_SDM);
 		project.getDependencies().add(CONF_GWT_SDM, "com.google.gwt:gwt-codeserver:2.7.0");
@@ -48,13 +47,10 @@ public class PwtLibPlugin implements Plugin<Project> {
 		project.getDependencies().add(CONF_JETTY, "fr.putnami.pwt:putnami-gradle-plugin:0.1.0-SNAPSHOT");
 
 		project.getDependencies().add("compile", "com.google.gwt:gwt-user:2.7.0");
-		// project.getDependencies().add("runtime",
-		// "fr.putnami.pwt:putnami-gradle-plugin:0.1.0-SNAPSHOT");
-
-		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
-		SourceSet mainSourset = javaConvention.getSourceSets().getByName("main");
 
 		Jar jarTask = project.getTasks().withType(Jar.class).getByName("jar");
+		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
+		SourceSet mainSourset = javaConvention.getSourceSets().getByName("main");
 		jarTask.from(mainSourset.getAllSource());
 	}
 

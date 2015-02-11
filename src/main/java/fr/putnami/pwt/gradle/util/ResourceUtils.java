@@ -45,6 +45,11 @@ public final class ResourceUtils {
 
 	public static File copy(String resourcePath, File targetDir, String targetName, Map<String, String> model)
 		throws IOException {
+		return copy(resourcePath, new File(targetDir, targetName), model);
+	}
+
+	public static File copy(String resourcePath, File target, Map<String, String> model)
+		throws IOException {
 
 		InputStream input = ResourceUtils.class.getResource(resourcePath).openStream();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -60,11 +65,11 @@ public final class ResourceUtils {
 			}
 		}
 
-		File outFile = new File(targetDir, targetName);
-		FileWriter writer = new FileWriter(outFile);
+		target.getParentFile().mkdirs();
+		FileWriter writer = new FileWriter(target);
 		writer.write(template);
 		writer.close();
-		return outFile;
+		return target;
 	}
 
 }

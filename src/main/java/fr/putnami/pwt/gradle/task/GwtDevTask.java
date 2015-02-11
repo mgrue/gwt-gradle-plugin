@@ -14,6 +14,7 @@
  */
 package fr.putnami.pwt.gradle.task;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
@@ -24,9 +25,7 @@ import org.gradle.api.internal.IConventionAware;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.WarPluginConvention;
 import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.OutputDirectory;
-import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
 
 import java.io.File;
@@ -45,21 +44,10 @@ import fr.putnami.pwt.gradle.extension.PutnamiExtension;
 import fr.putnami.pwt.gradle.util.JavaCommandBuilder;
 import fr.putnami.pwt.gradle.util.ResourceUtils;
 
-public class GwtDevTask extends AbstractTask {
+public class GwtDevTask extends AbstractJettyTask {
 
 	public static final String NAME = "gwtDev";
 
-	/* Jetty */
-	private File jettyConf;
-	private File jettyWar;
-	private String jettyBindAddress;
-	private File jettyLogRequestFile;
-	private File jettyLogFile;
-	private int jettyPort;
-	private int jettyStopPort;
-	private String jettyStopKey;
-
-	/* SDM */
 	private File workDir;
 	private File launcherDir;
 
@@ -89,49 +77,30 @@ public class GwtDevTask extends AbstractTask {
 
 	@TaskAction
 	public void exec() throws Exception {
-		JavaAction jetty = execJetty();
-		execSdm();
-		jetty.join();
-	}
+		WarPluginConvention warConvention = (WarPluginConvention) getProject().getConvention().getPlugins().get("war");
+		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
+		JettyOption jettyOption = putnami.getJetty();
 
-	private JavaAction execJetty() throws IOException {
-		WarPluginConvention warPluginConvention =
-			(WarPluginConvention) getProject().getConvention().getPlugins().get("war");
-
-		File webOverrideFile =
-			ResourceUtils.copy("/stub.web-dev-override.xml", getJettyConf(), "web-dev-override.xml",
+		try {
+			ResourceUtils.ensureDir(jettyOption.getLogFile().getParentFile());
+			File webOverrideFile = ResourceUtils.copy(
+				"/stub.web-dev-override.xml", new File(getProject().getBuildDir(), "putnami/jetty/web-dev-override.xml"),
 				new ImmutableMap.Builder<String, String>()
 					.put("__CODE_SERVER_PORT__", getSdmPort() + "")
 					.build());
-		File jettyConf = ResourceUtils.copy("/stub.jetty-dev-conf.xml", getJettyConf(), "jetty-dev-conf.xml",
-			new ImmutableMap.Builder<String, String>()
-				.put("__WEB_OVERRIDE__", webOverrideFile.getAbsolutePath())
-				.put("__WAR_FILE__", warPluginConvention.getWebAppDirName())
-				.build());
+			ResourceUtils.copy("/stub.jetty-dev-conf.xml", jettyOption.getJettyConf(),
+				new ImmutableMap.Builder<String, String>()
+					.put("__WEB_OVERRIDE__", webOverrideFile.getAbsolutePath())
+					.put("__WAR_FILE__", warConvention.getWebAppDir().getAbsolutePath())
+					.build());
 
-		PutnamiExtension putnami = getProject()
-			.getExtensions().getByType(PutnamiExtension.class);
-		String jettyClassPath =
-			getProject().getConfigurations().getByName(PwtLibPlugin.CONF_JETTY).getAsPath();
+		} catch (IOException e) {
+			Throwables.propagate(e);
+		}
 
-		JavaCommandBuilder builder = new JavaCommandBuilder();
-		builder.configureJavaArgs(putnami.getJetty());
-		builder.setMainClass("org.eclipse.jetty.runner.Runner");
-		builder.addClassPath(jettyClassPath);
-		// builder.addArg("-help");
-		builder.addArg("--log", getJettyLogRequestFile());
-		builder.addArg("--out", getJettyLogFile());
-		builder.addArg("--host", getJettyBindAddress());
-		builder.addArg("--port", getJettyPort());
-		builder.addArg("--stop-port", getJettyStopPort());
-		builder.addArg("--stop-key", getJettyStopKey());
-
-		builder.addArg(jettyConf.getAbsolutePath());
-
-		JavaAction jetty = new JavaAction(builder.toString());
-		jetty.execute(this);
-
-		return jetty;
+		JavaAction jetty = execJetty(jettyOption);
+		execSdm();
+		jetty.join();
 	}
 
 	private JavaAction execSdm() {
@@ -174,65 +143,10 @@ public class GwtDevTask extends AbstractTask {
 		return sdmAction;
 	}
 
-	public void configureJetty(final Project project, final JettyOption options) {
-		final File buildDir = new File(project.getBuildDir(), "putnami");
-		final File logDir = ResourceUtils.ensureDir(buildDir, "logs");
-
-		options.setLogFile(new File(logDir, "jetty.log"));
-		options.setLogRequestFile(new File(logDir, "request.log"));
-
-		options.setJettyConf(ResourceUtils.ensureDir(buildDir, "jerryConf"));
-
-		ConventionMapping convention = ((IConventionAware) this).getConventionMapping();
-
-		convention.map("jettyConf", new Callable<File>() {
-			@Override
-			public File call() throws Exception {
-				return options.getJettyConf();
-			}
-		});
-		convention.map("jettyWar", new Callable<File>() {
-			@Override
-			public File call() throws Exception {
-				return options.getWar();
-			}
-		});
-		convention.map("jettyBindAddress", new Callable<String>() {
-			@Override
-			public String call() throws Exception {
-				return options.getBindAddress();
-			}
-		});
-		convention.map("jettyLogRequestFile", new Callable<File>() {
-			@Override
-			public File call() throws Exception {
-				return options.getLogRequestFile();
-			}
-		});
-		convention.map("jettyLogFile", new Callable<File>() {
-			@Override
-			public File call() throws Exception {
-				return options.getLogFile();
-			}
-		});
-		convention.map("jettyPort", new Callable<Integer>() {
-			@Override
-			public Integer call() throws Exception {
-				return options.getPort();
-			}
-		});
-		convention.map("jettyStopPort", new Callable<Integer>() {
-			@Override
-			public Integer call() throws Exception {
-				return options.getStopPort();
-			}
-		});
-		convention.map("jettyStopKey", new Callable<String>() {
-			@Override
-			public String call() throws Exception {
-				return options.getStopKey();
-			}
-		});
+	@Override
+	public void configureJetty(Project project, JettyOption options) {
+		options.setJettyConf(new File(getProject().getBuildDir(), "putnami/jetty/jetty-dev-conf.xml"));
+		super.configureJetty(project, options);
 	}
 
 	public void configureCodeServer(final Project project, final CodeServerOption options) {
@@ -301,11 +215,11 @@ public class GwtDevTask extends AbstractTask {
 			}
 		});
 		convention.map("workDir", new Callable<File>() {
-				@Override
+			@Override
 			public File call() throws Exception {
 				return options.getWorkDir();
-				}
-			});
+			}
+		});
 		convention.map("launcherDir", new Callable<File>() {
 			@Override
 			public File call() throws Exception {
@@ -319,11 +233,11 @@ public class GwtDevTask extends AbstractTask {
 			}
 		});
 		convention.map("sourceLevel", new Callable<String>() {
-				@Override
+			@Override
 			public String call() throws Exception {
 				return options.getSourceLevel();
-				}
-			});
+			}
+		});
 		convention.map("logLevel", new Callable<LogLevel>() {
 			@Override
 			public LogLevel call() throws Exception {
@@ -338,57 +252,17 @@ public class GwtDevTask extends AbstractTask {
 		});
 		convention.map("methodNameDisplayMode",
 			new Callable<MethodNameDisplayMode>() {
-			@Override
+				@Override
 				public MethodNameDisplayMode call() throws Exception {
 					return options.getMethodNameDisplayMode();
-			}
-		});
+				}
+			});
 		convention.map("modules", new Callable<List<String>>() {
 			@Override
 			public List<String> call() throws Exception {
 				return options.getModule();
 			}
 		});
-	}
-
-	@OutputDirectory
-	public File getJettyConf() {
-		return jettyConf;
-	}
-
-	@InputFile
-	public File getJettyWar() {
-		return jettyWar;
-	}
-
-	@Input
-	public String getJettyBindAddress() {
-		return jettyBindAddress;
-	}
-
-	@OutputFile
-	public File getJettyLogRequestFile() {
-		return jettyLogRequestFile;
-	}
-
-	@OutputFile
-	public File getJettyLogFile() {
-		return jettyLogFile;
-	}
-
-	@Input
-	public int getJettyPort() {
-		return jettyPort;
-	}
-
-	@Input
-	public int getJettyStopPort() {
-		return jettyStopPort;
-	}
-
-	@Input
-	public String getJettyStopKey() {
-		return jettyStopKey;
 	}
 
 	@OutputDirectory
