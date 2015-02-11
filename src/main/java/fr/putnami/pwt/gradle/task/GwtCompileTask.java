@@ -142,7 +142,8 @@ public class GwtCompileTask extends AbstractTask {
 		compileAction.join();
 	}
 
-	public void configure(final Project project, final CompilerOptions options) {
+	public void configure(final Project project, final PutnamiExtension extention) {
+		final CompilerOptions options = extention.getCompile();
 
 		final File buildDir = new File(project.getBuildDir(), "putnami");
 
@@ -160,7 +161,7 @@ public class GwtCompileTask extends AbstractTask {
 		convention.map("modules", new Callable<List<String>>() {
 			@Override
 			public List<String> call() throws Exception {
-				return options.getModule();
+				return extention.getModule();
 			}
 		});
 

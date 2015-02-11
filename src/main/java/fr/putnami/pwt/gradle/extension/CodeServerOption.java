@@ -90,11 +90,6 @@ public class CodeServerOption extends JavaOptions {
 	 */
 	private MethodNameDisplayMode methodNameDisplayMode = MethodNameDisplayMode.NONE;
 
-	/**
-	 * GWT Module to compile.
-	 */
-	private List<String> module = Lists.newArrayList();
-
 	public boolean isAllowMissingSrc() {
 		return allowMissingSrc;
 	}
@@ -229,14 +224,6 @@ public class CodeServerOption extends JavaOptions {
 
 	public void methodNameDisplayMode(String methodNameDisplayMode) {
 		this.methodNameDisplayMode = MethodNameDisplayMode.valueOf(methodNameDisplayMode);
-	}
-
-	public List<String> getModule() {
-		return module;
-	}
-
-	public void module(String... module) {
-		this.module.addAll(Arrays.asList(module));
 	}
 
 }

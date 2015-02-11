@@ -47,7 +47,6 @@ public class GwtRunTask extends AbstractJettyTask {
 		JettyOption jettyOption = putnami.getJetty();
 
 		try {
-			ResourceUtils.ensureDir(jettyOption.getLogFile().getParentFile());
 			ResourceUtils.copy("/stub.jetty-run-conf.xml", jettyOption.getJettyConf(),
 				new ImmutableMap.Builder<String, String>()
 					.put("__WAR_FILE__", jettyOption.getWar().getAbsolutePath())
@@ -60,12 +59,10 @@ public class GwtRunTask extends AbstractJettyTask {
 		jetty.join();
 	}
 
-	@Override
 	public void configureJetty(final Project project, final JettyOption options) {
 		War warTask = (War) getProject().getTasks().getByName("war");
 		options.setWar(warTask.getArchivePath());
 		options.setJettyConf(new File(getProject().getBuildDir(), "putnami/jetty/jetty-run-conf.xml"));
-		super.configureJetty(project, options);
 	}
 
 }

@@ -14,7 +14,12 @@
  */
 package fr.putnami.pwt.gradle.extension;
 
+import com.google.common.collect.Lists;
+
 import org.gradle.util.ConfigureUtil;
+
+import java.util.Arrays;
+import java.util.List;
 
 import groovy.lang.Closure;
 
@@ -22,6 +27,11 @@ public class PutnamiExtension {
 	public static final String PWT_EXTENSION = "pwt";
 
 	private String gwtVersion = "2.7.0";
+
+	/**
+	 * GWT Module to compile.
+	 */
+	private List<String> module = Lists.newArrayList();
 
 	private CompilerOptions compile = new CompilerOptions();
 	private CodeServerOption dev = new CodeServerOption();
@@ -72,6 +82,14 @@ public class PutnamiExtension {
 	public PutnamiExtension jetty(Closure<JettyOption> c) {
 		ConfigureUtil.configure(c, jetty);
 		return this;
+	}
+
+	public List<String> getModule() {
+		return module;
+	}
+
+	public void module(String... module) {
+		this.module.addAll(Arrays.asList(module));
 	}
 
 }

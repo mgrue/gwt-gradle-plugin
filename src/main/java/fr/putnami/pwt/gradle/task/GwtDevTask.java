@@ -82,7 +82,6 @@ public class GwtDevTask extends AbstractJettyTask {
 		JettyOption jettyOption = putnami.getJetty();
 
 		try {
-			ResourceUtils.ensureDir(jettyOption.getLogFile().getParentFile());
 			File webOverrideFile = ResourceUtils.copy(
 				"/stub.web-dev-override.xml", new File(getProject().getBuildDir(), "putnami/jetty/web-dev-override.xml"),
 				new ImmutableMap.Builder<String, String>()
@@ -143,13 +142,12 @@ public class GwtDevTask extends AbstractJettyTask {
 		return sdmAction;
 	}
 
-	@Override
 	public void configureJetty(Project project, JettyOption options) {
 		options.setJettyConf(new File(getProject().getBuildDir(), "putnami/jetty/jetty-dev-conf.xml"));
-		super.configureJetty(project, options);
 	}
 
-	public void configureCodeServer(final Project project, final CodeServerOption options) {
+	public void configureCodeServer(final Project project, final PutnamiExtension extention) {
+		final CodeServerOption options = extention.getDev();
 
 		final File buildDir = new File(project.getBuildDir(), "putnami");
 
@@ -260,7 +258,7 @@ public class GwtDevTask extends AbstractJettyTask {
 		convention.map("modules", new Callable<List<String>>() {
 			@Override
 			public List<String> call() throws Exception {
-				return options.getModule();
+				return extention.getModule();
 			}
 		});
 	}

@@ -51,7 +51,7 @@ public class PwtPlugin implements Plugin<Project> {
 		project.getTasks().withType(GwtCompileTask.class, new Action<GwtCompileTask>() {
 			@Override
 			public void execute(final GwtCompileTask task) {
-				task.configure(project, extension.getCompile());
+				task.configure(project, extension);
 				warTask.from(extension.getCompile().getWar());
 			}
 		});
@@ -74,7 +74,7 @@ public class PwtPlugin implements Plugin<Project> {
 		project.getTasks().withType(GwtDevTask.class, new Action<GwtDevTask>() {
 			@Override
 			public void execute(final GwtDevTask task) {
-				task.configureCodeServer(project, extension.getDev());
+				task.configureCodeServer(project, extension);
 				task.configureJetty(project, extension.getJetty());
 			}
 		});

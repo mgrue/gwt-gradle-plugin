@@ -1,9 +1,5 @@
 package fr.putnami.pwt.gradle.task;
 
-import org.gradle.api.Project;
-
-import java.io.File;
-
 import fr.putnami.pwt.gradle.PwtLibPlugin;
 import fr.putnami.pwt.gradle.action.JavaAction;
 import fr.putnami.pwt.gradle.extension.JettyOption;
@@ -22,8 +18,14 @@ public class AbstractJettyTask extends AbstractTask {
 
 		builder.addClassPath(jettyClassPath);
 
-		builder.addArg("--log", jettyOption.getLogRequestFile());
-		builder.addArg("--out", jettyOption.getLogFile());
+		if (jettyOption.getLogRequestFile() != null) {
+			ResourceUtils.ensureDir(jettyOption.getLogRequestFile().getParentFile());
+			builder.addArg("--log", jettyOption.getLogRequestFile());
+		}
+		if (jettyOption.getLogFile() != null) {
+			ResourceUtils.ensureDir(jettyOption.getLogFile().getParentFile());
+			builder.addArg("--out", jettyOption.getLogFile());
+		}
 		builder.addArg("--host", jettyOption.getBindAddress());
 		builder.addArg("--port", jettyOption.getPort());
 		builder.addArg("--stop-port", jettyOption.getStopPort());
@@ -35,13 +37,5 @@ public class AbstractJettyTask extends AbstractTask {
 		jetty.execute(this);
 
 		return jetty;
-	}
-
-	public void configureJetty(final Project project, final JettyOption options) {
-		final File buildDir = new File(project.getBuildDir(), "putnami");
-		final File logDir = ResourceUtils.ensureDir(buildDir, "logs");
-
-		options.setLogFile(new File(logDir, "jetty.log"));
-		options.setLogRequestFile(new File(logDir, "request.log"));
 	}
 }

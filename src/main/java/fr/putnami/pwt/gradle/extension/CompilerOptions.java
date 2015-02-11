@@ -14,11 +14,7 @@
  */
 package fr.putnami.pwt.gradle.extension;
 
-import com.google.common.collect.Lists;
-
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * GWT Compiler options.
@@ -56,10 +52,6 @@ public class CompilerOptions extends JavaOptions {
 	 * Specifies a file into which detailed missing dependency information will be written.
 	 */
 	private File missingDepsFile;
-	/**
-	 * GWT Module to compile.
-	 */
-	private List<String> module = Lists.newArrayList();
 	/**
 	 * The level of logging detail
 	 */
@@ -343,14 +335,6 @@ public class CompilerOptions extends JavaOptions {
 
 	public void methodNameDisplayMode(String methodNameDisplayMode) {
 		this.methodNameDisplayMode = MethodNameDisplayMode.valueOf(methodNameDisplayMode);
-	}
-
-	public List<String> getModule() {
-		return module;
-	}
-
-	public void module(String... module) {
-		this.module.addAll(Arrays.asList(module));
 	}
 
 	public boolean isEnforceStrictResources() {
