@@ -131,7 +131,7 @@ public class GwtCompileTask extends AbstractTask {
 
 		builder.addArgIf(isClosureCompiler(), "-XclosureCompiler", "-XnoclosureCompiler");
 
-		// builder.addArg("-jsInteropMode", getJsInteropMode());
+		builder.addArg("-jsInteropMode", getJsInteropMode());
 
 		for (String module : getModules()) {
 			builder.addArg(module);

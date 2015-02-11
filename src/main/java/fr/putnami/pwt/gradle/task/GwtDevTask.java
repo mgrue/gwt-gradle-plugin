@@ -130,7 +130,7 @@ public class GwtDevTask extends AbstractJettyTask {
 		builder.addArg("-sourceLevel", getSourceLevel());
 		builder.addArg("-logLevel", getLogLevel());
 		builder.addArg("-XmethodNameDisplayMode", getMethodNameDisplayMode());
-		// builder.addArg("-jsInteropMode", getJsInteropMode());
+		builder.addArg("-jsInteropMode", getJsInteropMode());
 
 		for (String module : getModules()) {
 			builder.addArg(module);
