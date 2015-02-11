@@ -79,13 +79,14 @@ public class GwtDevTask extends AbstractJettyTask {
 	public void exec() throws Exception {
 		WarPluginConvention warConvention = (WarPluginConvention) getProject().getConvention().getPlugins().get("war");
 		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
+		CodeServerOption sdmOption = putnami.getDev();
 		JettyOption jettyOption = putnami.getJetty();
 
 		try {
 			File webOverrideFile = ResourceUtils.copy(
 				"/stub.web-dev-override.xml", new File(getProject().getBuildDir(), "putnami/jetty/web-dev-override.xml"),
 				new ImmutableMap.Builder<String, String>()
-					.put("__CODE_SERVER_PORT__", getSdmPort() + "")
+					.put("__LAUNCHER_DIR__", sdmOption.getLauncherDir().getAbsolutePath() + "")
 					.build());
 			ResourceUtils.copy("/stub.jetty-dev-conf.xml", jettyOption.getJettyConf(),
 				new ImmutableMap.Builder<String, String>()
@@ -130,7 +131,7 @@ public class GwtDevTask extends AbstractJettyTask {
 		builder.addArg("-sourceLevel", getSourceLevel());
 		builder.addArg("-logLevel", getLogLevel());
 		builder.addArg("-XmethodNameDisplayMode", getMethodNameDisplayMode());
-		builder.addArg("-jsInteropMode", getJsInteropMode());
+		builder.addArg("-XjsInteropMode", getJsInteropMode());
 
 		for (String module : getModules()) {
 			builder.addArg(module);

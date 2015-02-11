@@ -36,8 +36,8 @@
 		<filter-name>sdmFilter</filter-name>
 		<filter-class>fr.putnami.pwt.gradle.filter.NoCacheJsFilter</filter-class>
 		<init-param>
-			<param-name>CODE_SERVER_PORT</param-name>
-			<param-value>__CODE_SERVER_PORT__</param-value>
+			<param-name>LAUNCHER_DIR</param-name>
+			<param-value>__LAUNCHER_DIR__</param-value>
 		</init-param>
 	</filter>
 	<filter-mapping>

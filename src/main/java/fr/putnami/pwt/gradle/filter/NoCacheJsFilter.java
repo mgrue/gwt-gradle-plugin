@@ -15,11 +15,11 @@
 package fr.putnami.pwt.gradle.filter;
 
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
+import com.google.common.io.ByteStreams;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URL;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -31,13 +31,13 @@ import javax.servlet.http.HttpServletRequest;
 
 public class NoCacheJsFilter implements Filter {
 
-	private static final String PARAM_CODE_SERVER_PORT = "CODE_SERVER_PORT";
+	private static final String PARAM_LAUNCHER_DIR = "LAUNCHER_DIR";
 
-	private String port = "9876";
+	private String launcherDir = "";
 
 	@Override
 	public void init(FilterConfig paramFilterConfig) throws ServletException {
-		port = paramFilterConfig.getInitParameter(PARAM_CODE_SERVER_PORT);
+		launcherDir = paramFilterConfig.getInitParameter(PARAM_LAUNCHER_DIR);
 
 	}
 
@@ -50,16 +50,11 @@ public class NoCacheJsFilter implements Filter {
 		FilterChain chain)
 		throws IOException, ServletException {
 		if (request instanceof HttpServletRequest) {
-			HttpServletRequest httpRequest = (HttpServletRequest) request;
-			String uri = httpRequest.getRequestURI();
+			String uri = ((HttpServletRequest) request).getRequestURI();
 			String moduleName = uri.substring(uri.lastIndexOf("/") + 1).replaceAll(".nocache.js", "");
-			System.out.println(moduleName);
-			URL url = getClass().getResource("/stub.nocache.js");
-			String template = Resources.toString(url, Charsets.UTF_8);
-			template = template
-				.replace("__MODULE_NAME__", moduleName)
-				.replace("__SUPERDEV_PORT__", port);
-			response.getWriter().write(template);
+			File noCacheFile = new File(launcherDir + "/" + moduleName + "/" + moduleName + ".nocache.js");
+			FileInputStream launcherStream = new FileInputStream(noCacheFile);
+			ByteStreams.copy(launcherStream, response.getOutputStream());
 			response.flushBuffer();
 		}
 	}
