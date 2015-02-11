@@ -90,6 +90,7 @@ public class GwtCompileTask extends AbstractTask {
 
 		JavaCommandBuilder builder = new JavaCommandBuilder();
 		builder.configureJavaArgs(putnami.getDev());
+		builder.addJavaArgs("-Dgwt.persistentunitcache=false");
 
 		builder.setMainClass("com.google.gwt.dev.Compiler");
 
@@ -131,7 +132,8 @@ public class GwtCompileTask extends AbstractTask {
 
 		builder.addArgIf(isClosureCompiler(), "-XclosureCompiler", "-XnoclosureCompiler");
 
-		builder.addArg("-jsInteropMode", getJsInteropMode());
+		builder.addArg("-XjsInteropMode", getJsInteropMode());
+
 
 		for (String module : getModules()) {
 			builder.addArg(module);
@@ -140,6 +142,9 @@ public class GwtCompileTask extends AbstractTask {
 		JavaAction compileAction = new JavaAction(builder.toString());
 		compileAction.execute(this);
 		compileAction.join();
+		if (compileAction.exitValue() != 0) {
+			throw new RuntimeException("Fail to compile GWT modules");
+		}
 	}
 
 	public void configure(final Project project, final PutnamiExtension extention) {
@@ -147,10 +152,10 @@ public class GwtCompileTask extends AbstractTask {
 
 		final File buildDir = new File(project.getBuildDir(), "putnami");
 
-		options.setWar(new File(buildDir, "war"));
+		options.setWar(new File(buildDir, "out"));
 		options.setWorkDir(new File(buildDir, "work"));
-		options.setGen(new File(buildDir, "gen"));
-		options.setDeploy(new File(buildDir, "deploy"));
+		options.setGen(new File(buildDir, "extra/gen"));
+		options.setDeploy(new File(buildDir, "extra/deploy"));
 		options.setExtra(new File(buildDir, "extra"));
 		options.setSaveSourceOutput(new File(buildDir, "extra/source"));
 		options.setMissingDepsFile(new File(buildDir, "extra/missingDepsFile"));

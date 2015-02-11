@@ -118,5 +118,8 @@ public class JavaAction implements Action<Task> {
 		}
 	}
 
+	public int exitValue() {
+		return process.exitValue();
+	}
 
 }
