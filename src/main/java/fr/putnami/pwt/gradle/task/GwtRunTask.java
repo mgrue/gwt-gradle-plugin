@@ -62,7 +62,7 @@ public class GwtRunTask extends AbstractJettyTask {
 	public void configureJetty(final Project project, final JettyOption options) {
 		War warTask = (War) getProject().getTasks().getByName("war");
 		options.setWar(warTask.getArchivePath());
-		options.setJettyConf(new File(getProject().getBuildDir(), "putnami/jetty/jetty-run-conf.xml"));
+		options.setJettyConf(new File(getProject().getBuildDir(), "putnami/conf/jetty-run-conf.xml"));
 	}
 
 }

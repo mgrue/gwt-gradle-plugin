@@ -84,7 +84,7 @@ public class GwtDevTask extends AbstractJettyTask {
 
 		try {
 			File webOverrideFile = ResourceUtils.copy(
-				"/stub.web-dev-override.xml", new File(getProject().getBuildDir(), "putnami/jetty/web-dev-override.xml"),
+				"/stub.web-dev-override.xml", new File(getProject().getBuildDir(), "putnami/conf/web-dev-override.xml"),
 				new ImmutableMap.Builder<String, String>()
 					.put("__LAUNCHER_DIR__", sdmOption.getLauncherDir().getAbsolutePath() + "")
 					.build());
@@ -144,7 +144,7 @@ public class GwtDevTask extends AbstractJettyTask {
 	}
 
 	public void configureJetty(Project project, JettyOption options) {
-		options.setJettyConf(new File(getProject().getBuildDir(), "putnami/jetty/jetty-dev-conf.xml"));
+		options.setJettyConf(new File(getProject().getBuildDir(), "putnami/conf/jetty-dev-conf.xml"));
 	}
 
 	public void configureCodeServer(final Project project, final PutnamiExtension extention) {
@@ -152,7 +152,7 @@ public class GwtDevTask extends AbstractJettyTask {
 
 		final File buildDir = new File(project.getBuildDir(), "putnami");
 
-		options.setLauncherDir(ResourceUtils.ensureDir(buildDir, "launcher"));
+		options.setLauncherDir(ResourceUtils.ensureDir(buildDir, "conf"));
 		options.setWorkDir(ResourceUtils.ensureDir(buildDir, "work"));
 		options.src("src/main/java");
 
