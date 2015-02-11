@@ -1,4 +1,4 @@
-package fr.putnami.pwt.gradle.extension;
+package fr.putnami.gwt.gradle.extension;
 
 import com.google.common.collect.Lists;
 

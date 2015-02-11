@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with pwt. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-package fr.putnami.pwt.gradle;
+package fr.putnami.gwt.gradle;
 
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
@@ -25,7 +25,7 @@ import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.bundling.Jar;
 
-import fr.putnami.pwt.gradle.extension.PutnamiExtension;
+import fr.putnami.gwt.gradle.extension.PutnamiExtension;
 
 public class PwtLibPlugin implements Plugin<Project> {
 

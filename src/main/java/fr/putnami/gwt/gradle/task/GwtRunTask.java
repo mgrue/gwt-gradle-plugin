@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with pwt. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-package fr.putnami.pwt.gradle.task;
+package fr.putnami.gwt.gradle.task;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
@@ -25,10 +25,10 @@ import org.gradle.api.tasks.bundling.War;
 import java.io.File;
 import java.io.IOException;
 
-import fr.putnami.pwt.gradle.action.JavaAction;
-import fr.putnami.pwt.gradle.extension.JettyOption;
-import fr.putnami.pwt.gradle.extension.PutnamiExtension;
-import fr.putnami.pwt.gradle.util.ResourceUtils;
+import fr.putnami.gwt.gradle.action.JavaAction;
+import fr.putnami.gwt.gradle.extension.JettyOption;
+import fr.putnami.gwt.gradle.extension.PutnamiExtension;
+import fr.putnami.gwt.gradle.util.ResourceUtils;
 
 public class GwtRunTask extends AbstractJettyTask {
 

@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with pwt. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-package fr.putnami.pwt.gradle.task;
+package fr.putnami.gwt.gradle.task;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
@@ -33,16 +33,16 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import fr.putnami.pwt.gradle.PwtLibPlugin;
-import fr.putnami.pwt.gradle.action.JavaAction;
-import fr.putnami.pwt.gradle.extension.CodeServerOption;
-import fr.putnami.pwt.gradle.extension.JettyOption;
-import fr.putnami.pwt.gradle.extension.JsInteropMode;
-import fr.putnami.pwt.gradle.extension.LogLevel;
-import fr.putnami.pwt.gradle.extension.MethodNameDisplayMode;
-import fr.putnami.pwt.gradle.extension.PutnamiExtension;
-import fr.putnami.pwt.gradle.util.JavaCommandBuilder;
-import fr.putnami.pwt.gradle.util.ResourceUtils;
+import fr.putnami.gwt.gradle.PwtLibPlugin;
+import fr.putnami.gwt.gradle.action.JavaAction;
+import fr.putnami.gwt.gradle.extension.CodeServerOption;
+import fr.putnami.gwt.gradle.extension.JettyOption;
+import fr.putnami.gwt.gradle.extension.JsInteropMode;
+import fr.putnami.gwt.gradle.extension.LogLevel;
+import fr.putnami.gwt.gradle.extension.MethodNameDisplayMode;
+import fr.putnami.gwt.gradle.extension.PutnamiExtension;
+import fr.putnami.gwt.gradle.util.JavaCommandBuilder;
+import fr.putnami.gwt.gradle.util.ResourceUtils;
 
 public class GwtDevTask extends AbstractJettyTask {
 

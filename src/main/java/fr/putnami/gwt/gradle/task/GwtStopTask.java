@@ -12,15 +12,15 @@
  * You should have received a copy of the GNU Lesser General Public License along with pwt. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-package fr.putnami.pwt.gradle.task;
+package fr.putnami.gwt.gradle.task;
 
 import org.gradle.api.tasks.TaskAction;
 
 import java.io.OutputStream;
 import java.net.Socket;
 
-import fr.putnami.pwt.gradle.extension.JettyOption;
-import fr.putnami.pwt.gradle.extension.PutnamiExtension;
+import fr.putnami.gwt.gradle.extension.JettyOption;
+import fr.putnami.gwt.gradle.extension.PutnamiExtension;
 
 public class GwtStopTask extends AbstractTask {
 

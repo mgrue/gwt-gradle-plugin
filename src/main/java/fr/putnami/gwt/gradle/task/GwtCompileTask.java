@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with pwt. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-package fr.putnami.pwt.gradle.task;
+package fr.putnami.gwt.gradle.task;
 
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -28,15 +28,15 @@ import java.io.File;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import fr.putnami.pwt.gradle.PwtLibPlugin;
-import fr.putnami.pwt.gradle.action.JavaAction;
-import fr.putnami.pwt.gradle.extension.CodeStyle;
-import fr.putnami.pwt.gradle.extension.CompilerOptions;
-import fr.putnami.pwt.gradle.extension.JsInteropMode;
-import fr.putnami.pwt.gradle.extension.LogLevel;
-import fr.putnami.pwt.gradle.extension.MethodNameDisplayMode;
-import fr.putnami.pwt.gradle.extension.PutnamiExtension;
-import fr.putnami.pwt.gradle.util.JavaCommandBuilder;
+import fr.putnami.gwt.gradle.PwtLibPlugin;
+import fr.putnami.gwt.gradle.action.JavaAction;
+import fr.putnami.gwt.gradle.extension.CodeStyle;
+import fr.putnami.gwt.gradle.extension.CompilerOptions;
+import fr.putnami.gwt.gradle.extension.JsInteropMode;
+import fr.putnami.gwt.gradle.extension.LogLevel;
+import fr.putnami.gwt.gradle.extension.MethodNameDisplayMode;
+import fr.putnami.gwt.gradle.extension.PutnamiExtension;
+import fr.putnami.gwt.gradle.util.JavaCommandBuilder;
 
 public class GwtCompileTask extends AbstractTask {
 

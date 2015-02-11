@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with pwt. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-package fr.putnami.pwt.gradle.util;
+package fr.putnami.gwt.gradle.util;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -20,7 +20,7 @@ import com.google.common.collect.Lists;
 import java.io.File;
 import java.util.List;
 
-import fr.putnami.pwt.gradle.extension.JavaOptions;
+import fr.putnami.gwt.gradle.extension.JavaOptions;
 
 public class JavaCommandBuilder {
 

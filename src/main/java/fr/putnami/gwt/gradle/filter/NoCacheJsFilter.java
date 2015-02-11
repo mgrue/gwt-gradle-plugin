@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with pwt. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-package fr.putnami.pwt.gradle.filter;
+package fr.putnami.gwt.gradle.filter;
 
 
 import com.google.common.io.ByteStreams;

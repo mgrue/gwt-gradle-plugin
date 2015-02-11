@@ -1,10 +1,10 @@
-package fr.putnami.pwt.gradle.task;
+package fr.putnami.gwt.gradle.task;
 
-import fr.putnami.pwt.gradle.PwtLibPlugin;
-import fr.putnami.pwt.gradle.action.JavaAction;
-import fr.putnami.pwt.gradle.extension.JettyOption;
-import fr.putnami.pwt.gradle.util.JavaCommandBuilder;
-import fr.putnami.pwt.gradle.util.ResourceUtils;
+import fr.putnami.gwt.gradle.PwtLibPlugin;
+import fr.putnami.gwt.gradle.action.JavaAction;
+import fr.putnami.gwt.gradle.extension.JettyOption;
+import fr.putnami.gwt.gradle.util.JavaCommandBuilder;
+import fr.putnami.gwt.gradle.util.ResourceUtils;
 
 public class AbstractJettyTask extends AbstractTask {
 
