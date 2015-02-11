@@ -24,6 +24,7 @@ import fr.putnami.pwt.gradle.extension.PutnamiExtension;
 import fr.putnami.pwt.gradle.task.GwtCompileTask;
 import fr.putnami.pwt.gradle.task.GwtDevTask;
 import fr.putnami.pwt.gradle.task.GwtRunTask;
+import fr.putnami.pwt.gradle.task.GwtStopTask;
 
 public class PwtPlugin implements Plugin<Project> {
 
@@ -35,6 +36,11 @@ public class PwtPlugin implements Plugin<Project> {
 		createCompileTask(project);
 		createDevTask(project);
 		createRunTask(project);
+		createStopTask(project);
+	}
+
+	private void createStopTask(Project project) {
+		project.getTasks().create(GwtStopTask.NAME, GwtStopTask.class);
 	}
 
 	private void createCompileTask(final Project project) {
