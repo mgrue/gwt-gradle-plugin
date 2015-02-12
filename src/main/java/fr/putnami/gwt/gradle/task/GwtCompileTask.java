@@ -52,7 +52,6 @@ public class GwtCompileTask extends AbstractTask {
 		setDescription("Compile the GWT modules");
 
 		dependsOn(JavaPlugin.COMPILE_JAVA_TASK_NAME, JavaPlugin.PROCESS_RESOURCES_TASK_NAME);
-
 	}
 
 	@TaskAction
@@ -142,7 +141,6 @@ public class GwtCompileTask extends AbstractTask {
 		options.setMissingDepsFile(new File(buildDir, "extra/missingDepsFile"));
 		options.setLocalWorkers(evalWorkers(options));
 
-
 		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
 		SourceSet mainSourceSet = javaConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
 		final FileCollection sources = getProject().files(mainSourceSet.getAllJava().getSrcDirs())
@@ -175,8 +173,8 @@ public class GwtCompileTask extends AbstractTask {
 	private int evalWorkers(CompilerOption options) {
 		long workers = Runtime.getRuntime().availableProcessors();
 		OperatingSystemMXBean osMBean = ManagementFactory.getOperatingSystemMXBean();
-		if(osMBean instanceof com.sun.management.OperatingSystemMXBean){
-			com.sun.management.OperatingSystemMXBean sunOsMBean = (com.sun.management.OperatingSystemMXBean)osMBean;
+		if (osMBean instanceof com.sun.management.OperatingSystemMXBean) {
+			com.sun.management.OperatingSystemMXBean sunOsMBean = (com.sun.management.OperatingSystemMXBean) osMBean;
 			long nbFreeMemInGb = sunOsMBean.getFreePhysicalMemorySize() / (1024 * 1024 * options.getLocalWorkersMem());
 
 			if (nbFreeMemInGb < workers) {

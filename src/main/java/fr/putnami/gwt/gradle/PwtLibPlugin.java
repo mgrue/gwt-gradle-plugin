@@ -59,26 +59,25 @@ public class PwtLibPlugin implements Plugin<Project> {
 				String providedConfiguration = project.getPlugins().hasPlugin("war") ?
 					WarPlugin.PROVIDED_COMPILE_CONFIGURATION_NAME : JavaPlugin.COMPILE_CONFIGURATION_NAME;
 
-				dependencies.add(CONF_GWT_SDM, "com.google.gwt:gwt-codeserver:" + gwtVersion);
-				dependencies.add(CONF_GWT_SDM, "com.google.gwt:gwt-user:" + gwtVersion);
+				dependencies.add(CONF_GWT_SDM, "com.google.gwt:gwt-codeserver" + ":" + gwtVersion);
+				dependencies.add(CONF_GWT_SDM, "com.google.gwt:gwt-user" + ":" + gwtVersion);
 
-				dependencies.add(providedConfiguration, "com.google.gwt:gwt-user:" + gwtVersion);
-				dependencies.add(providedConfiguration, "com.google.gwt:gwt-dev:" + gwtVersion);
+				dependencies.add(providedConfiguration, "com.google.gwt:gwt-user" + ":" + gwtVersion);
+				dependencies.add(providedConfiguration, "com.google.gwt:gwt-dev" + ":" + gwtVersion);
 
 				if (extention.isGwtElementalLib()) {
 					dependencies.add(
-						JavaPlugin.COMPILE_CONFIGURATION_NAME, "com.google.gwt:gwt-elemental:" + gwtVersion);
+						JavaPlugin.COMPILE_CONFIGURATION_NAME, "com.google.gwt:gwt-elemental" + ":" + gwtVersion);
 				}
 				if (extention.isGwtServletLib()) {
 					dependencies.add(
-						JavaPlugin.COMPILE_CONFIGURATION_NAME, "com.google.gwt:gwt-servlet:" + gwtVersion);
+						JavaPlugin.COMPILE_CONFIGURATION_NAME, "com.google.gwt:gwt-servlet" + ":" + gwtVersion);
 				}
 
 				// dependencies.add(providedConfiguration, CONF_GWT_SDM);
 
-				dependencies.add(CONF_JETTY, "org.eclipse.jetty:jetty-runner:" + jettyVersion);
-				dependencies.add(CONF_JETTY, "fr.putnami.pwt:putnami-gradle-plugin:" + PLUGIN_VERSION);
-
+				dependencies.add(CONF_JETTY, "org.eclipse.jetty:jetty-runner" + ":" + jettyVersion);
+				dependencies.add(CONF_JETTY, "fr.putnami.pwt:putnami-gradle-plugin" + ":" + PLUGIN_VERSION);
 			}
 		});
 	}

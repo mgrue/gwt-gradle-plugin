@@ -141,7 +141,6 @@ public class JavaCommandBuilder {
 		}
 		if (!Strings.isNullOrEmpty(javaOptions.getMaxPermSize())) {
 			addJavaArgs("-XX:MaxPermSize=" + javaOptions.getMaxPermSize());
-
 		}
 		if (javaOptions.isDebugJava()) {
 			StringBuffer sb = new StringBuffer();
@@ -150,7 +149,6 @@ public class JavaCommandBuilder {
 			sb.append(",suspend=");
 			sb.append(javaOptions.isDebugSuspend() ? "y" : "n");
 			addJavaArgs(sb.toString());
-
 		}
 		for (String javaArg : javaOptions.getJavaArgs()) {
 			addJavaArgs(javaArg);

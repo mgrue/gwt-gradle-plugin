@@ -35,7 +35,7 @@ public class JettyOption extends JavaOption {
 	 */
 	private File logRequestFile;
 	/**
-	 * info/warn/debug log filename
+	 * info/warn/debug log filename.
 	 */
 	private File logFile;
 	/**

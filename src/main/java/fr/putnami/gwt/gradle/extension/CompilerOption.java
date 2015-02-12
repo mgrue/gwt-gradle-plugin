@@ -23,7 +23,7 @@ public class CompilerOption extends JavaOption {
 
 	/**
 	 * The compiler's working directory for internal use (must be writeable; defaults to a system
-	 * buil/work)
+	 * buil/work).
 	 */
 	private File workDir;
 	/**
@@ -37,7 +37,7 @@ public class CompilerOption extends JavaOption {
 	 */
 	private File deploy;
 	/**
-	 * Debugging: causes normally-transient generated types to be saved in the specified directory
+	 * Debugging: causes normally-transient generated types to be saved in the specified directory.
 	 */
 	private File gen;
 	/**
@@ -53,11 +53,11 @@ public class CompilerOption extends JavaOption {
 	 */
 	private File missingDepsFile;
 	/**
-	 * The level of logging detail
+	 * The level of logging detail.
 	 */
 	private LogLevel logLevel;
 	/**
-	 * Compile a report that tells the "Story of Your Compile"
+	 * Compile a report that tells the "Story of Your Compile".
 	 */
 	private Boolean compileReport;
 	/**
@@ -69,7 +69,7 @@ public class CompilerOption extends JavaOption {
 	 */
 	private Boolean checkAssertions;
 	/**
-	 * Script output style
+	 * Script output style.
 	 */
 	private CodeStyle style;
 	/**
@@ -93,7 +93,7 @@ public class CompilerOption extends JavaOption {
 	 */
 	private Boolean validateOnly;
 	/**
-	 * Specifies Java source level
+	 * Specifies Java source level.
 	 */
 	private String sourceLevel;
 	/**
@@ -132,7 +132,7 @@ public class CompilerOption extends JavaOption {
 	 */
 	private Boolean closureCompiler;
 	/**
-	 * Specifies JsInterop mode, either NONE, JS, or CLOSURE
+	 * Specifies JsInterop mode, either NONE, JS, or CLOSURE.
 	 */
 	private JsInteropMode jsInteropMode;
 
@@ -327,7 +327,6 @@ public class CompilerOption extends JavaOption {
 	public void setExtra(String extra) {
 		this.extra = new File(extra);
 	}
-
 
 	public File getSaveSourceOutput() {
 		return saveSourceOutput;

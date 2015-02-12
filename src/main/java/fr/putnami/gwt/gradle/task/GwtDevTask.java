@@ -189,7 +189,7 @@ public class GwtDevTask extends AbstractJettyTask {
 		return sdmAction;
 	}
 
-	public void configureJetty(Project project, JettyOption options) {
+	public void configureJetty(JettyOption options) {
 		options.setJettyConf(new File(getProject().getBuildDir(), "putnami/conf/jetty-dev-conf.xml"));
 	}
 

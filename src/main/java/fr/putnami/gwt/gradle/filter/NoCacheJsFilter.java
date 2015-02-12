@@ -14,7 +14,6 @@
  */
 package fr.putnami.gwt.gradle.filter;
 
-
 import com.google.common.io.ByteStreams;
 
 import java.io.File;
@@ -38,7 +37,6 @@ public class NoCacheJsFilter implements Filter {
 	@Override
 	public void init(FilterConfig paramFilterConfig) throws ServletException {
 		launcherDir = paramFilterConfig.getInitParameter(PARAM_LAUNCHER_DIR);
-
 	}
 
 	@Override

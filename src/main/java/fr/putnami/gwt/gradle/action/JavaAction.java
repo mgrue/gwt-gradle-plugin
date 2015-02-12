@@ -52,7 +52,7 @@ public class JavaAction implements Action<Task> {
 				}
 			} catch (IOException e) {
 				throw Throwables.propagate(e);
-			}finally{
+			} finally {
 				try {
 					stream.close();
 				} catch (IOException e) {

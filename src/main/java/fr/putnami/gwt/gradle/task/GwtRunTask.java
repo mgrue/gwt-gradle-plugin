@@ -17,7 +17,6 @@ package fr.putnami.gwt.gradle.task;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 
-import org.gradle.api.Project;
 import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.bundling.War;
@@ -59,7 +58,7 @@ public class GwtRunTask extends AbstractJettyTask {
 		jetty.join();
 	}
 
-	public void configureJetty(final Project project, final JettyOption options) {
+	public void configureJetty(final JettyOption options) {
 		War warTask = (War) getProject().getTasks().getByName("war");
 		options.setWar(warTask.getArchivePath());
 		options.setJettyConf(new File(getProject().getBuildDir(), "putnami/conf/jetty-run-conf.xml"));
