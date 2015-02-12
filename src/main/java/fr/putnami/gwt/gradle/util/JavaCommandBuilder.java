@@ -81,8 +81,10 @@ public class JavaCommandBuilder {
 		return this;
 	}
 
-	public void addArgIf(boolean condition, String ifTrue, String ifFalse) {
-		this.args.add(condition ? ifTrue : ifFalse);
+	public void addArgIf(Boolean condition, String ifTrue, String ifFalse) {
+		if (condition != null) {
+			this.args.add(condition ? ifTrue : ifFalse);
+		}
 	}
 
 	public void addArgIf(boolean condition, String value) {
