@@ -17,17 +17,26 @@ package fr.putnami.gwt.gradle.util;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+import org.gradle.internal.jvm.Jvm;
+
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import fr.putnami.gwt.gradle.extension.JavaOptions;
 
 public class JavaCommandBuilder {
 
-	private List<String> classPaths = Lists.newArrayList();
-	private List<String> javaArgs = Lists.newArrayList();
+	private final String javaExec;
+	private final List<String> javaArgs = Lists.newArrayList();
+	private final List<String> classPaths = Lists.newArrayList();
 	private String mainClass;
-	private List<String> args = Lists.newArrayList();
+	private final List<String> args = Lists.newArrayList();
+
+	public JavaCommandBuilder() {
+		this.javaExec = Jvm.current().getJavaExecutable().getAbsolutePath();
+		javaArgs.add("-Dfile.encoding=" + Charset.defaultCharset().name());
+	}
 
 	public void setMainClass(String mainClass) {
 		this.mainClass = mainClass;
@@ -85,7 +94,14 @@ public class JavaCommandBuilder {
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append("java");
+		sb.append(javaExec);
+
+		for (String arg : javaArgs) {
+			if (!Strings.isNullOrEmpty(arg)) {
+				sb.append(" ");
+				sb.append(arg);
+			}
+		}
 
 		if (classPaths.size() > 0) {
 			sb.append(" -cp ");
@@ -98,13 +114,6 @@ public class JavaCommandBuilder {
 					sb.append(classPath.trim());
 					i++;
 				}
-			}
-		}
-
-		for (String arg : javaArgs) {
-			if (!Strings.isNullOrEmpty(arg)) {
-				sb.append(" ");
-				sb.append(arg);
 			}
 		}
 
