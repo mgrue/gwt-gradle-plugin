@@ -129,14 +129,14 @@ public class JavaCommandBuilder {
 			addJavaArgs("-Xmx" + javaOptions.getMaxHeapSize());
 		}
 		if (!Strings.isNullOrEmpty(javaOptions.getMaxPermSize())) {
-			addJavaArgs("-XX:MaxPermSize" + javaOptions.getMaxPermSize());
+			addJavaArgs("-XX:MaxPermSize=" + javaOptions.getMaxPermSize());
 
 		}
-		if (javaOptions.isDebug()) {
+		if (javaOptions.isDebugJava()) {
 			StringBuffer sb = new StringBuffer();
-			sb.append("-Xdebug --Xrunjdwp:server=y, transport=dt_socket,address=");
+			sb.append("-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=");
 			sb.append(javaOptions.getDebugPort());
-			sb.append(", suspend=");
+			sb.append(",suspend=");
 			sb.append(javaOptions.isDebugSuspend() ? "y" : "n");
 			addJavaArgs(sb.toString());
 
