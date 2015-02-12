@@ -16,25 +16,26 @@ package fr.putnami.gwt.gradle.task;
 
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.ConventionMapping;
 import org.gradle.api.internal.IConventionAware;
 import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputDirectory;
-import org.gradle.api.tasks.OutputFile;
+import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskAction;
 
 import java.io.File;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 import fr.putnami.gwt.gradle.PwtLibPlugin;
 import fr.putnami.gwt.gradle.action.JavaAction;
-import fr.putnami.gwt.gradle.extension.CodeStyle;
 import fr.putnami.gwt.gradle.extension.CompilerOptions;
-import fr.putnami.gwt.gradle.extension.JsInteropMode;
-import fr.putnami.gwt.gradle.extension.LogLevel;
-import fr.putnami.gwt.gradle.extension.MethodNameDisplayMode;
 import fr.putnami.gwt.gradle.extension.PutnamiExtension;
 import fr.putnami.gwt.gradle.util.JavaCommandBuilder;
 
@@ -43,35 +44,8 @@ public class GwtCompileTask extends AbstractTask {
 	public static final String NAME = "gwtCompile";
 
 	private List<String> modules;
-
 	private File war;
-	private File work;
-	private File gen;
-	private File deploy;
-	private File extra;
-	private File missingDepsFile;
-	private File saveSourceOutput;
-
-	private LogLevel logLevel;
-	private boolean compileReport;
-	private boolean draftCompile;
-	private boolean checkAssertions;
-	private boolean incremental;
-	// private String namespace;
-	private CodeStyle style;
-	private int optimize;
-	private boolean overlappingSourceWarnings;
-	private boolean saveSource;
-	private boolean failOnError;
-	private boolean validateOnly;
-	private String sourceLevel;
-	private int localWorkers;
-	private MethodNameDisplayMode methodNameDisplayMode;
-	private boolean enforceStrictResources;
-	private boolean checkCasts;
-	private boolean classMetadata;
-	private boolean closureCompiler;
-	private JsInteropMode jsInteropMode;
+	private FileCollection src;
 
 	public GwtCompileTask() {
 		setName(NAME);
@@ -83,68 +57,75 @@ public class GwtCompileTask extends AbstractTask {
 
 	@TaskAction
 	public void exec() {
-		Configuration sdmConf = getProject().getConfigurations().getByName(PwtLibPlugin.CONF_GWT_SDM);
-		Configuration compileConf = getProject().getConfigurations().getByName(JavaPlugin.COMPILE_CONFIGURATION_NAME);
 
 		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
+		CompilerOptions compilerOptions = putnami.getCompile();
 
-		JavaCommandBuilder builder = new JavaCommandBuilder();
-		builder.configureJavaArgs(putnami.getDev());
-		builder.addJavaArgs("-Dgwt.persistentunitcache=false");
-
-		builder.setMainClass("com.google.gwt.dev.Compiler");
-
-		builder.addClassPath("src/main/java");
-		builder.addClassPath("src/main/resources");
-		builder.addClassPath(compileConf.getAsPath());
-		builder.addClassPath(sdmConf.getAsPath());
-
-		builder.addArg("-workDir", getWork());
-		builder.addArg("-gen", getGen());
-		builder.addArg("-war", getWar());
-		builder.addArg("-deploy", getDeploy());
-		builder.addArg("-extra", getExtra());
-
-		builder.addArg("-logLevel", getLogLevel());
-		builder.addArg("-localWorkers", getLocalWorkers());
-		builder.addArgIf(isFailOnError(), "-failOnError", "-nofailOnError");
-		builder.addArg("-sourceLevel", getSourceLevel());
-		builder.addArgIf(isDraftCompile(), "-draftCompile", "-nodraftCompile");
-		builder.addArg("-optimize", getOptimize());
-		builder.addArg("-style", getStyle());
-		builder.addArgIf(isCompileReport(), "-compileReport", "-nocompileReport");
-
-		if (isIncremental()) {
-			builder.addArg("-incremental");
-//			builder.addArg("-incrementalCompileWarnings");
-		}
-
-
-		builder.addArgIf(isCheckAssertions(), "-checkAssertions", "-nocheckAssertions");
-		builder.addArgIf(isCheckCasts(), "-XcheckCasts", "-XnocheckCasts");
-		builder.addArgIf(isEnforceStrictResources(), "-XenforceStrictResources", "-XnoenforceStrictResources");
-		builder.addArgIf(isClassMetadata(), "-XclassMetadata", "-XnoclassMetadata");
-
-		builder.addArgIf(isOverlappingSourceWarnings(), "-overlappingSourceWarnings",
-			"-nooverlappingSourceWarnings");
-		builder.addArgIf(isSaveSource(), "-saveSource", "-nosaveSource");
-		builder.addArg("-XmethodNameDisplayMode", getMethodNameDisplayMode());
-
-		builder.addArgIf(isClosureCompiler(), "-XclosureCompiler", "-XnoclosureCompiler");
-
-		builder.addArg("-XjsInteropMode", getJsInteropMode());
-
-
-		for (String module : getModules()) {
-			builder.addArg(module);
-		}
-
-		JavaAction compileAction = new JavaAction(builder.toString());
+		JavaAction compileAction = new JavaAction(buildCompileCommand(compilerOptions));
 		compileAction.execute(this);
 		compileAction.join();
 		if (compileAction.exitValue() != 0) {
 			throw new RuntimeException("Fail to compile GWT modules");
 		}
+	}
+
+	private String buildCompileCommand(CompilerOptions compilerOptions) {
+		Configuration sdmConf = getProject().getConfigurations().getByName(PwtLibPlugin.CONF_GWT_SDM);
+		Configuration compileConf = getProject().getConfigurations().getByName(JavaPlugin.COMPILE_CONFIGURATION_NAME);
+
+		JavaCommandBuilder builder = new JavaCommandBuilder();
+		builder.configureJavaArgs(compilerOptions);
+		builder.addJavaArgs("-Dgwt.persistentunitcachedir=" + getProject().getBuildDir() + "/putnami/work/cahce");
+
+		builder.setMainClass("com.google.gwt.dev.Compiler");
+
+		for (File sourceDir : getSrc()) {
+			builder.addClassPath(sourceDir.getAbsolutePath());
+
+		}
+		builder.addClassPath(compileConf.getAsPath());
+		builder.addClassPath(sdmConf.getAsPath());
+
+		builder.addArg("-war", getWar());
+		builder.addArg("-extra", compilerOptions.getExtra());
+		builder.addArg("-workDir", compilerOptions.getWorkDir());
+		builder.addArg("-gen", compilerOptions.getGen());
+		builder.addArg("-deploy", compilerOptions.getDeploy());
+
+		builder.addArg("-logLevel", compilerOptions.getLogLevel());
+		builder.addArg("-localWorkers", compilerOptions.getLocalWorkers());
+		builder.addArgIf(compilerOptions.getFailOnError(), "-failOnError", "-nofailOnError");
+		builder.addArg("-sourceLevel", compilerOptions.getSourceLevel());
+		builder.addArgIf(compilerOptions.getDraftCompile(), "-draftCompile", "-nodraftCompile");
+		builder.addArg("-optimize", compilerOptions.getOptimize());
+		builder.addArg("-style", compilerOptions.getStyle());
+		builder.addArgIf(compilerOptions.getCompileReport(), "-compileReport", "-nocompileReport");
+
+		if (Boolean.TRUE.equals(compilerOptions.getIncremental())) {
+			builder.addArg("-incremental");
+			// builder.addArg("-incrementalCompileWarnings");
+		}
+
+		builder.addArgIf(compilerOptions.getCheckAssertions(), "-checkAssertions", "-nocheckAssertions");
+		builder.addArgIf(compilerOptions.getCheckCasts(), "-XcheckCasts", "-XnocheckCasts");
+		builder.addArgIf(compilerOptions.getEnforceStrictResources(), "-XenforceStrictResources",
+			"-XnoenforceStrictResources");
+		builder.addArgIf(compilerOptions.getClassMetadata(), "-XclassMetadata", "-XnoclassMetadata");
+
+		builder.addArgIf(compilerOptions.getOverlappingSourceWarnings(), "-overlappingSourceWarnings",
+			"-nooverlappingSourceWarnings");
+		builder.addArgIf(compilerOptions.getSaveSource(), "-saveSource", "-nosaveSource");
+		builder.addArg("-XmethodNameDisplayMode", compilerOptions.getMethodNameDisplayMode());
+
+		builder.addArgIf(compilerOptions.getClosureCompiler(), "-XclosureCompiler", "-XnoclosureCompiler");
+
+		builder.addArg("-XjsInteropMode", compilerOptions.getJsInteropMode());
+
+		for (String module : getModules()) {
+			builder.addArg(module);
+		}
+
+		return builder.toString();
 	}
 
 	public void configure(final Project project, final PutnamiExtension extention) {
@@ -159,186 +140,52 @@ public class GwtCompileTask extends AbstractTask {
 		options.setExtra(new File(buildDir, "extra"));
 		options.setSaveSourceOutput(new File(buildDir, "extra/source"));
 		options.setMissingDepsFile(new File(buildDir, "extra/missingDepsFile"));
-		options.localWorkers(Runtime.getRuntime().availableProcessors());
+		options.setLocalWorkers(evalWorkers());
 
-		ConventionMapping convention = ((IConventionAware) this).getConventionMapping();
 
-		convention.map("modules", new Callable<List<String>>() {
+		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
+		SourceSet mainSourceSet = javaConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+		final FileCollection sources = getProject().files(mainSourceSet.getAllJava().getSrcDirs())
+			.plus(project.files(mainSourceSet.getOutput().getResourcesDir()));
+
+		ConventionMapping mapping = ((IConventionAware) this).getConventionMapping();
+
+		mapping.map("modules", new Callable<List<String>>() {
 			@Override
 			public List<String> call() throws Exception {
 				return extention.getModule();
 			}
 		});
 
-		convention.map("work", new Callable<File>() {
-			@Override
-			public File call() throws Exception {
-				return options.getWorkDir();
-			}
-		});
-		convention.map("gen", new Callable<File>() {
-			@Override
-			public File call() throws Exception {
-				return options.getGen();
-			}
-		});
-		convention.map("war", new Callable<File>() {
+		mapping.map("war", new Callable<File>() {
 			@Override
 			public File call() throws Exception {
 				return options.getWar();
 			}
 		});
-		convention.map("deploy", new Callable<File>() {
+		mapping.map("src", new Callable<FileCollection>() {
 			@Override
-			public File call() throws Exception {
-				return options.getDeploy();
+			public FileCollection call() throws Exception {
+				return sources;
 			}
 		});
-		convention.map("extra", new Callable<File>() {
-			@Override
-			public File call() throws Exception {
-				return options.getExtra();
+	}
+
+	private int evalWorkers() {
+		long workers = Runtime.getRuntime().availableProcessors();
+		OperatingSystemMXBean osMBean = ManagementFactory.getOperatingSystemMXBean();
+		if(osMBean instanceof com.sun.management.OperatingSystemMXBean){
+			com.sun.management.OperatingSystemMXBean sunOsMBean = (com.sun.management.OperatingSystemMXBean)osMBean;
+			long nbFreeMemInGb = sunOsMBean.getFreePhysicalMemorySize() / (1024 * 1024 * 1024);
+
+			if (nbFreeMemInGb < workers) {
+				workers = nbFreeMemInGb;
 			}
-		});
-		convention.map("logLevel", new Callable<LogLevel>() {
-			@Override
-			public LogLevel call() throws Exception {
-				return options.getLogLevel();
+			if (workers < 1) {
+				workers = 1;
 			}
-		});
-		convention.map("compileReport", new Callable<Boolean>()
-		{
-			@Override
-			public Boolean call() throws Exception {
-				return options.isCompileReport();
-			}
-		});
-		convention.map("draftCompile", new Callable<Boolean>()
-		{
-			@Override
-			public Boolean call() throws Exception {
-				return options.isDraftCompile();
-			}
-		});
-		convention.map("checkAssertions", new
-			Callable<Boolean>() {
-				@Override
-				public Boolean call() throws Exception {
-					return options.isCheckAssertions();
-				}
-			});
-		convention.map("missingDepsFile", new Callable<File>()
-		{
-			@Override
-			public File call() throws Exception {
-				return options.getMissingDepsFile();
-			}
-		});
-		convention.map("optimize", new Callable<Integer>() {
-			@Override
-			public Integer call() throws Exception {
-				return options.getOptimize();
-			}
-		});
-		convention.map("overlappingSourceWarnings", new
-			Callable<Boolean>() {
-				@Override
-				public Boolean call() throws Exception {
-					return options.isOverlappingSourceWarnings();
-				}
-			});
-		convention.map("saveSource", new Callable<Boolean>() {
-			@Override
-			public Boolean call() throws Exception {
-				return options.isSaveSource();
-			}
-		});
-		convention.map("style", new Callable<CodeStyle>() {
-			@Override
-			public CodeStyle call() throws Exception {
-				return options.getStyle();
-			}
-		});
-		convention.map("failOnError", new Callable<Boolean>() {
-			@Override
-			public Boolean call() throws Exception {
-				return options.isFailOnError();
-			}
-		});
-		convention.map("validateOnly", new Callable<Boolean>()
-		{
-			@Override
-			public Boolean call() throws Exception {
-				return options.isValidateOnly();
-			}
-		});
-		convention.map("sourceLevel", new Callable<String>() {
-			@Override
-			public String call() throws Exception {
-				return options.getSourceLevel();
-			}
-		});
-		convention.map("localWorkers", new Callable<Integer>()
-		{
-			@Override
-			public Integer call() throws Exception {
-				return options.getLocalWorkers();
-			}
-		});
-		convention.map("incremental", new Callable<Boolean>() {
-			@Override
-			public Boolean call() throws Exception {
-				return options.isIncremental();
-			}
-		});
-		convention.map("saveSourceOutput", new Callable<File>()
-		{
-			@Override
-			public File call() throws Exception {
-				return options.getSaveSourceOutput();
-			}
-		});
-		convention.map("methodNameDisplayMode",
-			new Callable<MethodNameDisplayMode>() {
-				@Override
-				public MethodNameDisplayMode call() throws Exception {
-					return options.getMethodNameDisplayMode();
-				}
-			});
-		convention.map("enforceStrictResources", new
-			Callable<Boolean>() {
-				@Override
-				public Boolean call() throws Exception {
-					return options.isEnforceStrictResources();
-				}
-			});
-		convention.map("checkCasts", new Callable<Boolean>() {
-			@Override
-			public Boolean call() throws Exception {
-				return options.isCheckCasts();
-			}
-		});
-		convention.map("classMetadata", new Callable<Boolean>()
-		{
-			@Override
-			public Boolean call() throws Exception {
-				return options.isClassMetadata();
-			}
-		});
-		convention.map("closureCompiler", new
-			Callable<Boolean>() {
-				@Override
-				public Boolean call() throws Exception {
-					return options.isClosureCompiler();
-				}
-			});
-		convention.map("jsInteropMode", new
-			Callable<JsInteropMode>() {
-				@Override
-				public JsInteropMode call() throws Exception {
-					return options.getJsInteropMode();
-				}
-			});
+		}
+		return (int) workers;
 	}
 
 	@OutputDirectory
@@ -346,139 +193,13 @@ public class GwtCompileTask extends AbstractTask {
 		return war;
 	}
 
-	@OutputDirectory
-	public File getWork() {
-		return work;
-	}
-
-	@OutputDirectory
-	public File getGen() {
-		return gen;
-	}
-
-	@OutputDirectory
-	public File getDeploy() {
-		return deploy;
-	}
-
-	@OutputDirectory
-	public File getExtra() {
-		return extra;
-	}
-
-	@OutputFile
-	public File getMissingDepsFile() {
-		return missingDepsFile;
-	}
-
-	@OutputDirectory
-	public File getSaveSourceOutput() {
-		return saveSourceOutput;
-	}
-
 	@Input
 	public List<String> getModules() {
 		return modules;
 	}
 
-	@Input
-	public LogLevel getLogLevel() {
-		return logLevel;
+	@InputFiles
+	public FileCollection getSrc() {
+		return src;
 	}
-
-	@Input
-	public boolean isCompileReport() {
-		return compileReport;
-	}
-
-	@Input
-	public boolean isDraftCompile() {
-		return draftCompile;
-	}
-
-	@Input
-	public boolean isCheckAssertions() {
-		return checkAssertions;
-	}
-
-	// @Input
-	// public String getNamespace() {
-	// return namespace;
-	// }
-
-	@Input
-	public CodeStyle getStyle() {
-		return style;
-	}
-
-	@Input
-	public int getOptimize() {
-		return optimize;
-	}
-
-	@Input
-	public boolean isOverlappingSourceWarnings() {
-		return overlappingSourceWarnings;
-	}
-
-	@Input
-	public boolean isSaveSource() {
-		return saveSource;
-	}
-
-	@Input
-	public boolean isFailOnError() {
-		return failOnError;
-	}
-
-	@Input
-	public boolean isValidateOnly() {
-		return validateOnly;
-	}
-
-	@Input
-	public String getSourceLevel() {
-		return sourceLevel;
-	}
-
-	@Input
-	public int getLocalWorkers() {
-		return localWorkers;
-	}
-
-	@Input
-	public boolean isIncremental() {
-		return incremental;
-	}
-
-	@Input
-	public MethodNameDisplayMode getMethodNameDisplayMode() {
-		return methodNameDisplayMode;
-	}
-
-	@Input
-	public boolean isEnforceStrictResources() {
-		return enforceStrictResources;
-	}
-
-	@Input
-	public boolean isCheckCasts() {
-		return checkCasts;
-	}
-
-	@Input
-	public boolean isClassMetadata() {
-		return classMetadata;
-	}
-
-	@Input
-	public boolean isClosureCompiler() {
-		return closureCompiler;
-	}
-
-	@Input
-	public JsInteropMode getJsInteropMode() {
-		return jsInteropMode;
-	}
-
 }

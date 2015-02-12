@@ -114,7 +114,11 @@ public class GwtDevTask extends AbstractJettyTask {
 		builder.setMainClass("com.google.gwt.dev.codeserver.CodeServer");
 		builder.addClassPath(sdmConf.getAsPath());
 
-		builder.addArg("-src", getSrc().get(0));
+		if (getSrc() != null) {
+			for (String srcDir : getSrc()) {
+				builder.addArg("-src", new File(srcDir));
+			}
+		}
 		builder.addArgIf(isAllowMissingSrc(), "-allowMissingSrc", "-noallowMissingSrc");
 		builder.addArg("-bindAddress", getBindAddress());
 		builder.addArgIf(isCompileTest(), "-compileTest ", "-nocompileTest");
@@ -154,7 +158,10 @@ public class GwtDevTask extends AbstractJettyTask {
 
 		options.setLauncherDir(ResourceUtils.ensureDir(buildDir, "conf"));
 		options.setWorkDir(ResourceUtils.ensureDir(buildDir, "work"));
-		options.src("src/main/java");
+		options.src(
+			project.getProjectDir().getAbsolutePath() + "/src/main/java",
+			project.getProjectDir().getAbsolutePath() + "/src/main/resources"
+			);
 
 		ConventionMapping convention = ((IConventionAware) this).getConventionMapping();
 
