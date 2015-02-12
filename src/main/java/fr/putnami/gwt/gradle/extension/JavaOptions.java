@@ -12,7 +12,7 @@ public class JavaOptions {
 	private String maxHeapSize;
 	private String minHeapSize;
 	private String maxPermSize;
-	private boolean debug = false;
+	private boolean debugJava = false;
 	private int debugPort = 8000;
 	private boolean debugSuspend = false;
 
@@ -20,7 +20,7 @@ public class JavaOptions {
 		return javaArgs;
 	}
 
-	public void javaArgs(String... javaArgs) {
+	public void setJavaArgs(String... javaArgs) {
 		this.javaArgs.addAll(Arrays.asList(javaArgs));
 	}
 
@@ -28,7 +28,7 @@ public class JavaOptions {
 		return maxHeapSize;
 	}
 
-	public void maxHeapSize(String maxHeapSize) {
+	public void setMaxHeapSize(String maxHeapSize) {
 		this.maxHeapSize = maxHeapSize;
 	}
 
@@ -36,7 +36,7 @@ public class JavaOptions {
 		return minHeapSize;
 	}
 
-	public void minHeapSize(String minHeapSize) {
+	public void setMinHeapSize(String minHeapSize) {
 		this.minHeapSize = minHeapSize;
 	}
 
@@ -48,19 +48,19 @@ public class JavaOptions {
 		this.maxPermSize = maxPermSize;
 	}
 
-	public boolean isDebug() {
-		return debug;
+	public boolean isDebugJava() {
+		return debugJava;
 	}
 
-	public void setDebug(boolean debug) {
-		this.debug = debug;
+	public void setDebugJava(boolean debugJava) {
+		this.debugJava = debugJava;
 	}
 
 	public int getDebugPort() {
 		return debugPort;
 	}
 
-	public void debugPort(int debugPort) {
+	public void setDebugPort(int debugPort) {
 		this.debugPort = debugPort;
 	}
 
@@ -68,7 +68,7 @@ public class JavaOptions {
 		return debugSuspend;
 	}
 
-	public void debugSuspend(boolean debugSuspend) {
+	public void setDebugSuspend(boolean debugSuspend) {
 		this.debugSuspend = debugSuspend;
 	}
 
