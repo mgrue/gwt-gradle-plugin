@@ -55,7 +55,7 @@ public class CompilerOptions extends JavaOptions {
 	/**
 	 * The level of logging detail
 	 */
-	private LogLevel logLevel = LogLevel.WARN;
+	private LogLevel logLevel = LogLevel.ERROR;
 	/**
 	 * Compile a report that tells the "Story of Your Compile"
 	 */
@@ -67,7 +67,7 @@ public class CompilerOptions extends JavaOptions {
 	/**
 	 * Include assert statements in compiled output.
 	 */
-	private boolean checkAssertions = false;
+	private boolean checkAssertions = true;
 	/**
 	 * Script output style
 	 */
@@ -79,11 +79,11 @@ public class CompilerOptions extends JavaOptions {
 	/**
 	 * Whether to show warnings during monolithic compiles for overlapping source inclusion.
 	 */
-	private boolean overlappingSourceWarnings = false;
+	private boolean overlappingSourceWarnings = true;
 	/**
 	 * Enables saving source code needed by debuggers. Also see -debugDir.
 	 */
-	private boolean saveSource = false;
+	private boolean saveSource = true;
 	/**
 	 * Fail compilation if any input file contains an error.
 	 */
@@ -126,7 +126,7 @@ public class CompilerOptions extends JavaOptions {
 	 * EXPERIMENTAL: Compile output Javascript with the Closure compiler for even further
 	 * optimizations.
 	 */
-	private boolean closureCompiler = false;
+	private boolean closureCompiler = true;
 	/**
 	 * Specifies JsInterop mode, either NONE, JS, or CLOSURE
 	 */

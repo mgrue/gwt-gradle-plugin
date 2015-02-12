@@ -79,7 +79,7 @@ public class CodeServerOption extends JavaOptions {
 	/**
 	 * The level of logging detail.
 	 */
-	private LogLevel logLevel = LogLevel.WARN;
+	private LogLevel logLevel = LogLevel.ERROR;
 	/**
 	 * Specifies JsInterop mode.
 	 */
