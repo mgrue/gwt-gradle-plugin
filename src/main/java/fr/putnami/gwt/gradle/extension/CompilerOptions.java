@@ -55,82 +55,82 @@ public class CompilerOptions extends JavaOptions {
 	/**
 	 * The level of logging detail
 	 */
-	private LogLevel logLevel = LogLevel.ERROR;
+	private LogLevel logLevel;
 	/**
 	 * Compile a report that tells the "Story of Your Compile"
 	 */
-	private boolean compileReport = false;
+	private Boolean compileReport;
 	/**
 	 * Compile quickly with minimal optimizations.
 	 */
-	private boolean draftCompile = false;
+	private Boolean draftCompile;
 	/**
 	 * Include assert statements in compiled output.
 	 */
-	private boolean checkAssertions = true;
+	private Boolean checkAssertions;
 	/**
 	 * Script output style
 	 */
-	private CodeStyle style = CodeStyle.OBF;
+	private CodeStyle style;
 	/**
 	 * Sets the optimization level used by the compiler. 0=none 9=maximum.
 	 */
-	private int optimize = 9;
+	private Integer optimize;
 	/**
 	 * Whether to show warnings during monolithic compiles for overlapping source inclusion.
 	 */
-	private boolean overlappingSourceWarnings = true;
+	private Boolean overlappingSourceWarnings;
 	/**
 	 * Enables saving source code needed by debuggers. Also see -debugDir.
 	 */
-	private boolean saveSource = true;
+	private Boolean saveSource;
 	/**
 	 * Fail compilation if any input file contains an error.
 	 */
-	private boolean failOnError = false;
+	private Boolean failOnError;
 	/**
 	 * Validate all source code, but do not compile.
 	 */
-	private boolean validateOnly = false;
+	private Boolean validateOnly;
 	/**
 	 * Specifies Java source level
 	 */
-	private String sourceLevel = "";
+	private String sourceLevel;
 	/**
 	 * The number of local workers to use when compiling permutations.
 	 */
-	private int localWorkers;
+	private Integer localWorkers;
 	/**
 	 * Compiles faster by reusing data from the previous compile.
 	 */
-	private boolean incremental = false;
+	private Boolean incremental;
 	/**
 	 * Emit extra information allow chrome dev tools to display Java identifiers in many places
 	 * instead of JavaScript functions.
 	 */
-	private MethodNameDisplayMode methodNameDisplayMode = MethodNameDisplayMode.NONE;
+	private MethodNameDisplayMode methodNameDisplayMode;
 	/**
 	 * EXPERIMENTAL: Avoid adding implicit dependencies on "client" and "public" for modules that
 	 * don't define any dependencies.
 	 */
-	private boolean enforceStrictResources = false;
+	private Boolean enforceStrictResources;
 	/**
 	 * EXPERIMENTAL: Insert run-time checking of cast operations.
 	 */
-	private boolean checkCasts = true;
+	private Boolean checkCasts;
 	/**
 	 * EXPERIMENTAL: Include metadata for some java.lang.Class methods (e.g. getName()).
 	 */
-	private boolean classMetadata = true;
+	private Boolean classMetadata;
 	/**
 	 * EXPERIMENTAL: Compile output Javascript with the Closure compiler for even further
 	 * optimizations.
 	 */
-	private boolean closureCompiler = true;
+	private Boolean closureCompiler;
 	/**
 	 * Specifies JsInterop mode, either NONE, JS, or CLOSURE
 	 */
-	private JsInteropMode jsInteropMode = JsInteropMode.NONE;
+	private JsInteropMode jsInteropMode;
 
 	public LogLevel getLogLevel() {
 		return logLevel;
@@ -140,7 +140,7 @@ public class CompilerOptions extends JavaOptions {
 		this.logLevel = logLevel;
 	}
 
-	public void logLevel(String logLevel) {
+	public void setLogLevel(String logLevel) {
 		this.logLevel = LogLevel.valueOf(logLevel);
 	}
 
@@ -152,31 +152,31 @@ public class CompilerOptions extends JavaOptions {
 		this.workDir = workDir;
 	}
 
-	public void workDir(String workDir) {
+	public void setWorkDir(String workDir) {
 		this.workDir = new File(workDir);
 	}
 
-	public boolean isCompileReport() {
+	public Boolean getCompileReport() {
 		return compileReport;
 	}
 
-	public void compileReport(boolean compileReport) {
+	public void setCompileReport(Boolean compileReport) {
 		this.compileReport = compileReport;
 	}
 
-	public boolean isDraftCompile() {
+	public Boolean getDraftCompile() {
 		return draftCompile;
 	}
 
-	public void draftCompile(boolean draftCompile) {
+	public void setDraftCompile(Boolean draftCompile) {
 		this.draftCompile = draftCompile;
 	}
 
-	public boolean isCheckAssertions() {
+	public Boolean getCheckAssertions() {
 		return checkAssertions;
 	}
 
-	public void checkAssertions(boolean checkAssertions) {
+	public void setCheckAssertions(Boolean checkAssertions) {
 		this.checkAssertions = checkAssertions;
 	}
 
@@ -188,7 +188,7 @@ public class CompilerOptions extends JavaOptions {
 		this.gen = gen;
 	}
 
-	public void gen(String gen) {
+	public void setGen(String gen) {
 		this.gen = new File(gen);
 	}
 
@@ -196,7 +196,7 @@ public class CompilerOptions extends JavaOptions {
 		return missingDepsFile;
 	}
 
-	public void missingDepsFile(String missingDepsFile) {
+	public void setMissingDepsFile(String missingDepsFile) {
 		this.missingDepsFile = new File(missingDepsFile);
 	}
 
@@ -204,27 +204,27 @@ public class CompilerOptions extends JavaOptions {
 		this.missingDepsFile = missingDepsFile;
 	}
 
-	public int getOptimize() {
+	public Integer getOptimize() {
 		return optimize;
 	}
 
-	public void optimize(int optimize) {
+	public void setOptimize(Integer optimize) {
 		this.optimize = optimize;
 	}
 
-	public boolean isOverlappingSourceWarnings() {
+	public Boolean getOverlappingSourceWarnings() {
 		return overlappingSourceWarnings;
 	}
 
-	public void overlappingSourceWarnings(boolean overlappingSourceWarnings) {
+	public void setOverlappingSourceWarnings(Boolean overlappingSourceWarnings) {
 		this.overlappingSourceWarnings = overlappingSourceWarnings;
 	}
 
-	public boolean isSaveSource() {
+	public Boolean getSaveSource() {
 		return saveSource;
 	}
 
-	public void saveSource(boolean saveSource) {
+	public void setSaveSource(Boolean saveSource) {
 		this.saveSource = saveSource;
 	}
 
@@ -232,23 +232,27 @@ public class CompilerOptions extends JavaOptions {
 		return style;
 	}
 
-	public void style(String style) {
+	public void setStyle(CodeStyle style) {
+		this.style = style;
+	}
+
+	public void setStyle(String style) {
 		this.style = CodeStyle.valueOf(style);
 	}
 
-	public boolean isFailOnError() {
+	public Boolean getFailOnError() {
 		return failOnError;
 	}
 
-	public void failOnError(boolean failOnError) {
+	public void setFailOnError(Boolean failOnError) {
 		this.failOnError = failOnError;
 	}
 
-	public boolean isValidateOnly() {
+	public Boolean getValidateOnly() {
 		return validateOnly;
 	}
 
-	public void validateOnly(boolean validateOnly) {
+	public void setValidateOnly(Boolean validateOnly) {
 		this.validateOnly = validateOnly;
 	}
 
@@ -256,23 +260,23 @@ public class CompilerOptions extends JavaOptions {
 		return sourceLevel;
 	}
 
-	public void sourceLevel(String sourceLevel) {
+	public void setSourceLevel(String sourceLevel) {
 		this.sourceLevel = sourceLevel;
 	}
 
-	public int getLocalWorkers() {
+	public Integer getLocalWorkers() {
 		return localWorkers;
 	}
 
-	public void localWorkers(int localWorkers) {
+	public void setLocalWorkers(Integer localWorkers) {
 		this.localWorkers = localWorkers;
 	}
 
-	public boolean isIncremental() {
+	public Boolean getIncremental() {
 		return incremental;
 	}
 
-	public void incremental(boolean incremental) {
+	public void setIncremental(Boolean incremental) {
 		this.incremental = incremental;
 	}
 
@@ -284,7 +288,7 @@ public class CompilerOptions extends JavaOptions {
 		this.war = war;
 	}
 
-	public void war(String war) {
+	public void setWar(String war) {
 		this.war = new File(war);
 	}
 
@@ -296,7 +300,7 @@ public class CompilerOptions extends JavaOptions {
 		this.deploy = deploy;
 	}
 
-	public void deploy(String deploy) {
+	public void setDeploy(String deploy) {
 		this.deploy = new File(deploy);
 	}
 
@@ -308,7 +312,7 @@ public class CompilerOptions extends JavaOptions {
 		this.extra = extra;
 	}
 
-	public void extra(String extra) {
+	public void setExtra(String extra) {
 		this.extra = new File(extra);
 	}
 
@@ -321,7 +325,7 @@ public class CompilerOptions extends JavaOptions {
 		this.saveSourceOutput = saveSourceOutput;
 	}
 
-	public void saveSourceOutput(String saveSourceOutput) {
+	public void setSaveSourceOutput(String saveSourceOutput) {
 		this.saveSourceOutput = new File(saveSourceOutput);
 	}
 
@@ -333,39 +337,39 @@ public class CompilerOptions extends JavaOptions {
 		this.methodNameDisplayMode = methodNameDisplayMode;
 	}
 
-	public void methodNameDisplayMode(String methodNameDisplayMode) {
+	public void setMethodNameDisplayMode(String methodNameDisplayMode) {
 		this.methodNameDisplayMode = MethodNameDisplayMode.valueOf(methodNameDisplayMode);
 	}
 
-	public boolean isEnforceStrictResources() {
+	public Boolean getEnforceStrictResources() {
 		return enforceStrictResources;
 	}
 
-	public void enforceStrictResources(boolean enforceStrictResources) {
+	public void setEnforceStrictResources(Boolean enforceStrictResources) {
 		this.enforceStrictResources = enforceStrictResources;
 	}
 
-	public boolean isCheckCasts() {
+	public Boolean getCheckCasts() {
 		return checkCasts;
 	}
 
-	public void checkCasts(boolean checkCasts) {
+	public void setCheckCasts(Boolean checkCasts) {
 		this.checkCasts = checkCasts;
 	}
 
-	public boolean isClassMetadata() {
+	public Boolean getClassMetadata() {
 		return classMetadata;
 	}
 
-	public void classMetadata(boolean classMetadata) {
+	public void setClassMetadata(Boolean classMetadata) {
 		this.classMetadata = classMetadata;
 	}
 
-	public boolean isClosureCompiler() {
+	public Boolean getClosureCompiler() {
 		return closureCompiler;
 	}
 
-	public void closureCompiler(boolean closureCompiler) {
+	public void setClosureCompiler(Boolean closureCompiler) {
 		this.closureCompiler = closureCompiler;
 	}
 
@@ -373,7 +377,7 @@ public class CompilerOptions extends JavaOptions {
 		return jsInteropMode;
 	}
 
-	public void jsInteropMode(String jsInteropMode) {
+	public void setJsInteropMode(String jsInteropMode) {
 		this.jsInteropMode = JsInteropMode.valueOf(jsInteropMode);
 	}
 
