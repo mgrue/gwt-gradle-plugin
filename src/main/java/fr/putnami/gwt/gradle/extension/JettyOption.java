@@ -59,7 +59,7 @@ public class JettyOption extends JavaOption {
 		this.jettyConf = jettyConf;
 	}
 
-	public void jettyConf(String jettyConf) {
+	public void setJettyConf(String jettyConf) {
 		this.jettyConf = new File(jettyConf);
 	}
 
@@ -71,7 +71,7 @@ public class JettyOption extends JavaOption {
 		this.war = war;
 	}
 
-	public void war(String war) {
+	public void setSar(String war) {
 		this.war = new File(war);
 	}
 
@@ -79,7 +79,7 @@ public class JettyOption extends JavaOption {
 		return bindAddress;
 	}
 
-	public void bindAddress(String bindAddress) {
+	public void setBindAddress(String bindAddress) {
 		this.bindAddress = bindAddress;
 	}
 
@@ -91,7 +91,7 @@ public class JettyOption extends JavaOption {
 		this.logRequestFile = logRequestFile;
 	}
 
-	public void logRequestFile(String logRequestFile) {
+	public void setLogRequestFile(String logRequestFile) {
 		this.logRequestFile = new File(logRequestFile);
 	}
 
@@ -103,7 +103,7 @@ public class JettyOption extends JavaOption {
 		this.logFile = logFile;
 	}
 
-	public void logFile(String logFile) {
+	public void setLogFile(String logFile) {
 		this.logFile = new File(logFile);
 	}
 
@@ -111,7 +111,7 @@ public class JettyOption extends JavaOption {
 		return port;
 	}
 
-	public void port(int port) {
+	public void setPort(int port) {
 		this.port = port;
 	}
 
@@ -119,7 +119,7 @@ public class JettyOption extends JavaOption {
 		return stopPort;
 	}
 
-	public void stopPort(int stopPort) {
+	public void setStopPort(int stopPort) {
 		this.stopPort = stopPort;
 	}
 
@@ -127,7 +127,7 @@ public class JettyOption extends JavaOption {
 		return stopKey;
 	}
 
-	public void stopKey(String stopKey) {
+	public void setStopKey(String stopKey) {
 		this.stopKey = stopKey;
 	}
 
