@@ -20,12 +20,19 @@ import com.google.common.collect.Lists;
 
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.artifacts.ConfigurationContainer;
+import org.gradle.api.artifacts.Dependency;
+import org.gradle.api.artifacts.DependencySet;
+import org.gradle.api.artifacts.ProjectDependency;
+import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.ConventionMapping;
 import org.gradle.api.internal.IConventionAware;
 import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.WarPluginConvention;
 import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.OutputDirectory;
+import org.gradle.api.tasks.InputFiles;
+import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskAction;
 
 import java.io.File;
@@ -35,11 +42,8 @@ import java.util.concurrent.Callable;
 
 import fr.putnami.gwt.gradle.PwtLibPlugin;
 import fr.putnami.gwt.gradle.action.JavaAction;
-import fr.putnami.gwt.gradle.extension.CodeServerOption;
+import fr.putnami.gwt.gradle.extension.DevOption;
 import fr.putnami.gwt.gradle.extension.JettyOption;
-import fr.putnami.gwt.gradle.extension.JsInteropMode;
-import fr.putnami.gwt.gradle.extension.LogLevel;
-import fr.putnami.gwt.gradle.extension.MethodNameDisplayMode;
 import fr.putnami.gwt.gradle.extension.PutnamiExtension;
 import fr.putnami.gwt.gradle.util.JavaCommandBuilder;
 import fr.putnami.gwt.gradle.util.ResourceUtils;
@@ -48,25 +52,8 @@ public class GwtDevTask extends AbstractJettyTask {
 
 	public static final String NAME = "gwtDev";
 
-	private File workDir;
-	private File launcherDir;
-
+	private FileCollection src;
 	private List<String> modules = Lists.newArrayList();
-
-	private boolean allowMissingSrc = false;
-	private String bindAddress = "127.0.0.1";
-	private boolean compileTest = false;
-	private int compileTestRecompiles = 1000;
-	private boolean failOnError = false;
-	private boolean precompile = false;
-	private int sdmPort = 9876;
-	private List<String> src = Lists.newArrayList();
-	private boolean enforceStrictResources = false;
-	private boolean incremental = true;
-	private String sourceLevel = "";
-	private LogLevel logLevel = LogLevel.WARN;
-	private JsInteropMode jsInteropMode = JsInteropMode.NONE;
-	private MethodNameDisplayMode methodNameDisplayMode = MethodNameDisplayMode.NONE;
 
 	public GwtDevTask() {
 		setName(NAME);
@@ -79,7 +66,7 @@ public class GwtDevTask extends AbstractJettyTask {
 	public void exec() throws Exception {
 		WarPluginConvention warConvention = (WarPluginConvention) getProject().getConvention().getPlugins().get("war");
 		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
-		CodeServerOption sdmOption = putnami.getDev();
+		DevOption sdmOption = putnami.getDev();
 		JettyOption jettyOption = putnami.getJetty();
 
 		try {
@@ -104,10 +91,27 @@ public class GwtDevTask extends AbstractJettyTask {
 	}
 
 	private JavaAction execSdm() {
-		Configuration sdmConf =
-			getProject().getConfigurations().getByName(PwtLibPlugin.CONF_GWT_SDM);
+		ConfigurationContainer configs = getProject().getConfigurations();
+		Configuration sdmConf = configs.getByName(PwtLibPlugin.CONF_GWT_SDM);
+		Configuration compileConf = configs.getByName(JavaPlugin.COMPILE_CONFIGURATION_NAME);
+
+		DependencySet depSet = compileConf.getAllDependencies();
+		List<File> subProjectSrc = Lists.newArrayList();
+		for (Dependency dep : depSet) {
+			if (dep instanceof ProjectDependency) {
+				ProjectDependency projectDependency = (ProjectDependency) dep;
+				JavaPluginConvention javaConvention =
+					projectDependency.getDependencyProject().getConvention().getPlugin(JavaPluginConvention.class);
+				SourceSet mainSourceSet = javaConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+
+				for (File file : mainSourceSet.getAllSource().getSrcDirs()) {
+					subProjectSrc.add(file);
+				}
+			}
+		}
 
 		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
+		DevOption devOption = putnami.getDev();
 
 		JavaCommandBuilder builder = new JavaCommandBuilder();
 		builder.configureJavaArgs(putnami.getDev());
@@ -115,27 +119,34 @@ public class GwtDevTask extends AbstractJettyTask {
 		builder.addClassPath(sdmConf.getAsPath());
 
 		if (getSrc() != null) {
-			for (String srcDir : getSrc()) {
-				builder.addArg("-src", new File(srcDir));
+			for (File srcDir : getSrc()) {
+				if (srcDir.isDirectory()) {
+				builder.addArg("-src", srcDir);
+				}
 			}
 		}
-		builder.addArgIf(isAllowMissingSrc(), "-allowMissingSrc", "-noallowMissingSrc");
-		builder.addArg("-bindAddress", getBindAddress());
-		builder.addArgIf(isCompileTest(), "-compileTest ", "-nocompileTest");
-		if (isCompileTest()) {
-			builder.addArg("-compileTestRecompiles", getCompileTestRecompiles());
+		for (File srcDir : subProjectSrc) {
+			if (srcDir.isDirectory()) {
+				builder.addArg("-src", srcDir);
+			}
 		}
-		builder.addArgIf(isFailOnError(), "-failOnError", "-nofailOnError");
-		builder.addArgIf(isPrecompile(), "-precompile", "-noprecompile");
-		builder.addArg("-port", getSdmPort());
-		builder.addArgIf(isEnforceStrictResources(), "-XenforceStrictResources ", "-XnoenforceStrictResources");
-		builder.addArg("-workDir", getWorkDir());
-		builder.addArg("-launcherDir", getLauncherDir());
-		builder.addArgIf(isPrecompile(), "-incremental", "-noincremental");
-		builder.addArg("-sourceLevel", getSourceLevel());
-		builder.addArg("-logLevel", getLogLevel());
-		builder.addArg("-XmethodNameDisplayMode", getMethodNameDisplayMode());
-		builder.addArg("-XjsInteropMode", getJsInteropMode());
+		builder.addArgIf(devOption.getAllowMissingSrc(), "-allowMissingSrc", "-noallowMissingSrc");
+		builder.addArg("-bindAddress", devOption.getBindAddress());
+		builder.addArgIf(devOption.getCompileTest(), "-compileTest ", "-nocompileTest");
+		if (Boolean.TRUE.equals(devOption.getCompileTest())) {
+			builder.addArg("-compileTestRecompiles", devOption.getCompileTestRecompiles());
+		}
+		builder.addArgIf(devOption.getFailOnError(), "-failOnError", "-nofailOnError");
+		builder.addArgIf(devOption.getPrecompile(), "-precompile", "-noprecompile");
+		builder.addArg("-port", devOption.getPort());
+		builder.addArgIf(devOption.getEnforceStrictResources(), "-XenforceStrictResources ", "-XnoenforceStrictResources");
+		builder.addArg("-workDir", devOption.getWorkDir());
+		builder.addArg("-launcherDir", devOption.getLauncherDir());
+		builder.addArgIf(devOption.getPrecompile(), "-incremental", "-noincremental");
+		builder.addArg("-sourceLevel", devOption.getSourceLevel());
+		builder.addArg("-logLevel", devOption.getLogLevel());
+		builder.addArg("-XmethodNameDisplayMode", devOption.getMethodNameDisplayMode());
+		builder.addArg("-XjsInteropMode", devOption.getJsInteropMode());
 
 		for (String module : getModules()) {
 			builder.addArg(module);
@@ -152,208 +163,40 @@ public class GwtDevTask extends AbstractJettyTask {
 	}
 
 	public void configureCodeServer(final Project project, final PutnamiExtension extention) {
-		final CodeServerOption options = extention.getDev();
+		final DevOption options = extention.getDev();
 
 		final File buildDir = new File(project.getBuildDir(), "putnami");
 
 		options.setLauncherDir(ResourceUtils.ensureDir(buildDir, "conf"));
 		options.setWorkDir(ResourceUtils.ensureDir(buildDir, "work"));
-		options.src(
-			project.getProjectDir().getAbsolutePath() + "/src/main/java",
-			project.getProjectDir().getAbsolutePath() + "/src/main/resources"
-			);
+
+		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
+		SourceSet mainSourceSet = javaConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+		final FileCollection sources = getProject().files(mainSourceSet.getAllJava().getSrcDirs());
 
 		ConventionMapping convention = ((IConventionAware) this).getConventionMapping();
-
-		convention.map("allowMissingSrc", new Callable<Boolean>() {
-			@Override
-			public Boolean call() throws Exception {
-				return options.isAllowMissingSrc();
-			}
-		});
-
-		convention.map("bindAddress", new Callable<String>() {
-			@Override
-			public String call() throws Exception {
-				return options.getBindAddress();
-			}
-		});
-		convention.map("compileTest", new Callable<Boolean>() {
-			@Override
-			public Boolean call() throws Exception {
-				return options.isCompileTest();
-			}
-		});
-		convention.map("compileTestRecompiles", new Callable<Integer>() {
-			@Override
-			public Integer call() throws Exception {
-				return options.getCompileTestRecompiles();
-			}
-		});
-		convention.map("failOnError", new Callable<Boolean>() {
-			@Override
-			public Boolean call() throws Exception {
-				return options.isFailOnError();
-			}
-		});
-		convention.map("precompile", new Callable<Boolean>() {
-			@Override
-			public Boolean call() throws Exception {
-				return options.isPrecompile();
-			}
-		});
-		convention.map("sdmPort", new Callable<Integer>() {
-			@Override
-			public Integer call() throws Exception {
-				return options.getPort();
-			}
-		});
-		convention.map("src", new Callable<List<String>>() {
-			@Override
-			public List<String> call() throws Exception {
-				return options.getSrc();
-			}
-		});
-		convention.map("enforceStrictResources", new Callable<Boolean>() {
-			@Override
-			public Boolean call() throws Exception {
-				return options.isEnforceStrictResources();
-			}
-		});
-		convention.map("workDir", new Callable<File>() {
-			@Override
-			public File call() throws Exception {
-				return options.getWorkDir();
-			}
-		});
-		convention.map("launcherDir", new Callable<File>() {
-			@Override
-			public File call() throws Exception {
-				return options.getLauncherDir();
-			}
-		});
-		convention.map("incremental", new Callable<Boolean>() {
-			@Override
-			public Boolean call() throws Exception {
-				return options.isIncremental();
-			}
-		});
-		convention.map("sourceLevel", new Callable<String>() {
-			@Override
-			public String call() throws Exception {
-				return options.getSourceLevel();
-			}
-		});
-		convention.map("logLevel", new Callable<LogLevel>() {
-			@Override
-			public LogLevel call() throws Exception {
-				return options.getLogLevel();
-			}
-		});
-		convention.map("jsInteropMode", new Callable<JsInteropMode>() {
-			@Override
-			public JsInteropMode call() throws Exception {
-				return options.getJsInteropMode();
-			}
-		});
-		convention.map("methodNameDisplayMode",
-			new Callable<MethodNameDisplayMode>() {
-				@Override
-				public MethodNameDisplayMode call() throws Exception {
-					return options.getMethodNameDisplayMode();
-				}
-			});
 		convention.map("modules", new Callable<List<String>>() {
 			@Override
 			public List<String> call() throws Exception {
 				return extention.getModule();
 			}
 		});
-	}
-
-	@OutputDirectory
-	public File getWorkDir() {
-		return workDir;
-	}
-
-	@OutputDirectory
-	public File getLauncherDir() {
-		return launcherDir;
-	}
-
-	@Input
-	public boolean isAllowMissingSrc() {
-		return allowMissingSrc;
-	}
-
-	@Input
-	public String getBindAddress() {
-		return bindAddress;
-	}
-
-	@Input
-	public boolean isCompileTest() {
-		return compileTest;
-	}
-
-	@Input
-	public int getCompileTestRecompiles() {
-		return compileTestRecompiles;
-	}
-
-	@Input
-	public boolean isFailOnError() {
-		return failOnError;
-	}
-
-	@Input
-	public boolean isPrecompile() {
-		return precompile;
-	}
-
-	@Input
-	public int getSdmPort() {
-		return sdmPort;
-	}
-
-	@Input
-	public List<String> getSrc() {
-		return src;
-	}
-
-	@Input
-	public boolean isEnforceStrictResources() {
-		return enforceStrictResources;
-	}
-
-	@Input
-	public boolean isIncremental() {
-		return incremental;
-	}
-
-	@Input
-	public String getSourceLevel() {
-		return sourceLevel;
-	}
-
-	@Input
-	public LogLevel getLogLevel() {
-		return logLevel;
-	}
-
-	@Input
-	public JsInteropMode getJsInteropMode() {
-		return jsInteropMode;
-	}
-
-	@Input
-	public MethodNameDisplayMode getMethodNameDisplayMode() {
-		return methodNameDisplayMode;
+		convention.map("src", new Callable<FileCollection>() {
+			@Override
+			public FileCollection call() throws Exception {
+				return sources;
+			}
+		});
 	}
 
 	@Input
 	public List<String> getModules() {
 		return modules;
+	}
+
+	@InputFiles
+	public FileCollection getSrc() {
+		return src;
 	}
 
 }

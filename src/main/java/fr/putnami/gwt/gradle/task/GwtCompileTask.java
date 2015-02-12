@@ -35,7 +35,7 @@ import java.util.concurrent.Callable;
 
 import fr.putnami.gwt.gradle.PwtLibPlugin;
 import fr.putnami.gwt.gradle.action.JavaAction;
-import fr.putnami.gwt.gradle.extension.CompilerOptions;
+import fr.putnami.gwt.gradle.extension.CompilerOption;
 import fr.putnami.gwt.gradle.extension.PutnamiExtension;
 import fr.putnami.gwt.gradle.util.JavaCommandBuilder;
 
@@ -59,7 +59,7 @@ public class GwtCompileTask extends AbstractTask {
 	public void exec() {
 
 		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
-		CompilerOptions compilerOptions = putnami.getCompile();
+		CompilerOption compilerOptions = putnami.getCompile();
 
 		JavaAction compileAction = new JavaAction(buildCompileCommand(compilerOptions));
 		compileAction.execute(this);
@@ -69,7 +69,7 @@ public class GwtCompileTask extends AbstractTask {
 		}
 	}
 
-	private String buildCompileCommand(CompilerOptions compilerOptions) {
+	private String buildCompileCommand(CompilerOption compilerOptions) {
 		Configuration sdmConf = getProject().getConfigurations().getByName(PwtLibPlugin.CONF_GWT_SDM);
 		Configuration compileConf = getProject().getConfigurations().getByName(JavaPlugin.COMPILE_CONFIGURATION_NAME);
 
@@ -81,8 +81,8 @@ public class GwtCompileTask extends AbstractTask {
 
 		for (File sourceDir : getSrc()) {
 			builder.addClassPath(sourceDir.getAbsolutePath());
-
 		}
+
 		builder.addClassPath(compileConf.getAsPath());
 		builder.addClassPath(sdmConf.getAsPath());
 
@@ -129,7 +129,7 @@ public class GwtCompileTask extends AbstractTask {
 	}
 
 	public void configure(final Project project, final PutnamiExtension extention) {
-		final CompilerOptions options = extention.getCompile();
+		final CompilerOption options = extention.getCompile();
 
 		final File buildDir = new File(project.getBuildDir(), "putnami");
 
@@ -146,6 +146,7 @@ public class GwtCompileTask extends AbstractTask {
 		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
 		SourceSet mainSourceSet = javaConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
 		final FileCollection sources = getProject().files(mainSourceSet.getAllJava().getSrcDirs())
+			.plus(project.files(mainSourceSet.getOutput().getClassesDir()))
 			.plus(project.files(mainSourceSet.getOutput().getResourcesDir()));
 
 		ConventionMapping mapping = ((IConventionAware) this).getConventionMapping();

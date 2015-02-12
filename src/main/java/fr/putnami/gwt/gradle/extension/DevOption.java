@@ -14,18 +14,14 @@
  */
 package fr.putnami.gwt.gradle.extension;
 
-import com.google.common.collect.Lists;
-
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
 
-public class CodeServerOption extends JavaOptions {
+public class DevOption extends JavaOption {
 
 	/**
 	 * Allows -src flags to reference missing directories.
 	 */
-	private boolean allowMissingSrc = false;
+	private Boolean allowMissingSrc = false;
 	/**
 	 * The ip address of the code server.
 	 */
@@ -33,32 +29,28 @@ public class CodeServerOption extends JavaOptions {
 	/**
 	 * Exits after compiling the modules. The exit code will be 0 if the compile succeeded
 	 */
-	private boolean compileTest = false;
+	private Boolean compileTest = false;
 	/**
 	 * The number of times to recompile (after the first one) during a compile test.
 	 */
-	private int compileTestRecompiles = 1000;
+	private Integer compileTestRecompiles;
 	/**
 	 * Stop compiling if a module has a Java file with a compile error, even if unused.
 	 */
-	private boolean failOnError = false;
+	private Boolean failOnError = false;
 	/**
 	 * Precompile modules.
 	 */
-	private boolean precompile = false;
+	private Boolean precompile = false;
 	/**
 	 * The port where the code server will run.
 	 */
-	private int port = 9876;
-	/**
-	 * A directory containing GWT source to be prepended to the classpath for compiling.
-	 */
-	private List<String> src = Lists.newArrayList();
+	private Integer port = 9876;
 	/**
 	 * EXPERIMENTAL: Don't implicitly depend on "client" and "public" when a module doesn't define any
 	 * dependencies.
 	 */
-	private boolean enforceStrictResources = false;
+	private Boolean enforceStrictResources = false;
 	/**
 	 * The root of the directory tree where the code server willwrite compiler output. If not
 	 * supplied, a temporary directorywill be used.
@@ -71,7 +63,7 @@ public class CodeServerOption extends JavaOptions {
 	/**
 	 * Compiles faster by reusing data from the previous compile.
 	 */
-	private boolean incremental = true;
+	private Boolean incremental = true;
 	/**
 	 * Specifies Java source level.
 	 */
@@ -90,11 +82,11 @@ public class CodeServerOption extends JavaOptions {
 	 */
 	private MethodNameDisplayMode methodNameDisplayMode = MethodNameDisplayMode.NONE;
 
-	public boolean isAllowMissingSrc() {
+	public Boolean getAllowMissingSrc() {
 		return allowMissingSrc;
 	}
 
-	public void allowMissingSrc(boolean allowMissingSrc) {
+	public void setAllowMissingSrc(Boolean allowMissingSrc) {
 		this.allowMissingSrc = allowMissingSrc;
 	}
 
@@ -102,63 +94,55 @@ public class CodeServerOption extends JavaOptions {
 		return bindAddress;
 	}
 
-	public void bindAddress(String bindAddress) {
+	public void setBindAddress(String bindAddress) {
 		this.bindAddress = bindAddress;
 	}
 
-	public boolean isCompileTest() {
+	public Boolean getCompileTest() {
 		return compileTest;
 	}
 
-	public void compileTest(boolean compileTest) {
+	public void setCompileTest(Boolean compileTest) {
 		this.compileTest = compileTest;
 	}
 
-	public int getCompileTestRecompiles() {
+	public Integer getCompileTestRecompiles() {
 		return compileTestRecompiles;
 	}
 
-	public void compileTestRecompiles(int compileTestRecompiles) {
+	public void setCompileTestRecompiles(Integer compileTestRecompiles) {
 		this.compileTestRecompiles = compileTestRecompiles;
 	}
 
-	public boolean isFailOnError() {
+	public Boolean getFailOnError() {
 		return failOnError;
 	}
 
-	public void failOnError(boolean failOnError) {
+	public void setFailOnError(Boolean failOnError) {
 		this.failOnError = failOnError;
 	}
 
-	public boolean isPrecompile() {
+	public Boolean getPrecompile() {
 		return precompile;
 	}
 
-	public void precompile(boolean precompile) {
+	public void setPrecompile(Boolean precompile) {
 		this.precompile = precompile;
 	}
 
-	public int getPort() {
+	public Integer getPort() {
 		return port;
 	}
 
-	public void port(int port) {
+	public void setPort(Integer port) {
 		this.port = port;
 	}
 
-	public List<String> getSrc() {
-		return src;
-	}
-
-	public void src(String... src) {
-		this.src.addAll(Arrays.asList(src));
-	}
-
-	public boolean isEnforceStrictResources() {
+	public Boolean getEnforceStrictResources() {
 		return enforceStrictResources;
 	}
 
-	public void enforceStrictResources(boolean enforceStrictResources) {
+	public void setEnforceStrictResources(Boolean enforceStrictResources) {
 		this.enforceStrictResources = enforceStrictResources;
 	}
 
@@ -170,7 +154,7 @@ public class CodeServerOption extends JavaOptions {
 		this.workDir = workDir;
 	}
 
-	public void workDir(String workDir) {
+	public void setWorkDir(String workDir) {
 		this.workDir = new File(workDir);
 	}
 
@@ -182,15 +166,15 @@ public class CodeServerOption extends JavaOptions {
 		this.launcherDir = launcherDir;
 	}
 
-	public void launcherDir(String launcherDir) {
+	public void setLauncherDir(String launcherDir) {
 		this.launcherDir = new File(launcherDir);
 	}
 
-	public boolean isIncremental() {
+	public Boolean getIncremental() {
 		return incremental;
 	}
 
-	public void incremental(boolean incremental) {
+	public void setIncremental(Boolean incremental) {
 		this.incremental = incremental;
 	}
 
@@ -198,7 +182,7 @@ public class CodeServerOption extends JavaOptions {
 		return sourceLevel;
 	}
 
-	public void sourceLevel(String sourceLevel) {
+	public void setSourceLevel(String sourceLevel) {
 		this.sourceLevel = sourceLevel;
 	}
 
@@ -206,7 +190,7 @@ public class CodeServerOption extends JavaOptions {
 		return logLevel;
 	}
 
-	public void logLevel(String logLevel) {
+	public void setLogLevel(String logLevel) {
 		this.logLevel = LogLevel.valueOf(logLevel);
 	}
 
@@ -214,7 +198,7 @@ public class CodeServerOption extends JavaOptions {
 		return jsInteropMode;
 	}
 
-	public void jsInteropMode(String jsInteropMode) {
+	public void setJsInteropMode(String jsInteropMode) {
 		this.jsInteropMode = JsInteropMode.valueOf(jsInteropMode);
 	}
 
@@ -222,7 +206,7 @@ public class CodeServerOption extends JavaOptions {
 		return methodNameDisplayMode;
 	}
 
-	public void methodNameDisplayMode(String methodNameDisplayMode) {
+	public void setMethodNameDisplayMode(String methodNameDisplayMode) {
 		this.methodNameDisplayMode = MethodNameDisplayMode.valueOf(methodNameDisplayMode);
 	}
 

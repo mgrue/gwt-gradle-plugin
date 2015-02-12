@@ -37,8 +37,8 @@ public class PutnamiExtension {
 	 */
 	private List<String> module = Lists.newArrayList();
 
-	private CompilerOptions compile = new CompilerOptions();
-	private CodeServerOption dev = new CodeServerOption();
+	private CompilerOption compile = new CompilerOption();
+	private DevOption dev = new DevOption();
 	private JettyOption jetty = new JettyOption();
 
 	public String getGwtVersion() {
@@ -73,28 +73,28 @@ public class PutnamiExtension {
 		this.gwtElementalLib = gwtElementalLib;
 	}
 
-	public CodeServerOption getDev() {
+	public DevOption getDev() {
 		return dev;
 	}
 
-	public void setDev(CodeServerOption dev) {
+	public void setDev(DevOption dev) {
 		this.dev = dev;
 	}
 
-	public PutnamiExtension dev(Closure<CodeServerOption> c) {
+	public PutnamiExtension dev(Closure<DevOption> c) {
 		ConfigureUtil.configure(c, dev);
 		return this;
 	}
 
-	public CompilerOptions getCompile() {
+	public CompilerOption getCompile() {
 		return compile;
 	}
 
-	public void setCompile(CompilerOptions compile) {
+	public void setCompile(CompilerOption compile) {
 		this.compile = compile;
 	}
 
-	public PutnamiExtension compile(Closure<CompilerOptions> c) {
+	public PutnamiExtension compile(Closure<CompilerOption> c) {
 		ConfigureUtil.configure(c, compile);
 		return this;
 	}

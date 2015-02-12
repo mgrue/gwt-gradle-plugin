@@ -23,7 +23,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import fr.putnami.gwt.gradle.extension.JavaOptions;
+import fr.putnami.gwt.gradle.extension.JavaOption;
 
 public class JavaCommandBuilder {
 
@@ -132,7 +132,7 @@ public class JavaCommandBuilder {
 		return sb.toString();
 	}
 
-	public void configureJavaArgs(JavaOptions javaOptions) {
+	public void configureJavaArgs(JavaOption javaOptions) {
 		if (!Strings.isNullOrEmpty(javaOptions.getMinHeapSize())) {
 			addJavaArgs("-Xms" + javaOptions.getMinHeapSize());
 		}

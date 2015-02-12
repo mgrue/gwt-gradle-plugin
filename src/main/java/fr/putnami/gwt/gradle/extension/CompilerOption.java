@@ -19,7 +19,7 @@ import java.io.File;
 /**
  * GWT Compiler options.
  */
-public class CompilerOptions extends JavaOptions {
+public class CompilerOption extends JavaOption {
 
 	/**
 	 * The compiler's working directory for internal use (must be writeable; defaults to a system

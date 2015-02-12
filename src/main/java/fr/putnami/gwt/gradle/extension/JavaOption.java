@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import java.util.Arrays;
 import java.util.List;
 
-public class JavaOptions {
+public class JavaOption {
 
 	private List<String> javaArgs = Lists.newArrayList();
 

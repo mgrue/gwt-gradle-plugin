@@ -16,7 +16,7 @@ package fr.putnami.gwt.gradle.extension;
 
 import java.io.File;
 
-public class JettyOption extends JavaOptions {
+public class JettyOption extends JavaOption {
 
 	/**
 	 * jetty xml conf.
