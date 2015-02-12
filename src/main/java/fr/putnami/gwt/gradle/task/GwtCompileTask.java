@@ -143,9 +143,11 @@ public class GwtCompileTask extends AbstractTask {
 
 		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
 		SourceSet mainSourceSet = javaConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-		final FileCollection sources = getProject().files(mainSourceSet.getAllJava().getSrcDirs())
+		final FileCollection sources = getProject()
+			.files(project.files(mainSourceSet.getOutput().getResourcesDir()))
 			.plus(project.files(mainSourceSet.getOutput().getClassesDir()))
-			.plus(project.files(mainSourceSet.getOutput().getResourcesDir()));
+			.plus(mainSourceSet.getJava())
+			.plus(mainSourceSet.getResources());
 
 		ConventionMapping mapping = ((IConventionAware) this).getConventionMapping();
 
