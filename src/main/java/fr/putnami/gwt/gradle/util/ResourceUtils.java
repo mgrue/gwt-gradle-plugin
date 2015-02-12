@@ -18,9 +18,12 @@ import com.google.common.io.ByteStreams;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Map;
 
 public final class ResourceUtils {
@@ -72,4 +75,31 @@ public final class ResourceUtils {
 		return target;
 	}
 
+	public static void copyDirectory(File source, File target) throws IOException {
+		if (!target.exists()) {
+			target.mkdirs();
+		}
+
+		for (String fileName : source.list()) {
+			File s = new File(source, fileName);
+			File t = new File(target, fileName);
+			if (s.isDirectory()) {
+				copyDirectory(s, t);
+			} else {
+				copy(s, t);
+			}
+		}
+	}
+
+	public static void copy(File source, File target) throws IOException {
+		try (
+			InputStream in = new FileInputStream(source);
+			OutputStream out = new FileOutputStream(target)) {
+			byte[] buf = new byte[1024];
+			int length;
+			while ((length = in.read(buf)) > 0) {
+				out.write(buf, 0, length);
+			}
+		}
+	}
 }

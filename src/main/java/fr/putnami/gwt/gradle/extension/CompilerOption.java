@@ -101,6 +101,10 @@ public class CompilerOption extends JavaOption {
 	 */
 	private Integer localWorkers;
 	/**
+	 * The number of local workers to use when compiling permutations.
+	 */
+	private Integer localWorkersMem = 2048;
+	/**
 	 * Compiles faster by reusing data from the previous compile.
 	 */
 	private Boolean incremental;
@@ -270,6 +274,14 @@ public class CompilerOption extends JavaOption {
 
 	public void setLocalWorkers(Integer localWorkers) {
 		this.localWorkers = localWorkers;
+	}
+
+	public Integer getLocalWorkersMem() {
+		return localWorkersMem;
+	}
+
+	public void setLocalWorkersMem(Integer localWorkersMem) {
+		this.localWorkersMem = localWorkersMem;
 	}
 
 	public Boolean getIncremental() {

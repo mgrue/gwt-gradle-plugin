@@ -81,6 +81,7 @@ public class DevOption extends JavaOption {
 	 * instead of JavaScript functions.
 	 */
 	private MethodNameDisplayMode methodNameDisplayMode = MethodNameDisplayMode.NONE;
+	private File war;
 
 	public Boolean getAllowMissingSrc() {
 		return allowMissingSrc;
@@ -208,6 +209,14 @@ public class DevOption extends JavaOption {
 
 	public void setMethodNameDisplayMode(String methodNameDisplayMode) {
 		this.methodNameDisplayMode = MethodNameDisplayMode.valueOf(methodNameDisplayMode);
+	}
+
+	public File getWar() {
+		return war;
+	}
+
+	public void setWar(File war) {
+		this.war = war;
 	}
 
 }

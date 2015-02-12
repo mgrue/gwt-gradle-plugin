@@ -64,10 +64,11 @@ public class GwtDevTask extends AbstractJettyTask {
 
 	@TaskAction
 	public void exec() throws Exception {
-		WarPluginConvention warConvention = (WarPluginConvention) getProject().getConvention().getPlugins().get("war");
 		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
 		DevOption sdmOption = putnami.getDev();
 		JettyOption jettyOption = putnami.getJetty();
+
+		createWarExploded(sdmOption);
 
 		try {
 			File webOverrideFile = ResourceUtils.copy(
@@ -78,7 +79,7 @@ public class GwtDevTask extends AbstractJettyTask {
 			ResourceUtils.copy("/stub.jetty-dev-conf.xml", jettyOption.getJettyConf(),
 				new ImmutableMap.Builder<String, String>()
 					.put("__WEB_OVERRIDE__", webOverrideFile.getAbsolutePath())
-					.put("__WAR_FILE__", warConvention.getWebAppDir().getAbsolutePath())
+					.put("__WAR_FILE__", sdmOption.getWar().getAbsolutePath())
 					.build());
 
 		} catch (IOException e) {
@@ -88,6 +89,32 @@ public class GwtDevTask extends AbstractJettyTask {
 		JavaAction jetty = execJetty(jettyOption);
 		execSdm();
 		jetty.join();
+	}
+
+	private void createWarExploded(DevOption sdmOption) throws IOException {
+		WarPluginConvention warConvention = getProject().getConvention().getPlugin(WarPluginConvention.class);
+		JavaPluginConvention javaConvention = getProject().getConvention().getPlugin(JavaPluginConvention.class);
+
+		File warDir = sdmOption.getWar();
+
+		SourceSet mainSourceSet = javaConvention.getSourceSets().getByName("main");
+		ResourceUtils.copyDirectory(warConvention.getWebAppDir(), warDir);
+		File classesDir = ResourceUtils.ensureDir(new File(warDir, "WEB-INF/classes"));
+		for (File file : mainSourceSet.getResources().getSrcDirs()) {
+			ResourceUtils.copyDirectory(file, classesDir);
+		}
+		ResourceUtils.copyDirectory(mainSourceSet.getOutput().getClassesDir(), classesDir);
+		for (File file : mainSourceSet.getOutput().getFiles()) {
+			if (file.exists() && file.isFile()) {
+				ResourceUtils.copy(file, new File(classesDir, file.getName()));
+			}
+		}
+		File libDir = ResourceUtils.ensureDir(new File(warDir, "WEB-INF/lib"));
+		for (File file : mainSourceSet.getRuntimeClasspath()) {
+			if (file.exists() && file.isFile()) {
+				ResourceUtils.copy(file, new File(libDir, file.getName()));
+			}
+		}
 	}
 
 	private JavaAction execSdm() {
@@ -110,6 +137,9 @@ public class GwtDevTask extends AbstractJettyTask {
 			}
 		}
 
+		SourceSet mainSourceSet = getProject().getConvention()
+			.getPlugin(JavaPluginConvention.class).getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+
 		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
 		DevOption devOption = putnami.getDev();
 
@@ -117,6 +147,7 @@ public class GwtDevTask extends AbstractJettyTask {
 		builder.configureJavaArgs(putnami.getDev());
 		builder.setMainClass("com.google.gwt.dev.codeserver.CodeServer");
 		builder.addClassPath(sdmConf.getAsPath());
+		builder.addClassPath(mainSourceSet.getRuntimeClasspath().getAsPath());
 
 		if (getSrc() != null) {
 			for (File srcDir : getSrc()) {
@@ -140,8 +171,8 @@ public class GwtDevTask extends AbstractJettyTask {
 		builder.addArgIf(devOption.getPrecompile(), "-precompile", "-noprecompile");
 		builder.addArg("-port", devOption.getPort());
 		builder.addArgIf(devOption.getEnforceStrictResources(), "-XenforceStrictResources ", "-XnoenforceStrictResources");
-		builder.addArg("-workDir", devOption.getWorkDir());
-		builder.addArg("-launcherDir", devOption.getLauncherDir());
+		builder.addArg("-workDir", ResourceUtils.ensureDir(devOption.getWorkDir()));
+		builder.addArg("-launcherDir", ResourceUtils.ensureDir(devOption.getLauncherDir()));
 		builder.addArgIf(devOption.getPrecompile(), "-incremental", "-noincremental");
 		builder.addArg("-sourceLevel", devOption.getSourceLevel());
 		builder.addArg("-logLevel", devOption.getLogLevel());
@@ -168,6 +199,7 @@ public class GwtDevTask extends AbstractJettyTask {
 		final File buildDir = new File(project.getBuildDir(), "putnami");
 
 		options.setLauncherDir(ResourceUtils.ensureDir(buildDir, "conf"));
+		options.setWar(ResourceUtils.ensureDir(buildDir, "warDev"));
 		options.setWorkDir(ResourceUtils.ensureDir(buildDir, "work"));
 
 		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
