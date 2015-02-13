@@ -29,7 +29,6 @@ public class PutnamiExtension {
 	private String gwtVersion = "2.7.0";
 	private boolean gwtServletLib = false;
 	private boolean gwtElementalLib = false;
-
 	private String jettyVersion = "9.2.7.v20150116";
 
 	/**

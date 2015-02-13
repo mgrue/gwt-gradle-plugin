@@ -14,8 +14,8 @@ apply plugin: 'checkstyle'
 apply plugin: 'license'	
 apply plugin: 'signing'
 
-group = 'fr.putnami.pwt'
-version = '0.1.0'
+group = 'fr.putnami.gwt'
+version = '0.1.1'
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7

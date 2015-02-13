@@ -29,7 +29,7 @@ import fr.putnami.gwt.gradle.extension.PutnamiExtension;
 
 public class PwtLibPlugin implements Plugin<Project> {
 
-	public static final String PLUGIN_VERSION = "0.1.0";
+	public static final String PLUGIN_VERSION = "0.1.1";
 
 	public static final String CONF_GWT_SDM = "gwtSdk";
 	public static final String CONF_JETTY = "jettyConf";
