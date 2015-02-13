@@ -15,7 +15,7 @@ apply plugin: 'license'
 apply plugin: 'signing'
 
 group = 'fr.putnami.pwt'
-version = '0.1.0-SNAPSHOT'
+version = '0.1.0'
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
