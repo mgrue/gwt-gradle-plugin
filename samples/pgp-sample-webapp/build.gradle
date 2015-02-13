@@ -1,0 +1,23 @@
+buildscript {
+	repositories {
+		mavenLocal()
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'fr.putnami.pwt:putnami-gradle-plugin:0.1.0-SNAPSHOT'
+	}
+}
+
+apply plugin: 'fr.putnami.gwt'
+
+group = 'fr.putnami.pwt.gradle.samples'
+version = '0'
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+putnami{
+	module 'fr.putnami.gradle.sample.webapp.App'
+}
