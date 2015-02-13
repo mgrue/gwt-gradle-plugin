@@ -146,8 +146,8 @@ public class GwtCompileTask extends AbstractTask {
 		final FileCollection sources = getProject()
 			.files(project.files(mainSourceSet.getOutput().getResourcesDir()))
 			.plus(project.files(mainSourceSet.getOutput().getClassesDir()))
-			.plus(mainSourceSet.getJava())
-			.plus(mainSourceSet.getResources());
+			.plus(getProject().files(mainSourceSet.getAllSource().getSrcDirs()));
+		// .plus(mainSourceSet.getResources());
 
 		ConventionMapping mapping = ((IConventionAware) this).getConventionMapping();
 
