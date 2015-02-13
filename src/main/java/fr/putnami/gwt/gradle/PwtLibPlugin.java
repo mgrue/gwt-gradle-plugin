@@ -29,7 +29,7 @@ import fr.putnami.gwt.gradle.extension.PutnamiExtension;
 
 public class PwtLibPlugin implements Plugin<Project> {
 
-	public static final String PLUGIN_VERSION = "0.1.1";
+	public static final String PLUGIN_VERSION = "0.1.2";
 
 	public static final String CONF_GWT_SDM = "gwtSdk";
 	public static final String CONF_JETTY = "jettyConf";
@@ -77,7 +77,7 @@ public class PwtLibPlugin implements Plugin<Project> {
 				// dependencies.add(providedConfiguration, CONF_GWT_SDM);
 
 				dependencies.add(CONF_JETTY, "org.eclipse.jetty:jetty-runner" + ":" + jettyVersion);
-				dependencies.add(CONF_JETTY, "fr.putnami.pwt:putnami-gradle-plugin" + ":" + PLUGIN_VERSION);
+				dependencies.add(CONF_JETTY, "fr.putnami.gwt:putnami-gradle-plugin" + ":" + PLUGIN_VERSION);
 			}
 		});
 	}

@@ -58,7 +58,7 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'fr.putnami.pwt:putnami-gradle-plugin:0.1.1'
+		classpath 'fr.putnami.gwt:putnami-gradle-plugin:0.1.2'
 	}
 }
 
