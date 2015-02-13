@@ -5,50 +5,233 @@ Travis build status [![Build Status](https://travis-ci.org/Putnami/putnami-gradl
 
 ===================
 
-# Usage #
+This plugin helps to build GWT project with Gradle. The main goals is build webapps and libraries.
 
-##Releases##
+**Why to use it?**
 
-##Snapshot##
-If use need to use the snapshots you need to install the sonatype snapshot repository https://oss.sonatype.org/content/repositories/snapshots/
+* DevMode on standalone Jetty 9 container.
+* DevMode works with multi module project. 
+* Ease of use.
+* Gradle is faster and easier than Maven
+ 
+## Requirements ##
+
+* Java 7 or higher.
+* Gradle 2 or higher. https://gradle.org
+
+## Quick start ##
+
+* First you need java and gradle installed on your workstation. 
+* Init your project with this structure
 
 ```
+/ build.gradle
+/ src
+  |-- main
+    |-- java
+    |-- resources
+    |-- webapp
+  |-- test
+    |-- java
+    |-- resources
+```
+
+* You can init the project with those commands
+
+```sh
+PROJECT_NAME={your-project}
+mkdir $PROJECT_NAME
+cd $PROJECT_NAME
+mkdir -p src/main/java src/main/resources src/main/webapp
+mkdir -p src/test/java src/test/resources
+touch build.gralde
+```
+
+
+* Apply the plugin **fr.putnami.gwt** in your *build.gradle* file
+
+```groovy
+apply plugin: 'fr.putnami.gwt'
+
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'fr.putnami.pwt:putnami-gradle-plugin:0.1.0'
+	}
+}
+
 repositories {
 	mavenCentral()
-	maven{ url 'https://oss.sonatype.org/content/repositories/snapshots/'}
+}
+
+putnami{
+	module 'your.gwt.module.to.compile'
 }
 ```
 
-##Samples##
+* Then use the commands below:
+  * `gradle gwtRun` To run the webapp
+  * `gradle gwtDev` To run the DevMode
+  * `gradle build`  To compile GWT and Build the webapp
+
+**Notes**
+
+To use the lastest **snapshot** you can add `maven{ url 'https://oss.sonatype.org/content/repositories/snapshots/' }` to the buildscript repositories.
 
 
-# Build Plugin #
+## Samples ##
 
-**Note :** To build this project you need gradle. If you are ready to use gradle, please refer to https://www.gradle.org/ to install it.
+We offer you 3 build samples:
 
-## Project structure ##
+* **Library project** : Simple library project.
+* **WebApp project** : Simple GWT project.
+* **Multi-modules project** : Project composed with a library and a webapp.
 
-## Commands ##
+## Advanced usages ##
 
-# Help and Contribute #
+### Commands ###
+
+**TODO**
+
+### Full configuration sample ###
+
+```groovy
+putnami{
+	/** Can be module */
+	module 'fr.putnami.gradle.sample.multimodule.app.App'
+	
+	/** GWT version */
+	gwtVersion = "2.7.0";
+	/** Add the gwt-servlet lib */
+	gwtServletLib = true;
+	/** Add the gwt-elemental lib */
+	gwtElementalLib = false;
+	/** Jetty version */
+	jettyVersion = "9.2.7.v20150116";
+	
+	compile {
+		/** The level of logging detail (ERROR, WARN, INFO, TRACE, DEBUG, SPAM, ALL) */
+		logLevel = INFO
+		/** Compile a report that tells the "Story of Your Compile". */
+		compileReport = true
+		/** Compile quickly with minimal optimizations. */
+		draftCompile = true
+		/** Include assert statements in compiled output. */
+		checkAssertions = false
+		/** Script output style. (OBF, PRETTY, DETAILED)*/
+		style = "OBF"
+		/** Sets the optimization level used by the compiler. 0=none 9=maximum. */
+		optimize = 5
+		/** Fail compilation if any input file contains an error. */
+		failOnError = false
+		/** Validate all source code, but do not compile. */
+		validateOnly = false
+		/** Specifies Java source level. ("1.6", "1.7")*/
+		sourceLevel = "1.7"
+		/** The number of local workers to use when compiling permutations. */
+		localWorkers = 2
+		/** The number of local workers to use when compiling permutations. */
+		localWorkersMem = 2048
+		/** Emit extra information allow chrome dev tools to display Java identifiers in many places instead of JavaScript functions. (NONE, ONLY_METHOD_NAME, ABBREVIATED, FULL)*/
+		methodNameDisplayMode = "NONE"
+		/** Specifies JsInterop mode, either NONE, JS, or CLOSURE. */
+		jsInteropMode = "NONE"
+		
+		/**
+		* Java args
+		*/
+		maxHeapSize="1024m"
+		minHeapSize="512m"
+		maxPermSize="128m"
+		debugJava = true
+		debugPort = 8000
+		debugSuspend = false
+		javaArgs = "-Xmx256m", "-Xms256m"
+	}
+	dev {
+		/** Allows -src flags to reference missing directories. */
+		allowMissingSrc = false
+		/** The ip address of the code server. */
+		bindAddress = "127.0.0.1"
+		/** Stop compiling if a module has a Java file with a compile error, even if unused. */
+		failOnError = false
+		/** Precompile modules. */
+		precompile = false
+		/** The port where the code server will run. */
+		port = 9876
+		/** EXPERIMENTAL: Don't implicitly depend on "client" and "public" when a module doesn't define anydependencies. */
+		enforceStrictResources = false
+		/** Specifies Java source level ("1.6", "1.7").
+		sourceLevel = "1.6"
+		/** The level of logging detail (ERROR, WARN, INFO, TRACE, DEBUG, SPAM, ALL) */
+		logLevel = "INFO"
+		/** Specifies JsInterop mode (NONE, JS, CLOSURE). */
+		jsInteropMode = "JS"
+		/** Emit extra information allow chrome dev tools to display Java identifiers in many placesinstead of JavaScript functions. (NONE, ONLY_METHOD_NAME, ABBREVIATED, FULL) */
+		methodNameDisplayMode = "NONE"
+		
+		/**
+		* Java args
+		*/
+		maxHeapSize="1024m"
+		minHeapSize="512m"
+		maxPermSize="128m"
+		debugJava = true
+		debugPort = 8000
+		debugSuspend = false
+		javaArgs = "-Xmx256m", "-Xms256m"
+	}
+	jetty {
+		/** interface to listen on. */
+		bindAddress = "127.0.0.1"
+		/** request log filename. */
+		logRequestFile
+		/** info/warn/debug log filename. */
+		logFile
+		/** port to listen on. */
+		port = 8080
+		/** port to listen for stop command. */
+		stopPort = 8089
+		/** security string for stop command. */
+		stopKey = "JETTY-STOP"
+		
+		/**
+		* Java args
+		*/
+		maxHeapSize="1024m"
+		minHeapSize="512m"
+		maxPermSize="128m"
+		debugJava = true
+		debugPort = 8000
+		debugSuspend = false
+		javaArgs = "-Xmx256m", "-Xms256m"
+	}
+}
+```
+
+
+## Help and Contribute ##
 We need you!
 Any help is welcome. And there is many ways to help us:
 
-## Be a nice community member ##
+### Be a nice community member ###
 If you tried and you love PWT. We will be glad to count you as community members. So please :
 
-* Star this project and become one famous [stargazers](https://github.com/Putnami/putnami-web-toolkit/stargazers)
+* Star this project and become one famous [stargazers](https://github.com/Putnami/putnami-gradle-plugin/stargazers)
 * Become a follower on [twitter](https://twitter.com/PutnamiTeam)
 * Join the news group [putnami-web-toolkit](https://groups.google.com/forum/#!forum/putnami-web-toolkit)
 
 Of course you will get all our thankfulness if you blog, share and spread PWT around you. All the backlinks on [http://putnami.org](http://putnami.org) are very welcome.
 
-## Report issues ##
+### Report issues ###
+
 All issues about bugs or enhancement are precious and will be given careful consideration. We're going to help you in the best delay as can (generally in the day time).
 
 To report an issue, please use the project [issue tracker](https://github.com/Putnami/putnami-gradle-plugin/issues)
 
-## Contribute ##
+### Contribute ###
 
 You'd love to contribute your code, nice :)
 First be sure that your code respect the project code style and formating. 
@@ -59,7 +242,7 @@ If you are an eclipse user, it could be nice if you follow the workspace setup i
 Every pullrequest will be review with a great consideration, and with a full open mind. 
 
 
-# License
+## License ##
 The framework is delivered under LGPL v 3.0.
 
 The LGPL v 3.0 allows a free usage of PWT for commercial and open source projects.
