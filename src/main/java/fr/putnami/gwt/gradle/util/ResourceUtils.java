@@ -76,17 +76,23 @@ public final class ResourceUtils {
 	}
 
 	public static void copyDirectory(File source, File target) throws IOException {
+		if (source == null) {
+			return;
+		}
 		if (!target.exists()) {
 			target.mkdirs();
 		}
 
-		for (String fileName : source.list()) {
-			File s = new File(source, fileName);
-			File t = new File(target, fileName);
-			if (s.isDirectory()) {
-				copyDirectory(s, t);
-			} else {
-				copy(s, t);
+		String[] files = source.list();
+		if (files != null) {
+			for (String fileName : source.list()) {
+				File s = new File(source, fileName);
+				File t = new File(target, fileName);
+				if (s.isDirectory()) {
+					copyDirectory(s, t);
+				} else {
+					copy(s, t);
+				}
 			}
 		}
 	}
