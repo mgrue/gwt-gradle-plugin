@@ -85,58 +85,71 @@ To use the lastest **snapshot** you can add `maven{ url 'https://oss.sonatype.or
 
 We offer you 3 build samples:
 
-* **Library project** : Simple library project.
-* **WebApp project** : Simple GWT project.
-* **Multi-modules project** : Project composed with a library and a webapp.
+* **Library project** : Simple library project [pgp-sample-lib](https://github.com/Putnami/putnami-gradle-plugin/tree/master/samples/pgp-sample-lib).
+* **WebApp project** : Simple GWT project [pgp-sample-webapp](https://github.com/Putnami/putnami-gradle-plugin/tree/master/samples/pgp-sample-webapp).
+* **Multi-modules project** : Project composed with a library and a webapp [pgp-sample-multimodules](https://github.com/Putnami/putnami-gradle-plugin/tree/master/samples/pgp-sample-multimodules).
 
 ## Advanced usages ##
 
-### Commands ###
+### Plugins ###
 
-**TODO**
+The Putnami Gradle Plugin is usefull either to build GWT's library or webapp.
 
-### Full configuration sample ###
+* apply plugin: **'fr.putnami.gwt-lib'** : To build a library. This plugin installs properly all the GWT dependencies on your project and adds the java sources into the target jar artifact. 
+* apply plugin: **'fr.putnami.gwt'** : To build a webapp. This plugin installs properly all the GWT dependencies and provide all the usefull tasks helping you to work efficiently on your projects. 
+
+### Tasks and configuration ###
+
+* Common configuration
 
 ```groovy
 putnami{
-	/** Can be module */
+	/** Module to compile, can be multiple **/
 	module 'fr.putnami.gradle.sample.multimodule.app.App'
 	
-	/** GWT version */
+	/** GWT version **/
 	gwtVersion = "2.7.0";
-	/** Add the gwt-servlet lib */
+	/** Add the gwt-servlet lib **/
 	gwtServletLib = true;
-	/** Add the gwt-elemental lib */
+	/** Add the gwt-elemental lib **/
 	gwtElementalLib = false;
-	/** Jetty version */
+	/** Jetty version **/
 	jettyVersion = "9.2.7.v20150116";
-	
+}
+```
+
+* **gwtCompile** Compile the GWT webapp.
+
+Can be tuned with the following parametters:
+
+```groovy
+putnami{
 	compile {
-		/** The level of logging detail (ERROR, WARN, INFO, TRACE, DEBUG, SPAM, ALL) */
+		/** The level of logging detail (ERROR, WARN, INFO, TRACE, DEBUG, SPAM, ALL) **/
 		logLevel = INFO
-		/** Compile a report that tells the "Story of Your Compile". */
+		/** Compile a report that tells the "Story of Your Compile". **/
 		compileReport = true
-		/** Compile quickly with minimal optimizations. */
+		/** Compile quickly with minimal optimizations. **/
 		draftCompile = true
-		/** Include assert statements in compiled output. */
+		/** Include assert statements in compiled output. **/
 		checkAssertions = false
 		/** Script output style. (OBF, PRETTY, DETAILED)*/
 		style = "OBF"
-		/** Sets the optimization level used by the compiler. 0=none 9=maximum. */
+		/** Sets the optimization level used by the compiler. 0=none 9=maximum. **/
 		optimize = 5
-		/** Fail compilation if any input file contains an error. */
+		/** Fail compilation if any input file contains an error. **/
 		failOnError = false
-		/** Validate all source code, but do not compile. */
+		/** Validate all source code, but do not compile. **/
 		validateOnly = false
 		/** Specifies Java source level. ("1.6", "1.7")*/
 		sourceLevel = "1.7"
-		/** The number of local workers to use when compiling permutations. */
+		/** The number of local workers to use when compiling permutations. **/
 		localWorkers = 2
-		/** The number of local workers to use when compiling permutations. */
+		/** The number of local workers to use when compiling permutations. **/
 		localWorkersMem = 2048
 		/** Emit extra information allow chrome dev tools to display Java identifiers in many places instead of JavaScript functions. (NONE, ONLY_METHOD_NAME, ABBREVIATED, FULL)*/
 		methodNameDisplayMode = "NONE"
-		/** Specifies JsInterop mode, either NONE, JS, or CLOSURE. */
+		/** Specifies JsInterop mode, either NONE, JS, or CLOSURE. **/
 		jsInteropMode = "NONE"
 		
 		/**
@@ -150,27 +163,31 @@ putnami{
 		debugSuspend = false
 		javaArgs = "-Xmx256m", "-Xms256m"
 	}
-	dev {
-		/** Allows -src flags to reference missing directories. */
-		allowMissingSrc = false
-		/** The ip address of the code server. */
+}
+```
+
+* **gwtRun** Compile the GWT webapp and run the jar on Jetty 9
+
+
+**Note :** This task depends on the gwtCompile task.
+
+Can be tuned with the following parametters:
+
+```groovy
+putnami{
+	jetty {
+		/** interface to listen on. **/
 		bindAddress = "127.0.0.1"
-		/** Stop compiling if a module has a Java file with a compile error, even if unused. */
-		failOnError = false
-		/** Precompile modules. */
-		precompile = false
-		/** The port where the code server will run. */
-		port = 9876
-		/** EXPERIMENTAL: Don't implicitly depend on "client" and "public" when a module doesn't define anydependencies. */
-		enforceStrictResources = false
-		/** Specifies Java source level ("1.6", "1.7").
-		sourceLevel = "1.6"
-		/** The level of logging detail (ERROR, WARN, INFO, TRACE, DEBUG, SPAM, ALL) */
-		logLevel = "INFO"
-		/** Specifies JsInterop mode (NONE, JS, CLOSURE). */
-		jsInteropMode = "JS"
-		/** Emit extra information allow chrome dev tools to display Java identifiers in many placesinstead of JavaScript functions. (NONE, ONLY_METHOD_NAME, ABBREVIATED, FULL) */
-		methodNameDisplayMode = "NONE"
+		/** request log filename. **/
+		logRequestFile
+		/** info/warn/debug log filename. **/
+		logFile
+		/** port to listen on. **/
+		port = 8080
+		/** port to listen for stop command. **/
+		stopPort = 8089
+		/** security string for stop command. **/
+		stopKey = "JETTY-STOP"
 		
 		/**
 		* Java args
@@ -183,19 +200,36 @@ putnami{
 		debugSuspend = false
 		javaArgs = "-Xmx256m", "-Xms256m"
 	}
-	jetty {
-		/** interface to listen on. */
+}
+```
+
+* **gwtDev** Run the CodeServer (SDM) and Jetty 9 
+
+The SDM is tuned with the following parametters, the jetty is configured from the previous configuration.
+
+```groovy
+putnami{
+	dev {
+		/** Allows -src flags to reference missing directories. **/
+		allowMissingSrc = false
+		/** The ip address of the code server. **/
 		bindAddress = "127.0.0.1"
-		/** request log filename. */
-		logRequestFile
-		/** info/warn/debug log filename. */
-		logFile
-		/** port to listen on. */
-		port = 8080
-		/** port to listen for stop command. */
-		stopPort = 8089
-		/** security string for stop command. */
-		stopKey = "JETTY-STOP"
+		/** Stop compiling if a module has a Java file with a compile error, even if unused. **/
+		failOnError = false
+		/** Precompile modules. **/
+		precompile = false
+		/** The port where the code server will run. **/
+		port = 9876
+		/** EXPERIMENTAL: Don't implicitly depend on "client" and "public" when a module doesn't define anydependencies. **/
+		enforceStrictResources = false
+		/** Specifies Java source level ("1.6", "1.7").
+		sourceLevel = "1.6"
+		/** The level of logging detail (ERROR, WARN, INFO, TRACE, DEBUG, SPAM, ALL) **/
+		logLevel = "INFO"
+		/** Specifies JsInterop mode (NONE, JS, CLOSURE). **/
+		jsInteropMode = "JS"
+		/** Emit extra information allow chrome dev tools to display Java identifiers in many placesinstead of JavaScript functions. (NONE, ONLY_METHOD_NAME, ABBREVIATED, FULL) **/
+		methodNameDisplayMode = "NONE"
 		
 		/**
 		* Java args
@@ -213,8 +247,7 @@ putnami{
 
 
 ## Help and Contribute ##
-We need you!
-Any help is welcome. And there is many ways to help us:
+We need you! Any help is welcome. And there is many ways to help us:
 
 ### Be a nice community member ###
 If you tried and you love PWT. We will be glad to count you as community members. So please :
