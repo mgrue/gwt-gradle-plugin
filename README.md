@@ -44,7 +44,7 @@ mkdir $PROJECT_NAME
 cd $PROJECT_NAME
 mkdir -p src/main/java src/main/resources src/main/webapp
 mkdir -p src/test/java src/test/resources
-touch build.gralde
+touch build.gradle
 ```
 
 
