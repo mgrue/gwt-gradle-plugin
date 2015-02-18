@@ -17,10 +17,13 @@ package fr.putnami.gwt.gradle;
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.Task;
+import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.tasks.bundling.War;
 
 import fr.putnami.gwt.gradle.extension.PutnamiExtension;
+import fr.putnami.gwt.gradle.task.GwtCheckTask;
 import fr.putnami.gwt.gradle.task.GwtCompileTask;
 import fr.putnami.gwt.gradle.task.GwtDevTask;
 import fr.putnami.gwt.gradle.task.GwtRunTask;
@@ -33,6 +36,7 @@ public class PwtPlugin implements Plugin<Project> {
 		project.getPlugins().apply(PwtLibPlugin.class);
 		project.getPlugins().apply(WarPlugin.class);
 
+		createCheckTask(project);
 		createCompileTask(project);
 		createDevTask(project);
 		createRunTask(project);
@@ -41,6 +45,19 @@ public class PwtPlugin implements Plugin<Project> {
 
 	private void createStopTask(Project project) {
 		project.getTasks().create(GwtStopTask.NAME, GwtStopTask.class);
+	}
+
+	private void createCheckTask(final Project project) {
+		project.getTasks().create(GwtCheckTask.NAME, GwtCheckTask.class);
+		final PutnamiExtension extension = project.getExtensions().getByType(PutnamiExtension.class);
+		final Task checkTask = project.getTasks().getByName(JavaBasePlugin.CHECK_TASK_NAME);
+		checkTask.dependsOn(GwtCheckTask.NAME);
+		project.getTasks().withType(GwtCheckTask.class, new Action<GwtCheckTask>() {
+			@Override
+			public void execute(final GwtCheckTask task) {
+				task.configure(project, extension);
+			}
+		});
 	}
 
 	private void createCompileTask(final Project project) {
