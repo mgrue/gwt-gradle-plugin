@@ -3,7 +3,7 @@ buildscript {
 		jcenter()
 	}
 	dependencies {
-		classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.7.0'
+		classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
 	}
 }
 
@@ -37,6 +37,7 @@ license {
 	skipExistingHeaders = true
 	header rootProject.file('settings/LICENSE_LGPL_HEADER');
 	ext.projectName = project.name
+	exclude "**/skeleton/**"
 }
 
 project.tasks.jar.dependsOn project.tasks.licenseFormat

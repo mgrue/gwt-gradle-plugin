@@ -19,6 +19,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.plugins.JavaBasePlugin;
+import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.tasks.bundling.War;
 
@@ -28,6 +29,7 @@ import fr.putnami.gwt.gradle.task.GwtCodeServerTask;
 import fr.putnami.gwt.gradle.task.GwtCompileTask;
 import fr.putnami.gwt.gradle.task.GwtDevTask;
 import fr.putnami.gwt.gradle.task.GwtRunTask;
+import fr.putnami.gwt.gradle.task.GwtSetUpTask;
 import fr.putnami.gwt.gradle.task.GwtStopTask;
 
 public class PwtPlugin implements Plugin<Project> {
@@ -37,12 +39,32 @@ public class PwtPlugin implements Plugin<Project> {
 		project.getPlugins().apply(PwtLibPlugin.class);
 		project.getPlugins().apply(WarPlugin.class);
 
+		createSetUpTask(project);
 		createCheckTask(project);
 		createCompileTask(project);
 		createCodeServerTask(project);
 		createDevTask(project);
 		createRunTask(project);
 		createStopTask(project);
+	}
+
+	private void createSetUpTask(final Project project) {
+		final PutnamiExtension extension = project.getExtensions().getByType(PutnamiExtension.class);
+		final Task setUpTask = project.getTasks().create(GwtSetUpTask.NAME, GwtSetUpTask.class);
+		final Task javaTask = project.getTasks().getByName(JavaPlugin.COMPILE_JAVA_TASK_NAME);
+		javaTask.dependsOn(GwtSetUpTask.NAME);
+		project.getTasks().withType(GwtSetUpTask.class, new Action<GwtSetUpTask>() {
+			@Override
+			public void execute(final GwtSetUpTask task) {
+				task.configure(extension);
+			}
+		});
+		project.afterEvaluate(new Action<Project>() {
+			@Override
+			public void execute(final Project project) {
+				setUpTask.setEnabled(GwtSetUpTask.isEnable(project, extension));
+			}
+		});
 	}
 
 	private void createStopTask(Project project) {
