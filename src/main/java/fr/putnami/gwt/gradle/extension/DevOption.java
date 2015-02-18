@@ -14,7 +14,11 @@
  */
 package fr.putnami.gwt.gradle.extension;
 
+import org.gradle.api.Project;
+
 import java.io.File;
+
+import fr.putnami.gwt.gradle.util.ResourceUtils;
 
 public class DevOption extends JavaOption {
 
@@ -217,6 +221,14 @@ public class DevOption extends JavaOption {
 
 	public void setWar(File war) {
 		this.war = war;
+	}
+
+	public void init(Project project) {
+		final File buildDir = new File(project.getBuildDir(), "putnami");
+
+		setLauncherDir(ResourceUtils.ensureDir(buildDir, "conf"));
+		setWar(ResourceUtils.ensureDir(buildDir, "warDev"));
+		setWorkDir(ResourceUtils.ensureDir(buildDir, "work"));
 	}
 
 }

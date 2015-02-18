@@ -24,6 +24,7 @@ import org.gradle.api.tasks.bundling.War;
 
 import fr.putnami.gwt.gradle.extension.PutnamiExtension;
 import fr.putnami.gwt.gradle.task.GwtCheckTask;
+import fr.putnami.gwt.gradle.task.GwtCodeServerTask;
 import fr.putnami.gwt.gradle.task.GwtCompileTask;
 import fr.putnami.gwt.gradle.task.GwtDevTask;
 import fr.putnami.gwt.gradle.task.GwtRunTask;
@@ -38,6 +39,7 @@ public class PwtPlugin implements Plugin<Project> {
 
 		createCheckTask(project);
 		createCompileTask(project);
+		createCodeServerTask(project);
 		createDevTask(project);
 		createRunTask(project);
 		createStopTask(project);
@@ -81,6 +83,17 @@ public class PwtPlugin implements Plugin<Project> {
 			@Override
 			public void execute(final GwtRunTask task) {
 				task.configureJetty(extension.getJetty());
+			}
+		});
+	}
+
+	private void createCodeServerTask(final Project project) {
+		project.getTasks().create(GwtCodeServerTask.NAME, GwtCodeServerTask.class);
+		final PutnamiExtension extension = project.getExtensions().getByType(PutnamiExtension.class);
+		project.getTasks().withType(GwtCodeServerTask.class, new Action<GwtCodeServerTask>() {
+			@Override
+			public void execute(final GwtCodeServerTask task) {
+				task.configureCodeServer(project, extension);
 			}
 		});
 	}
