@@ -22,9 +22,11 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
+import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskAction;
 
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -39,6 +41,7 @@ public class GwtCheckTask extends AbstractTask {
 
 	private List<String> modules;
 	private FileCollection src;
+	private File war;
 
 	public GwtCheckTask() {
 		setName(NAME);
@@ -83,12 +86,23 @@ public class GwtCheckTask extends AbstractTask {
 				return extention.getModule();
 			}
 		});
+		mapping.map("war", new Callable<File>() {
+			@Override
+			public File call() throws Exception {
+				return new File(getProject().getBuildDir(), "out");
+			}
+		});
 		mapping.map("src", new Callable<FileCollection>() {
 			@Override
 			public FileCollection call() throws Exception {
 				return sources;
 			}
 		});
+	}
+
+	@OutputDirectory
+	public File getWar() {
+		return war;
 	}
 
 	@Input

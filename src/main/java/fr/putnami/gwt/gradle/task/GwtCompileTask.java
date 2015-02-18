@@ -66,6 +66,8 @@ public class GwtCompileTask extends AbstractTask {
 		if (compileAction.exitValue() != 0) {
 			throw new RuntimeException("Fail to compile GWT modules");
 		}
+
+		getProject().getTasks().getByName(GwtCheckTask.NAME).setEnabled(false);
 	}
 
 	public void configure(final Project project, final PutnamiExtension extention) {
