@@ -76,6 +76,53 @@ putnami{
   * `gradle gwtDev` To run the DevMode
   * `gradle build`  To compile GWT and Build the webapp
 
+## Quick start for eclipse ##
+
+Get [Gradle Integration for Eclipse](http://marketplace.eclipse.org/content/gradle-integration-eclipse-44)
+Go to the eclipse navigator by opening eclipse and going to Window>Show View>Navigator
+Create a new java project
+Add a file to the project and name it build.gradle
+In the src folder add the following directory structure:
+```
+/ src
+  |-- main
+    |-- java
+    |-- resources
+    |-- webapp
+  |-- test
+    |-- java
+    |-- resources
+```
+In the build .gradle file put:
+```
+apply plugin: 'fr.putnami.gwt'
+apply plugin: 'eclipse'
+
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'fr.putnami.gwt:putnami-gradle-plugin:0.1.2'
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+putnami{
+	module 'your.gwt.module.to.compile'
+}
+```
+right click on the project and configure>convert to Gradle project
+Go to Window>Show View>Other>gradle tasks. In the gradle tasks window double click eclipse.
+Make sure that the GPE(Google Plugin for Eclipse) is installed.
+Right click on your project and go to Properties>google>Web Application
+Check the check box labeled this project has a war directory and select src/main/webapp as your war directory.
+Then go to the properties for web toolkit. Check the check box labeled use Google Web Toolkit. Make sure not to use 
+an SDK from before 2.7.0. Add all of your gwt entry point modules. To tell the plugin to gwt compile right click your project and go to google>gwt compile, add all of your modules and click compile. 
+
 **Notes**
 
 To use the lastest **snapshot** you can add `maven{ url 'https://oss.sonatype.org/content/repositories/snapshots/' }` to the buildscript repositories.
