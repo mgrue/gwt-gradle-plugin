@@ -14,21 +14,12 @@
  */
 package fr.putnami.gwt.gradle.task;
 
-import com.google.common.collect.Lists;
-
 import org.gradle.api.Project;
 import org.gradle.api.file.FileCollection;
-import org.gradle.api.internal.ConventionMapping;
-import org.gradle.api.internal.IConventionAware;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskAction;
-
-import java.util.List;
-import java.util.concurrent.Callable;
 
 import fr.putnami.gwt.gradle.action.JavaAction;
 import fr.putnami.gwt.gradle.extension.DevOption;
@@ -39,9 +30,6 @@ import fr.putnami.gwt.gradle.util.ProjectUtils;
 public class GwtCodeServerTask extends AbstractTask {
 
 	public static final String NAME = "gwtCodeServer";
-
-	private FileCollection src;
-	private List<String> modules = Lists.newArrayList();
 
 	public GwtCodeServerTask() {
 		setName(NAME);
@@ -54,10 +42,14 @@ public class GwtCodeServerTask extends AbstractTask {
 	public void exec() throws Exception {
 		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
 
+		JavaPluginConvention javaConvention = getProject().getConvention().getPlugin(JavaPluginConvention.class);
+		SourceSet mainSourceSet = javaConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+		final FileCollection sources = getProject().files(mainSourceSet.getAllJava().getSrcDirs());
+
 		CodeServerBuilder sdmBuilder = new CodeServerBuilder();
-		sdmBuilder.addSrc(getSrc());
+		sdmBuilder.addSrc(sources);
 		sdmBuilder.addSrc(ProjectUtils.listProjectDepsSrcDirs(getProject()));
-		sdmBuilder.configure(getProject(), putnami.getDev(), getModules());
+		sdmBuilder.configure(getProject(), putnami.getDev(), putnami.getModule());
 
 		JavaAction sdmAction = sdmBuilder.buildJavaAction();
 		sdmAction.execute(this);
@@ -67,34 +59,5 @@ public class GwtCodeServerTask extends AbstractTask {
 	public void configureCodeServer(final Project project, final PutnamiExtension extention) {
 		final DevOption options = extention.getDev();
 		options.init(project);
-
-		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
-		SourceSet mainSourceSet = javaConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-		final FileCollection sources = getProject().files(mainSourceSet.getAllJava().getSrcDirs());
-
-		ConventionMapping convention = ((IConventionAware) this).getConventionMapping();
-		convention.map("modules", new Callable<List<String>>() {
-			@Override
-			public List<String> call() throws Exception {
-				return extention.getModule();
-			}
-		});
-		convention.map("src", new Callable<FileCollection>() {
-			@Override
-			public FileCollection call() throws Exception {
-				return sources;
-			}
-		});
 	}
-
-	@Input
-	public List<String> getModules() {
-		return modules;
-	}
-
-	@InputFiles
-	public FileCollection getSrc() {
-		return src;
-	}
-
 }
