@@ -15,7 +15,6 @@
 package fr.putnami.gwt.gradle.task;
 
 import org.gradle.api.Project;
-import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.ConventionMapping;
 import org.gradle.api.internal.IConventionAware;
@@ -33,11 +32,10 @@ import java.lang.management.OperatingSystemMXBean;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import fr.putnami.gwt.gradle.PwtLibPlugin;
 import fr.putnami.gwt.gradle.action.JavaAction;
 import fr.putnami.gwt.gradle.extension.CompilerOption;
 import fr.putnami.gwt.gradle.extension.PutnamiExtension;
-import fr.putnami.gwt.gradle.util.JavaCommandBuilder;
+import fr.putnami.gwt.gradle.helper.CompileCommandBuilder;
 
 public class GwtCompileTask extends AbstractTask {
 
@@ -60,71 +58,14 @@ public class GwtCompileTask extends AbstractTask {
 		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
 		CompilerOption compilerOptions = putnami.getCompile();
 
-		JavaAction compileAction = new JavaAction(buildCompileCommand(compilerOptions));
+		CompileCommandBuilder commandBuilder = new CompileCommandBuilder();
+		commandBuilder.configure(getProject(), compilerOptions, getSrc(), getWar(), getModules());
+		JavaAction compileAction = commandBuilder.buildJavaAction();
 		compileAction.execute(this);
 		compileAction.join();
 		if (compileAction.exitValue() != 0) {
 			throw new RuntimeException("Fail to compile GWT modules");
 		}
-	}
-
-	private String buildCompileCommand(CompilerOption compilerOptions) {
-		Configuration sdmConf = getProject().getConfigurations().getByName(PwtLibPlugin.CONF_GWT_SDM);
-		Configuration compileConf = getProject().getConfigurations().getByName(JavaPlugin.COMPILE_CONFIGURATION_NAME);
-
-		JavaCommandBuilder builder = new JavaCommandBuilder();
-		builder.configureJavaArgs(compilerOptions);
-		builder.addJavaArgs("-Dgwt.persistentunitcachedir=" + getProject().getBuildDir() + "/putnami/work/cahce");
-
-		builder.setMainClass("com.google.gwt.dev.Compiler");
-
-		for (File sourceDir : getSrc()) {
-			builder.addClassPath(sourceDir.getAbsolutePath());
-		}
-
-		builder.addClassPath(compileConf.getAsPath());
-		builder.addClassPath(sdmConf.getAsPath());
-
-		builder.addArg("-war", getWar());
-		builder.addArg("-extra", compilerOptions.getExtra());
-		builder.addArg("-workDir", compilerOptions.getWorkDir());
-		builder.addArg("-gen", compilerOptions.getGen());
-		builder.addArg("-deploy", compilerOptions.getDeploy());
-
-		builder.addArg("-logLevel", compilerOptions.getLogLevel());
-		builder.addArg("-localWorkers", compilerOptions.getLocalWorkers());
-		builder.addArgIf(compilerOptions.getFailOnError(), "-failOnError", "-nofailOnError");
-		builder.addArg("-sourceLevel", compilerOptions.getSourceLevel());
-		builder.addArgIf(compilerOptions.getDraftCompile(), "-draftCompile", "-nodraftCompile");
-		builder.addArg("-optimize", compilerOptions.getOptimize());
-		builder.addArg("-style", compilerOptions.getStyle());
-		builder.addArgIf(compilerOptions.getCompileReport(), "-compileReport", "-nocompileReport");
-
-		if (Boolean.TRUE.equals(compilerOptions.getIncremental())) {
-			builder.addArg("-incremental");
-			// builder.addArg("-incrementalCompileWarnings");
-		}
-
-		builder.addArgIf(compilerOptions.getCheckAssertions(), "-checkAssertions", "-nocheckAssertions");
-		builder.addArgIf(compilerOptions.getCheckCasts(), "-XcheckCasts", "-XnocheckCasts");
-		builder.addArgIf(compilerOptions.getEnforceStrictResources(), "-XenforceStrictResources",
-			"-XnoenforceStrictResources");
-		builder.addArgIf(compilerOptions.getClassMetadata(), "-XclassMetadata", "-XnoclassMetadata");
-
-		builder.addArgIf(compilerOptions.getOverlappingSourceWarnings(), "-overlappingSourceWarnings",
-			"-nooverlappingSourceWarnings");
-		builder.addArgIf(compilerOptions.getSaveSource(), "-saveSource", "-nosaveSource");
-		builder.addArg("-XmethodNameDisplayMode", compilerOptions.getMethodNameDisplayMode());
-
-		builder.addArgIf(compilerOptions.getClosureCompiler(), "-XclosureCompiler", "-XnoclosureCompiler");
-
-		builder.addArg("-XjsInteropMode", compilerOptions.getJsInteropMode());
-
-		for (String module : getModules()) {
-			builder.addArg(module);
-		}
-
-		return builder.toString();
 	}
 
 	public void configure(final Project project, final PutnamiExtension extention) {

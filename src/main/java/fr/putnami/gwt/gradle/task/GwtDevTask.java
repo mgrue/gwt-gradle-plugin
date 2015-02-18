@@ -19,11 +19,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import org.gradle.api.Project;
-import org.gradle.api.artifacts.Configuration;
-import org.gradle.api.artifacts.ConfigurationContainer;
-import org.gradle.api.artifacts.Dependency;
-import org.gradle.api.artifacts.DependencySet;
-import org.gradle.api.artifacts.ProjectDependency;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.ConventionMapping;
 import org.gradle.api.internal.IConventionAware;
@@ -40,15 +35,16 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import fr.putnami.gwt.gradle.PwtLibPlugin;
 import fr.putnami.gwt.gradle.action.JavaAction;
 import fr.putnami.gwt.gradle.extension.DevOption;
 import fr.putnami.gwt.gradle.extension.JettyOption;
 import fr.putnami.gwt.gradle.extension.PutnamiExtension;
-import fr.putnami.gwt.gradle.util.JavaCommandBuilder;
+import fr.putnami.gwt.gradle.helper.CodeServerBuilder;
+import fr.putnami.gwt.gradle.helper.JettyServerBuilder;
+import fr.putnami.gwt.gradle.util.ProjectUtils;
 import fr.putnami.gwt.gradle.util.ResourceUtils;
 
-public class GwtDevTask extends AbstractJettyTask {
+public class GwtDevTask extends AbstractTask {
 
 	public static final String NAME = "gwtDev";
 
@@ -86,7 +82,7 @@ public class GwtDevTask extends AbstractJettyTask {
 			Throwables.propagate(e);
 		}
 
-		JavaAction jetty = execJetty(jettyOption);
+		JavaAction jetty = execJetty();
 		execSdm();
 		jetty.join();
 	}
@@ -117,73 +113,24 @@ public class GwtDevTask extends AbstractJettyTask {
 		}
 	}
 
-	private JavaAction execSdm() {
-		ConfigurationContainer configs = getProject().getConfigurations();
-		Configuration sdmConf = configs.getByName(PwtLibPlugin.CONF_GWT_SDM);
-		Configuration compileConf = configs.getByName(JavaPlugin.COMPILE_CONFIGURATION_NAME);
-
-		DependencySet depSet = compileConf.getAllDependencies();
-		List<File> subProjectSrc = Lists.newArrayList();
-		for (Dependency dep : depSet) {
-			if (dep instanceof ProjectDependency) {
-				ProjectDependency projectDependency = (ProjectDependency) dep;
-				JavaPluginConvention javaConvention =
-					projectDependency.getDependencyProject().getConvention().getPlugin(JavaPluginConvention.class);
-				SourceSet mainSourceSet = javaConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-
-				for (File file : mainSourceSet.getAllSource().getSrcDirs()) {
-					subProjectSrc.add(file);
-				}
-			}
-		}
-
-		SourceSet mainSourceSet = getProject().getConvention()
-			.getPlugin(JavaPluginConvention.class).getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-
+	private JavaAction execJetty() {
 		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
-		DevOption devOption = putnami.getDev();
+		JettyServerBuilder jettyBuilder = new JettyServerBuilder();
+		jettyBuilder.configure(getProject(), putnami.getJetty());
+		JavaAction jetty = jettyBuilder.buildJavaAction();
+		jetty.execute(this);
+		return jetty;
+	}
 
-		JavaCommandBuilder builder = new JavaCommandBuilder();
-		builder.configureJavaArgs(putnami.getDev());
-		builder.setMainClass("com.google.gwt.dev.codeserver.CodeServer");
-		builder.addClassPath(sdmConf.getAsPath());
-		builder.addClassPath(mainSourceSet.getRuntimeClasspath().getAsPath());
+	private JavaAction execSdm() {
+		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
 
-		if (getSrc() != null) {
-			for (File srcDir : getSrc()) {
-				if (srcDir.isDirectory()) {
-				builder.addArg("-src", srcDir);
-				}
-			}
-		}
-		for (File srcDir : subProjectSrc) {
-			if (srcDir.isDirectory()) {
-				builder.addArg("-src", srcDir);
-			}
-		}
-		builder.addArgIf(devOption.getAllowMissingSrc(), "-allowMissingSrc", "-noallowMissingSrc");
-		builder.addArg("-bindAddress", devOption.getBindAddress());
-		builder.addArgIf(devOption.getCompileTest(), "-compileTest ", "-nocompileTest");
-		if (Boolean.TRUE.equals(devOption.getCompileTest())) {
-			builder.addArg("-compileTestRecompiles", devOption.getCompileTestRecompiles());
-		}
-		builder.addArgIf(devOption.getFailOnError(), "-failOnError", "-nofailOnError");
-		builder.addArgIf(devOption.getPrecompile(), "-precompile", "-noprecompile");
-		builder.addArg("-port", devOption.getPort());
-		builder.addArgIf(devOption.getEnforceStrictResources(), "-XenforceStrictResources ", "-XnoenforceStrictResources");
-		builder.addArg("-workDir", ResourceUtils.ensureDir(devOption.getWorkDir()));
-		builder.addArg("-launcherDir", ResourceUtils.ensureDir(devOption.getLauncherDir()));
-		builder.addArgIf(devOption.getPrecompile(), "-incremental", "-noincremental");
-		builder.addArg("-sourceLevel", devOption.getSourceLevel());
-		builder.addArg("-logLevel", devOption.getLogLevel());
-		builder.addArg("-XmethodNameDisplayMode", devOption.getMethodNameDisplayMode());
-		builder.addArg("-XjsInteropMode", devOption.getJsInteropMode());
+		CodeServerBuilder sdmBuilder = new CodeServerBuilder();
+		sdmBuilder.addSrc(getSrc());
+		sdmBuilder.addSrc(ProjectUtils.listProjectDepsSrcDirs(getProject()));
+		sdmBuilder.configure(getProject(), putnami.getDev(), getModules());
 
-		for (String module : getModules()) {
-			builder.addArg(module);
-		}
-
-		JavaAction sdmAction = new JavaAction(builder.toString());
+		JavaAction sdmAction = sdmBuilder.buildJavaAction();
 		sdmAction.execute(this);
 
 		return sdmAction;

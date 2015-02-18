@@ -27,9 +27,10 @@ import java.io.IOException;
 import fr.putnami.gwt.gradle.action.JavaAction;
 import fr.putnami.gwt.gradle.extension.JettyOption;
 import fr.putnami.gwt.gradle.extension.PutnamiExtension;
+import fr.putnami.gwt.gradle.helper.JettyServerBuilder;
 import fr.putnami.gwt.gradle.util.ResourceUtils;
 
-public class GwtRunTask extends AbstractJettyTask {
+public class GwtRunTask extends AbstractTask {
 
 	public static final String NAME = "gwtRun";
 
@@ -42,6 +43,7 @@ public class GwtRunTask extends AbstractJettyTask {
 
 	@TaskAction
 	public void exec() throws Exception {
+		System.out.println("2");
 		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
 		JettyOption jettyOption = putnami.getJetty();
 
@@ -54,8 +56,20 @@ public class GwtRunTask extends AbstractJettyTask {
 			Throwables.propagate(e);
 		}
 
-		JavaAction jetty = execJetty(jettyOption);
+		System.out.println("3");
+		JavaAction jetty = execJetty();
+		System.out.println("4");
 		jetty.join();
+	}
+
+	private JavaAction execJetty() {
+		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
+		JettyServerBuilder jettyBuilder = new JettyServerBuilder();
+		jettyBuilder.configure(getProject(), putnami.getJetty());
+		System.out.println(jettyBuilder.toString());
+		JavaAction jetty = jettyBuilder.buildJavaAction();
+		jetty.execute(this);
+		return jetty;
 	}
 
 	public void configureJetty(final JettyOption options) {
