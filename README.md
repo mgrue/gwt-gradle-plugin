@@ -139,8 +139,6 @@ putnami{
 		optimize = 5
 		/** Fail compilation if any input file contains an error. **/
 		failOnError = false
-		/** Validate all source code, but do not compile. **/
-		validateOnly = false
 		/** Specifies Java source level. ("1.6", "1.7")*/
 		sourceLevel = "1.7"
 		/** The number of local workers to use when compiling permutations. **/

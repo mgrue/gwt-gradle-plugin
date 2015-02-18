@@ -71,15 +71,7 @@ public class GwtCompileTask extends AbstractTask {
 	public void configure(final Project project, final PutnamiExtension extention) {
 		final CompilerOption options = extention.getCompile();
 
-		final File buildDir = new File(project.getBuildDir(), "putnami");
-
-		options.setWar(new File(buildDir, "out"));
-		options.setWorkDir(new File(buildDir, "work"));
-		options.setGen(new File(buildDir, "extra/gen"));
-		options.setDeploy(new File(buildDir, "extra/deploy"));
-		options.setExtra(new File(buildDir, "extra"));
-		options.setSaveSourceOutput(new File(buildDir, "extra/source"));
-		options.setMissingDepsFile(new File(buildDir, "extra/missingDepsFile"));
+		options.init(getProject());
 		options.setLocalWorkers(evalWorkers(options));
 
 		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
@@ -88,7 +80,6 @@ public class GwtCompileTask extends AbstractTask {
 			.files(project.files(mainSourceSet.getOutput().getResourcesDir()))
 			.plus(project.files(mainSourceSet.getOutput().getClassesDir()))
 			.plus(getProject().files(mainSourceSet.getAllSource().getSrcDirs()));
-		// .plus(mainSourceSet.getResources());
 
 		ConventionMapping mapping = ((IConventionAware) this).getConventionMapping();
 
@@ -98,7 +89,6 @@ public class GwtCompileTask extends AbstractTask {
 				return extention.getModule();
 			}
 		});
-
 		mapping.map("war", new Callable<File>() {
 			@Override
 			public File call() throws Exception {
@@ -118,7 +108,8 @@ public class GwtCompileTask extends AbstractTask {
 		OperatingSystemMXBean osMBean = ManagementFactory.getOperatingSystemMXBean();
 		if (osMBean instanceof com.sun.management.OperatingSystemMXBean) {
 			com.sun.management.OperatingSystemMXBean sunOsMBean = (com.sun.management.OperatingSystemMXBean) osMBean;
-			long nbFreeMemInGb = sunOsMBean.getFreePhysicalMemorySize() / (1024 * 1024 * options.getLocalWorkersMem());
+			long memPerWorker = 1024L * 1024L * options.getLocalWorkersMem();
+			long nbFreeMemInGb = sunOsMBean.getFreePhysicalMemorySize() / memPerWorker;
 
 			if (nbFreeMemInGb < workers) {
 				workers = nbFreeMemInGb;

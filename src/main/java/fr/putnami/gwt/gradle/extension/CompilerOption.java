@@ -14,6 +14,8 @@
  */
 package fr.putnami.gwt.gradle.extension;
 
+import org.gradle.api.Project;
+
 import java.io.File;
 
 /**
@@ -88,10 +90,6 @@ public class CompilerOption extends JavaOption {
 	 * Fail compilation if any input file contains an error.
 	 */
 	private Boolean failOnError;
-	/**
-	 * Validate all source code, but do not compile.
-	 */
-	private Boolean validateOnly;
 	/**
 	 * Specifies Java source level.
 	 */
@@ -252,14 +250,6 @@ public class CompilerOption extends JavaOption {
 		this.failOnError = failOnError;
 	}
 
-	public Boolean getValidateOnly() {
-		return validateOnly;
-	}
-
-	public void setValidateOnly(Boolean validateOnly) {
-		this.validateOnly = validateOnly;
-	}
-
 	public String getSourceLevel() {
 		return sourceLevel;
 	}
@@ -390,6 +380,18 @@ public class CompilerOption extends JavaOption {
 
 	public void setJsInteropMode(String jsInteropMode) {
 		this.jsInteropMode = JsInteropMode.valueOf(jsInteropMode);
+	}
+
+	public void init(Project project) {
+		final File buildDir = new File(project.getBuildDir(), "putnami");
+
+		setWar(new File(buildDir, "out"));
+		setWorkDir(new File(buildDir, "work"));
+		setGen(new File(buildDir, "extra/gen"));
+		setDeploy(new File(buildDir, "extra/deploy"));
+		setExtra(new File(buildDir, "extra"));
+		setSaveSourceOutput(new File(buildDir, "extra/source"));
+		setMissingDepsFile(new File(buildDir, "extra/missingDepsFile"));
 	}
 
 }
