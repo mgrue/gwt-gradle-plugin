@@ -31,6 +31,10 @@ public class DevOption extends JavaOption {
 	 */
 	private String bindAddress = "127.0.0.1";
 	/**
+	 * Stop compiling if a module has a Java file with a compile error, even if unused.
+	 */
+	private Boolean noServer = false;
+	/**
 	 * Exits after compiling the modules. The exit code will be 0 if the compile succeeded
 	 */
 	private Boolean compileTest = false;
@@ -101,6 +105,14 @@ public class DevOption extends JavaOption {
 
 	public void setBindAddress(String bindAddress) {
 		this.bindAddress = bindAddress;
+	}
+
+	public Boolean getNoServer() {
+		return noServer;
+	}
+
+	public void setNoServer(Boolean noServer) {
+		this.noServer = noServer;
 	}
 
 	public Boolean getCompileTest() {

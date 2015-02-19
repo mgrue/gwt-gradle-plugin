@@ -93,22 +93,28 @@ public class GwtDevTask extends AbstractTask {
 
 		File warDir = sdmOption.getWar();
 
-		SourceSet mainSourceSet = javaConvention.getSourceSets().getByName("main");
 		ResourceUtils.copyDirectory(warConvention.getWebAppDir(), warDir);
-		File classesDir = ResourceUtils.ensureDir(new File(warDir, "WEB-INF/classes"));
-		for (File file : mainSourceSet.getResources().getSrcDirs()) {
-			ResourceUtils.copyDirectory(file, classesDir);
-		}
-		ResourceUtils.copyDirectory(mainSourceSet.getOutput().getClassesDir(), classesDir);
-		for (File file : mainSourceSet.getOutput().getFiles()) {
-			if (file.exists() && file.isFile()) {
-				ResourceUtils.copy(file, new File(classesDir, file.getName()));
+
+		if (Boolean.TRUE.equals(sdmOption.getNoServer())) {
+			File webInfDir = ResourceUtils.ensureDir(new File(warDir, "WEB-INF"));
+			ResourceUtils.deleteDirectory(webInfDir);
+		} else {
+			SourceSet mainSourceSet = javaConvention.getSourceSets().getByName("main");
+			File classesDir = ResourceUtils.ensureDir(new File(warDir, "WEB-INF/classes"));
+			for (File file : mainSourceSet.getResources().getSrcDirs()) {
+				ResourceUtils.copyDirectory(file, classesDir);
 			}
-		}
-		File libDir = ResourceUtils.ensureDir(new File(warDir, "WEB-INF/lib"));
-		for (File file : mainSourceSet.getRuntimeClasspath()) {
-			if (file.exists() && file.isFile()) {
-				ResourceUtils.copy(file, new File(libDir, file.getName()));
+			ResourceUtils.copyDirectory(mainSourceSet.getOutput().getClassesDir(), classesDir);
+			for (File file : mainSourceSet.getOutput().getFiles()) {
+				if (file.exists() && file.isFile()) {
+					ResourceUtils.copy(file, new File(classesDir, file.getName()));
+				}
+			}
+			File libDir = ResourceUtils.ensureDir(new File(warDir, "WEB-INF/lib"));
+			for (File file : mainSourceSet.getRuntimeClasspath()) {
+				if (file.exists() && file.isFile()) {
+					ResourceUtils.copy(file, new File(libDir, file.getName()));
+				}
 			}
 		}
 	}
