@@ -23,10 +23,6 @@ public class JettyOption extends JavaOption {
 	 */
 	private File jettyConf;
 	/**
-	 * war to deploy.
-	 */
-	private File war;
-	/**
 	 * interface to listen on.
 	 */
 	private String bindAddress = "";
@@ -61,18 +57,6 @@ public class JettyOption extends JavaOption {
 
 	public void setJettyConf(String jettyConf) {
 		this.jettyConf = new File(jettyConf);
-	}
-
-	public File getWar() {
-		return war;
-	}
-
-	public void setWar(File war) {
-		this.war = war;
-	}
-
-	public void setSar(String war) {
-		this.war = new File(war);
 	}
 
 	public String getBindAddress() {
