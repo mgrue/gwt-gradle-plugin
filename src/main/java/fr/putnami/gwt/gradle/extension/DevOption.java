@@ -28,6 +28,8 @@ public class DevOption extends JavaOption {
 	 * Stop compiling if a module has a Java file with a compile error, even if unused.
 	 */
 	private Boolean noServer;
+
+	private Boolean strict;
 	/**
 	 * Exits after compiling the modules. The exit code will be 0 if the compile succeeded
 	 */
@@ -96,6 +98,14 @@ public class DevOption extends JavaOption {
 
 	public void setNoServer(Boolean noServer) {
 		this.noServer = noServer;
+	}
+
+	public Boolean getStrict() {
+		return strict;
+	}
+
+	public void setStrict(Boolean strict) {
+		this.strict = strict;
 	}
 
 	public Boolean getCompileTest() {

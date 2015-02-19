@@ -151,17 +151,17 @@ The Putnami Gradle Plugin is usefull either to build GWT's library or webapp.
 
 ```groovy
 putnami{
-	/** Module to compile, can be multiple **/
+	/** Module to compile, can be multiple */
 	module 'fr.putnami.gradle.sample.multimodule.app.App'
 	
-	/** GWT version **/
-	gwtVersion = "2.7.0";
-	/** Add the gwt-servlet lib **/
-	gwtServletLib = true;
-	/** Add the gwt-elemental lib **/
-	gwtElementalLib = false;
-	/** Jetty version **/
-	jettyVersion = "9.2.7.v20150116";
+	/** GWT version */
+	gwtVersion = "2.7.0"
+	/** Add the gwt-servlet lib */
+	gwtServletLib = true
+	/** Add the gwt-elemental lib */
+	gwtElementalLib = false
+	/** Jetty version */
+	jettyVersion = "9.2.7.v20150116"
 }
 ```
 
@@ -172,34 +172,32 @@ Can be tuned with the following parametters:
 ```groovy
 putnami{
 	compile {
-		/** The level of logging detail (ERROR, WARN, INFO, TRACE, DEBUG, SPAM, ALL) **/
+		/** The level of logging detail (ERROR, WARN, INFO, TRACE, DEBUG, SPAM, ALL) */
 		logLevel = INFO
-		/** Compile a report that tells the "Story of Your Compile". **/
+		/** Compile a report that tells the "Story of Your Compile". */
 		compileReport = true
-		/** Compile quickly with minimal optimizations. **/
+		/** Compile quickly with minimal optimizations. */
 		draftCompile = true
-		/** Include assert statements in compiled output. **/
+		/** Include assert statements in compiled output. */
 		checkAssertions = false
 		/** Script output style. (OBF, PRETTY, DETAILED)*/
 		style = "OBF"
-		/** Sets the optimization level used by the compiler. 0=none 9=maximum. **/
+		/** Sets the optimization level used by the compiler. 0=none 9=maximum. */
 		optimize = 5
-		/** Fail compilation if any input file contains an error. **/
+		/** Fail compilation if any input file contains an error. */
 		failOnError = false
 		/** Specifies Java source level. ("1.6", "1.7")*/
 		sourceLevel = "1.7"
-		/** The number of local workers to use when compiling permutations. **/
+		/** The number of local workers to use when compiling permutations. */
 		localWorkers = 2
-		/** The number of local workers to use when compiling permutations. **/
+		/** The number of local workers to use when compiling permutations. */
 		localWorkersMem = 2048
 		/** Emit extra information allow chrome dev tools to display Java identifiers in many places instead of JavaScript functions. (NONE, ONLY_METHOD_NAME, ABBREVIATED, FULL)*/
 		methodNameDisplayMode = "NONE"
-		/** Specifies JsInterop mode, either NONE, JS, or CLOSURE. **/
+		/** Specifies JsInterop mode, either NONE, JS, or CLOSURE. */
 		jsInteropMode = "NONE"
 		
-		/**
-		* Java args
-		*/
+		/** Java args */
 		maxHeapSize="1024m"
 		minHeapSize="512m"
 		maxPermSize="128m"
@@ -221,22 +219,20 @@ Can be tuned with the following parametters:
 ```groovy
 putnami{
 	jetty {
-		/** interface to listen on. **/
+		/** interface to listen on. */
 		bindAddress = "127.0.0.1"
-		/** request log filename. **/
+		/** request log filename. */
 		logRequestFile
-		/** info/warn/debug log filename. **/
+		/** info/warn/debug log filename. */
 		logFile
-		/** port to listen on. **/
+		/** port to listen on. */
 		port = 8080
-		/** port to listen for stop command. **/
+		/** port to listen for stop command. */
 		stopPort = 8089
-		/** security string for stop command. **/
+		/** security string for stop command. */
 		stopKey = "JETTY-STOP"
 		
-		/**
-		* Java args
-		*/
+		/** Java args */
 		maxHeapSize="1024m"
 		minHeapSize="512m"
 		maxPermSize="128m"
@@ -255,30 +251,28 @@ The SDM is tuned with the following parametters, the jetty is configured from th
 ```groovy
 putnami{
 	dev {
-		/** Allows -src flags to reference missing directories. **/
-		allowMissingSrc = false
-		/** The ip address of the code server. **/
+		/** The ip address of the code server. */
 		bindAddress = "127.0.0.1"
-		/** Stop compiling if a module has a Java file with a compile error, even if unused. **/
+		/** strick mode. */
+		strict = true
+		/** Stop compiling if a module has a Java file with a compile error, even if unused. */
 		failOnError = false
-		/** Precompile modules. **/
+		/** Precompile modules. */
 		precompile = false
-		/** The port where the code server will run. **/
+		/** The port where the code server will run. */
 		port = 9876
-		/** EXPERIMENTAL: Don't implicitly depend on "client" and "public" when a module doesn't define anydependencies. **/
+		/** EXPERIMENTAL: Don't implicitly depend on "client" and "public" when a module doesn't define anydependencies. */
 		enforceStrictResources = false
 		/** Specifies Java source level ("1.6", "1.7").
 		sourceLevel = "1.6"
-		/** The level of logging detail (ERROR, WARN, INFO, TRACE, DEBUG, SPAM, ALL) **/
+		/** The level of logging detail (ERROR, WARN, INFO, TRACE, DEBUG, SPAM, ALL) */
 		logLevel = "INFO"
-		/** Specifies JsInterop mode (NONE, JS, CLOSURE). **/
+		/** Specifies JsInterop mode (NONE, JS, CLOSURE). */
 		jsInteropMode = "JS"
-		/** Emit extra information allow chrome dev tools to display Java identifiers in many placesinstead of JavaScript functions. (NONE, ONLY_METHOD_NAME, ABBREVIATED, FULL) **/
+		/** Emit extra information allow chrome dev tools to display Java identifiers in many placesinstead of JavaScript functions. (NONE, ONLY_METHOD_NAME, ABBREVIATED, FULL) */
 		methodNameDisplayMode = "NONE"
 		
-		/**
-		* Java args
-		*/
+		/** Java args */
 		maxHeapSize="1024m"
 		minHeapSize="512m"
 		maxPermSize="128m"

@@ -55,6 +55,7 @@ public class CodeServerBuilder extends JavaCommandBuilder {
 		addArgIf(devOption.getFailOnError(), "-failOnError", "-nofailOnError");
 		addArgIf(devOption.getPrecompile(), "-precompile", "-noprecompile");
 		addArg("-port", devOption.getPort());
+		addArgIf(devOption.getStrict(), "-strict");
 		addArgIf(devOption.getEnforceStrictResources(), "-XenforceStrictResources ", "-XnoenforceStrictResources");
 		addArg("-workDir", ResourceUtils.ensureDir(devOption.getWorkDir()));
 		addArgIf(devOption.getIncremental(), "-incremental", "-noincremental");

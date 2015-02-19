@@ -87,8 +87,8 @@ public abstract class JavaCommandBuilder {
 		}
 	}
 
-	public void addArgIf(boolean condition, String value) {
-		if (condition) {
+	public void addArgIf(Boolean condition, String value) {
+		if (Boolean.TRUE.equals(condition)) {
 			this.args.add(value);
 		}
 	}
