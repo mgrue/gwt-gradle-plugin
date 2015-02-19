@@ -195,6 +195,9 @@ putnami{
 		/** Specifies JsInterop mode, either NONE, JS, or CLOSURE. */
 		jsInteropMode = "NONE"
 		
+		/** shown all compile errors */
+                strict = false
+		
 		/** Java args */
 		maxHeapSize="1024m"
 		minHeapSize="512m"
