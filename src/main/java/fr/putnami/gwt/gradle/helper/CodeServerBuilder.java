@@ -48,10 +48,6 @@ public class CodeServerBuilder extends JavaCommandBuilder {
 		addClassPath(mainSourceSet.getRuntimeClasspath().getAsPath());
 
 		addArg("-bindAddress", devOption.getBindAddress());
-		addArgIf(devOption.getCompileTest(), "-compileTest ", "-nocompileTest");
-		if (Boolean.TRUE.equals(devOption.getCompileTest())) {
-			addArg("-compileTestRecompiles", devOption.getCompileTestRecompiles());
-		}
 		addArgIf(devOption.getFailOnError(), "-failOnError", "-nofailOnError");
 		addArgIf(devOption.getPrecompile(), "-precompile", "-noprecompile");
 		addArg("-port", devOption.getPort());

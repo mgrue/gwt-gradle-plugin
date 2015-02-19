@@ -31,14 +31,6 @@ public class DevOption extends JavaOption {
 
 	private Boolean strict;
 	/**
-	 * Exits after compiling the modules. The exit code will be 0 if the compile succeeded
-	 */
-	private Boolean compileTest;
-	/**
-	 * The number of times to recompile (after the first one) during a compile test.
-	 */
-	private Integer compileTestRecompiles;
-	/**
 	 * Stop compiling if a module has a Java file with a compile error, even if unused.
 	 */
 	private Boolean failOnError;
@@ -106,22 +98,6 @@ public class DevOption extends JavaOption {
 
 	public void setStrict(Boolean strict) {
 		this.strict = strict;
-	}
-
-	public Boolean getCompileTest() {
-		return compileTest;
-	}
-
-	public void setCompileTest(Boolean compileTest) {
-		this.compileTest = compileTest;
-	}
-
-	public Integer getCompileTestRecompiles() {
-		return compileTestRecompiles;
-	}
-
-	public void setCompileTestRecompiles(Integer compileTestRecompiles) {
-		this.compileTestRecompiles = compileTestRecompiles;
 	}
 
 	public Boolean getFailOnError() {
