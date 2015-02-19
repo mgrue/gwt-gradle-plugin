@@ -47,7 +47,6 @@ public class CodeServerBuilder extends JavaCommandBuilder {
 		addClassPath(sdmConf.getAsPath());
 		addClassPath(mainSourceSet.getRuntimeClasspath().getAsPath());
 
-		addArgIf(devOption.getAllowMissingSrc(), "-allowMissingSrc", "-noallowMissingSrc");
 		addArg("-bindAddress", devOption.getBindAddress());
 		addArgIf(devOption.getCompileTest(), "-compileTest ", "-nocompileTest");
 		if (Boolean.TRUE.equals(devOption.getCompileTest())) {
@@ -59,7 +58,7 @@ public class CodeServerBuilder extends JavaCommandBuilder {
 		addArgIf(devOption.getEnforceStrictResources(), "-XenforceStrictResources ", "-XnoenforceStrictResources");
 		addArg("-workDir", ResourceUtils.ensureDir(devOption.getWorkDir()));
 		addArg("-launcherDir", ResourceUtils.ensureDir(devOption.getLauncherDir()));
-		addArgIf(devOption.getPrecompile(), "-incremental", "-noincremental");
+		addArgIf(devOption.getIncremental(), "-incremental", "-noincremental");
 		addArg("-sourceLevel", devOption.getSourceLevel());
 		addArg("-logLevel", devOption.getLogLevel());
 		addArg("-XmethodNameDisplayMode", devOption.getMethodNameDisplayMode());

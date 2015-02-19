@@ -23,21 +23,17 @@ import fr.putnami.gwt.gradle.util.ResourceUtils;
 public class DevOption extends JavaOption {
 
 	/**
-	 * Allows -src flags to reference missing directories.
-	 */
-	private Boolean allowMissingSrc = false;
-	/**
 	 * The ip address of the code server.
 	 */
-	private String bindAddress = "127.0.0.1";
+	private String bindAddress;
 	/**
 	 * Stop compiling if a module has a Java file with a compile error, even if unused.
 	 */
-	private Boolean noServer = false;
+	private Boolean noServer;
 	/**
 	 * Exits after compiling the modules. The exit code will be 0 if the compile succeeded
 	 */
-	private Boolean compileTest = false;
+	private Boolean compileTest;
 	/**
 	 * The number of times to recompile (after the first one) during a compile test.
 	 */
@@ -45,7 +41,7 @@ public class DevOption extends JavaOption {
 	/**
 	 * Stop compiling if a module has a Java file with a compile error, even if unused.
 	 */
-	private Boolean failOnError = false;
+	private Boolean failOnError;
 	/**
 	 * Precompile modules.
 	 */
@@ -58,7 +54,7 @@ public class DevOption extends JavaOption {
 	 * EXPERIMENTAL: Don't implicitly depend on "client" and "public" when a module doesn't define any
 	 * dependencies.
 	 */
-	private Boolean enforceStrictResources = false;
+	private Boolean enforceStrictResources;
 	/**
 	 * The root of the directory tree where the code server willwrite compiler output. If not
 	 * supplied, a temporary directorywill be used.
@@ -71,7 +67,7 @@ public class DevOption extends JavaOption {
 	/**
 	 * Compiles faster by reusing data from the previous compile.
 	 */
-	private Boolean incremental = true;
+	private Boolean incremental;
 	/**
 	 * Specifies Java source level.
 	 */
@@ -83,21 +79,14 @@ public class DevOption extends JavaOption {
 	/**
 	 * Specifies JsInterop mode.
 	 */
-	private JsInteropMode jsInteropMode = JsInteropMode.NONE;
+	private JsInteropMode jsInteropMode;
 	/**
 	 * Emit extra information allow chrome dev tools to display Java identifiers in many places
 	 * instead of JavaScript functions.
 	 */
-	private MethodNameDisplayMode methodNameDisplayMode = MethodNameDisplayMode.NONE;
+	private MethodNameDisplayMode methodNameDisplayMode;
+
 	private File war;
-
-	public Boolean getAllowMissingSrc() {
-		return allowMissingSrc;
-	}
-
-	public void setAllowMissingSrc(Boolean allowMissingSrc) {
-		this.allowMissingSrc = allowMissingSrc;
-	}
 
 	public String getBindAddress() {
 		return bindAddress;
