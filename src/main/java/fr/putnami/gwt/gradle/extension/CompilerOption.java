@@ -59,6 +59,10 @@ public class CompilerOption extends JavaOption {
 	 */
 	private LogLevel logLevel;
 	/**
+	 * Shown all compile errors.
+	 */
+	private Boolean strict;
+	/**
 	 * Compile a report that tells the "Story of Your Compile".
 	 */
 	private Boolean compileReport;
@@ -144,6 +148,14 @@ public class CompilerOption extends JavaOption {
 
 	public void setLogLevel(String logLevel) {
 		this.logLevel = LogLevel.valueOf(logLevel);
+	}
+
+	public Boolean getStrict() {
+		return strict;
+	}
+
+	public void setStrict(Boolean strict) {
+		this.strict = strict;
 	}
 
 	public File getWorkDir() {
@@ -380,6 +392,10 @@ public class CompilerOption extends JavaOption {
 
 	public void setJsInteropMode(String jsInteropMode) {
 		this.jsInteropMode = JsInteropMode.valueOf(jsInteropMode);
+	}
+
+	public void setJsInteropMode(JsInteropMode jsInteropMode) {
+		this.jsInteropMode = jsInteropMode;
 	}
 
 	public void init(Project project) {

@@ -28,7 +28,9 @@ public class DevOption extends JavaOption {
 	 * Stop compiling if a module has a Java file with a compile error, even if unused.
 	 */
 	private Boolean noServer;
-
+	/**
+	 * Shown all compile errors.
+	 */
 	private Boolean strict;
 	/**
 	 * Stop compiling if a module has a Java file with a compile error, even if unused.

@@ -56,18 +56,14 @@ public class CompileCommandBuilder extends JavaCommandBuilder {
 
 		addArg("-logLevel", compilerOptions.getLogLevel());
 		addArg("-localWorkers", compilerOptions.getLocalWorkers());
+		addArgIf(compilerOptions.getStrict(), "-strict");
 		addArgIf(compilerOptions.getFailOnError(), "-failOnError", "-nofailOnError");
 		addArg("-sourceLevel", compilerOptions.getSourceLevel());
 		addArgIf(compilerOptions.getDraftCompile(), "-draftCompile", "-nodraftCompile");
 		addArg("-optimize", compilerOptions.getOptimize());
 		addArg("-style", compilerOptions.getStyle());
 		addArgIf(compilerOptions.getCompileReport(), "-compileReport", "-nocompileReport");
-
-		if (Boolean.TRUE.equals(compilerOptions.getIncremental())) {
-			addArg("-incremental");
-			// addArg("-incrementalCompileWarnings");
-		}
-
+		addArgIf(compilerOptions.getIncremental(), "-incremental");
 		addArgIf(compilerOptions.getCheckAssertions(), "-checkAssertions", "-nocheckAssertions");
 		addArgIf(compilerOptions.getCheckCasts(), "-XcheckCasts", "-XnocheckCasts");
 		addArgIf(compilerOptions.getEnforceStrictResources(), "-XenforceStrictResources",
