@@ -43,12 +43,11 @@ public class GwtRunTask extends AbstractTask {
 
 	@TaskAction
 	public void exec() throws Exception {
-		System.out.println("2");
 		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
 		JettyOption jettyOption = putnami.getJetty();
 
 		try {
-			ResourceUtils.copy("/stub.jetty-run-conf.xml", jettyOption.getJettyConf(),
+			ResourceUtils.copy("/stub.jetty-conf.xml", jettyOption.getJettyConf(),
 				new ImmutableMap.Builder<String, String>()
 					.put("__WAR_FILE__", jettyOption.getWar().getAbsolutePath())
 					.build());
@@ -56,9 +55,7 @@ public class GwtRunTask extends AbstractTask {
 			Throwables.propagate(e);
 		}
 
-		System.out.println("3");
 		JavaAction jetty = execJetty();
-		System.out.println("4");
 		jetty.join();
 	}
 
@@ -66,7 +63,6 @@ public class GwtRunTask extends AbstractTask {
 		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
 		JettyServerBuilder jettyBuilder = new JettyServerBuilder();
 		jettyBuilder.configure(getProject(), putnami.getJetty());
-		System.out.println(jettyBuilder.toString());
 		JavaAction jetty = jettyBuilder.buildJavaAction();
 		jetty.execute(this);
 		return jetty;

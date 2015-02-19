@@ -18,8 +18,6 @@ import org.gradle.api.Project;
 
 import java.io.File;
 
-import fr.putnami.gwt.gradle.util.ResourceUtils;
-
 public class DevOption extends JavaOption {
 
 	/**
@@ -60,10 +58,6 @@ public class DevOption extends JavaOption {
 	 * supplied, a temporary directorywill be used.
 	 */
 	private File workDir;
-	/**
-	 * An output directory where files for launching Super Dev Mode will be written.
-	 */
-	private File launcherDir;
 	/**
 	 * Compiles faster by reusing data from the previous compile.
 	 */
@@ -164,18 +158,6 @@ public class DevOption extends JavaOption {
 		this.workDir = new File(workDir);
 	}
 
-	public File getLauncherDir() {
-		return launcherDir;
-	}
-
-	public void setLauncherDir(File launcherDir) {
-		this.launcherDir = launcherDir;
-	}
-
-	public void setLauncherDir(String launcherDir) {
-		this.launcherDir = new File(launcherDir);
-	}
-
 	public Boolean getIncremental() {
 		return incremental;
 	}
@@ -227,9 +209,8 @@ public class DevOption extends JavaOption {
 	public void init(Project project) {
 		final File buildDir = new File(project.getBuildDir(), "putnami");
 
-		setLauncherDir(ResourceUtils.ensureDir(buildDir, "conf"));
-		setWar(ResourceUtils.ensureDir(buildDir, "warDev"));
-		setWorkDir(ResourceUtils.ensureDir(buildDir, "work"));
+		setWar(new File(buildDir, "warDev"));
+		setWorkDir(new File(buildDir, "work"));
 	}
 
 }

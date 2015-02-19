@@ -59,7 +59,6 @@ public class JettyServerBuilder extends JavaCommandBuilder {
 	}
 
 	public JavaAction buildJavaAction() {
-		System.out.println(this.toString());
 		return new JavaAction(this.toString());
 	}
 }

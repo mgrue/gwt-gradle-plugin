@@ -34,8 +34,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Semaphore;
 
 import fr.putnami.gwt.gradle.action.JavaAction;
+import fr.putnami.gwt.gradle.action.JavaAction.ProcessLogger;
 import fr.putnami.gwt.gradle.extension.DevOption;
 import fr.putnami.gwt.gradle.extension.JettyOption;
 import fr.putnami.gwt.gradle.extension.PutnamiExtension;
@@ -66,15 +68,12 @@ public class GwtDevTask extends AbstractTask {
 
 		createWarExploded(sdmOption);
 
+		ResourceUtils.ensureDir(sdmOption.getWar());
+		ResourceUtils.ensureDir(sdmOption.getWorkDir());
+
 		try {
-			File webOverrideFile = ResourceUtils.copy(
-				"/stub.web-dev-override.xml", new File(getProject().getBuildDir(), "putnami/conf/web-dev-override.xml"),
+			ResourceUtils.copy("/stub.jetty-conf.xml", jettyOption.getJettyConf(),
 				new ImmutableMap.Builder<String, String>()
-					.put("__LAUNCHER_DIR__", sdmOption.getLauncherDir().getAbsolutePath() + "")
-					.build());
-			ResourceUtils.copy("/stub.jetty-dev-conf.xml", jettyOption.getJettyConf(),
-				new ImmutableMap.Builder<String, String>()
-					.put("__WEB_OVERRIDE__", webOverrideFile.getAbsolutePath())
 					.put("__WAR_FILE__", sdmOption.getWar().getAbsolutePath())
 					.build());
 
@@ -82,8 +81,9 @@ public class GwtDevTask extends AbstractTask {
 			Throwables.propagate(e);
 		}
 
-		JavaAction jetty = execJetty();
 		execSdm();
+
+		JavaAction jetty = execJetty();
 		jetty.join();
 	}
 
@@ -130,15 +130,31 @@ public class GwtDevTask extends AbstractTask {
 
 	private JavaAction execSdm() {
 		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
+		DevOption devOption = putnami.getDev();
 
 		CodeServerBuilder sdmBuilder = new CodeServerBuilder();
 		sdmBuilder.addSrc(getSrc());
 		sdmBuilder.addSrc(ProjectUtils.listProjectDepsSrcDirs(getProject()));
 		sdmBuilder.configure(getProject(), putnami.getDev(), getModules());
+		sdmBuilder.addArg("-launcherDir", devOption.getWar());
 
 		JavaAction sdmAction = sdmBuilder.buildJavaAction();
-		sdmAction.execute(this);
 
+		final Semaphore lock = new Semaphore(1);
+
+		sdmAction.setInfoLogger(new ProcessLogger() {
+			@Override
+			protected void printLine(String line) {
+				if (line.contains("The code server is ready")) {
+					lock.release();
+				}
+				super.printLine(line);
+			}
+		});
+
+		lock.acquireUninterruptibly();
+		sdmAction.execute(this);
+		lock.acquireUninterruptibly();
 		return sdmAction;
 	}
 

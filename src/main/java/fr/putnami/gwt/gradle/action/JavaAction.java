@@ -27,13 +27,16 @@ import java.io.InputStreamReader;
 
 public class JavaAction implements Action<Task> {
 
-	protected class ProcessLogger extends Thread {
-		private final InputStream stream;
+	public static class ProcessLogger extends Thread {
+		private InputStream stream;
 		private LogLevel level;
 		private boolean quit = false;
 
-		public ProcessLogger(InputStream stream, LogLevel level) {
+		public void setStream(InputStream stream) {
 			this.stream = stream;
+		}
+
+		public void setLevel(LogLevel level) {
 			this.level = level;
 		}
 
@@ -43,11 +46,7 @@ public class JavaAction implements Action<Task> {
 			try {
 				String line = input.readLine();
 				while (!quit && line != null) {
-					if (level == LogLevel.ERROR) {
-						System.err.println(line);
-					} else {
-						System.out.println(line);
-					}
+					printLine(line);
 					line = input.readLine();
 				}
 			} catch (IOException e) {
@@ -61,6 +60,14 @@ public class JavaAction implements Action<Task> {
 			}
 		}
 
+		protected void printLine(String line) {
+			if (level == LogLevel.ERROR) {
+				System.err.println(line);
+			} else {
+				System.out.println(line);
+			}
+		}
+
 		public void quitLogger() {
 			quit = true;
 		}
@@ -70,8 +77,8 @@ public class JavaAction implements Action<Task> {
 
 	private Process process;
 
-	private ProcessLogger errorLogger;
-	private ProcessLogger infoLogger;
+	private ProcessLogger errorLogger = new ProcessLogger();
+	private ProcessLogger infoLogger = new ProcessLogger();
 
 	public JavaAction(String javaCommand) {
 		super();
@@ -93,10 +100,20 @@ public class JavaAction implements Action<Task> {
 		} catch (IOException e) {
 			throw Throwables.propagate(e);
 		}
-		errorLogger = new ProcessLogger(process.getErrorStream(), LogLevel.ERROR);
+		errorLogger.setStream(process.getErrorStream());
+		errorLogger.setLevel(LogLevel.ERROR);
 		errorLogger.start();
-		infoLogger = new ProcessLogger(process.getInputStream(), LogLevel.INFO);
+		infoLogger.setStream(process.getInputStream());
+		errorLogger.setLevel(LogLevel.INFO);
 		infoLogger.start();
+	}
+
+	public void setErrorLogger(ProcessLogger errorLogger) {
+		this.errorLogger = errorLogger;
+	}
+
+	public void setInfoLogger(ProcessLogger infoLogger) {
+		this.infoLogger = infoLogger;
 	}
 
 	public void kill() {

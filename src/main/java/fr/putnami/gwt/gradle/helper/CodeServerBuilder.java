@@ -57,7 +57,6 @@ public class CodeServerBuilder extends JavaCommandBuilder {
 		addArg("-port", devOption.getPort());
 		addArgIf(devOption.getEnforceStrictResources(), "-XenforceStrictResources ", "-XnoenforceStrictResources");
 		addArg("-workDir", ResourceUtils.ensureDir(devOption.getWorkDir()));
-		addArg("-launcherDir", ResourceUtils.ensureDir(devOption.getLauncherDir()));
 		addArgIf(devOption.getIncremental(), "-incremental", "-noincremental");
 		addArg("-sourceLevel", devOption.getSourceLevel());
 		addArg("-logLevel", devOption.getLogLevel());
