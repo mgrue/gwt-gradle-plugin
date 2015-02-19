@@ -44,8 +44,8 @@ public class CodeServerBuilder extends JavaCommandBuilder {
 
 		configureJavaArgs(devOption);
 
+		addClassPath(mainSourceSet.getCompileClasspath().getAsPath());
 		addClassPath(sdmConf.getAsPath());
-		addClassPath(mainSourceSet.getRuntimeClasspath().getAsPath());
 
 		addArg("-bindAddress", devOption.getBindAddress());
 		addArgIf(devOption.getFailOnError(), "-failOnError", "-nofailOnError");
