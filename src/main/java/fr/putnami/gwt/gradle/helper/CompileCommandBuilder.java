@@ -39,7 +39,7 @@ public class CompileCommandBuilder extends JavaCommandBuilder {
 		Configuration compileConf = project.getConfigurations().getByName(JavaPlugin.COMPILE_CONFIGURATION_NAME);
 
 		configureJavaArgs(compilerOptions);
-		addJavaArgs("-Dgwt.persistentunitcachedir=" + project.getBuildDir() + "/putnami/work/cahce");
+		addJavaArgs("-Dgwt.persistentunitcachedir=" + project.getBuildDir() + "/putnami/work/cache");
 
 		for (File sourceDir : sources) {
 			addClassPath(sourceDir.getAbsolutePath());
