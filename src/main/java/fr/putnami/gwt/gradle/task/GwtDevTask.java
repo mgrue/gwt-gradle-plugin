@@ -81,10 +81,11 @@ public class GwtDevTask extends AbstractTask {
 			Throwables.propagate(e);
 		}
 
-		execSdm();
-
-		JavaAction jetty = execJetty();
-		jetty.join();
+		JavaAction sdm = execSdm();
+		if (sdm.isAlive()) {
+			JavaAction jetty = execJetty();
+			jetty.join();
+		}
 	}
 
 	private void createWarExploded(DevOption sdmOption) throws IOException {
@@ -138,7 +139,7 @@ public class GwtDevTask extends AbstractTask {
 		sdmBuilder.addArg("-launcherDir", devOption.getWar());
 		sdmBuilder.configure(getProject(), putnami.getDev(), getModules());
 
-		JavaAction sdmAction = sdmBuilder.buildJavaAction();
+		final JavaAction sdmAction = sdmBuilder.buildJavaAction();
 
 		final Semaphore lock = new Semaphore(1);
 
@@ -147,6 +148,10 @@ public class GwtDevTask extends AbstractTask {
 			protected void printLine(String line) {
 				super.printLine(line);
 				if (line.contains("The code server is ready")) {
+					lock.release();
+				}
+				if (line.contains("[ERROR]")) {
+					sdmAction.kill();
 					lock.release();
 				}
 			}

@@ -139,4 +139,13 @@ public class JavaAction implements Action<Task> {
 		return process.exitValue();
 	}
 
+	public boolean isAlive() {
+		try {
+			process.exitValue();
+			return false;
+		} catch (IllegalThreadStateException e) {
+			return true;
+		}
+	}
+
 }
