@@ -135,8 +135,8 @@ public class GwtDevTask extends AbstractTask {
 		CodeServerBuilder sdmBuilder = new CodeServerBuilder();
 		sdmBuilder.addSrc(getSrc());
 		sdmBuilder.addSrc(ProjectUtils.listProjectDepsSrcDirs(getProject()));
-		sdmBuilder.configure(getProject(), putnami.getDev(), getModules());
 		sdmBuilder.addArg("-launcherDir", devOption.getWar());
+		sdmBuilder.configure(getProject(), putnami.getDev(), getModules());
 
 		JavaAction sdmAction = sdmBuilder.buildJavaAction();
 
@@ -145,10 +145,10 @@ public class GwtDevTask extends AbstractTask {
 		sdmAction.setInfoLogger(new ProcessLogger() {
 			@Override
 			protected void printLine(String line) {
+				super.printLine(line);
 				if (line.contains("The code server is ready")) {
 					lock.release();
 				}
-				super.printLine(line);
 			}
 		});
 

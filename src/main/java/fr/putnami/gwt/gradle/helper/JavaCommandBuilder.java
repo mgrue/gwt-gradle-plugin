@@ -47,6 +47,15 @@ public abstract class JavaCommandBuilder {
 		return this;
 	}
 
+	public JavaCommandBuilder addClassPath(Iterable<File> files) {
+		for (File file : files) {
+			if (file != null && file.exists()) {
+				addClassPath(file.getAbsolutePath());
+			}
+		}
+		return this;
+	}
+
 	public JavaCommandBuilder addJavaArgs(String javaArgs) {
 		this.javaArgs.add(javaArgs);
 		return this;

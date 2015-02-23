@@ -44,6 +44,8 @@ public class CodeServerBuilder extends JavaCommandBuilder {
 
 		configureJavaArgs(devOption);
 
+		addClassPath(mainSourceSet.getOutput().getAsPath());
+		addClassPath(mainSourceSet.getAllJava().getSrcDirs());
 		addClassPath(mainSourceSet.getCompileClasspath().getAsPath());
 		addClassPath(sdmConf.getAsPath());
 
