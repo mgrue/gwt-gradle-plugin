@@ -196,7 +196,7 @@ putnami{
 		jsInteropMode = "NONE"
 		
 		/** shown all compile errors */
-                strict = false
+        strict = false
 		
 		/** Java args */
 		maxHeapSize="1024m"
