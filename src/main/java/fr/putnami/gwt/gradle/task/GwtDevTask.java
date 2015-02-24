@@ -33,13 +33,13 @@ import org.gradle.api.tasks.TaskAction;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Semaphore;
 
 import fr.putnami.gwt.gradle.action.JavaAction;
 import fr.putnami.gwt.gradle.action.JavaAction.ProcessLogger;
 import fr.putnami.gwt.gradle.extension.DevOption;
-import fr.putnami.gwt.gradle.extension.JettyOption;
 import fr.putnami.gwt.gradle.extension.PutnamiExtension;
 import fr.putnami.gwt.gradle.helper.CodeServerBuilder;
 import fr.putnami.gwt.gradle.helper.JettyServerBuilder;
@@ -52,6 +52,7 @@ public class GwtDevTask extends AbstractTask {
 
 	private FileCollection src;
 	private List<String> modules = Lists.newArrayList();
+	private File jettyConf;
 
 	public GwtDevTask() {
 		setName(NAME);
@@ -64,7 +65,6 @@ public class GwtDevTask extends AbstractTask {
 	public void exec() throws Exception {
 		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
 		DevOption sdmOption = putnami.getDev();
-		JettyOption jettyOption = putnami.getJetty();
 
 		createWarExploded(sdmOption);
 
@@ -72,10 +72,11 @@ public class GwtDevTask extends AbstractTask {
 		ResourceUtils.ensureDir(sdmOption.getWorkDir());
 
 		try {
-			ResourceUtils.copy("/stub.jetty-conf.xml", jettyOption.getJettyConf(),
-				new ImmutableMap.Builder<String, String>()
+			this.jettyConf = new File(getProject().getBuildDir(), "putnami/conf/jetty-run-conf.xml");
+			Map<String, String> model = new ImmutableMap.Builder<String, String>()
 					.put("__WAR_FILE__", sdmOption.getWar().getAbsolutePath())
-					.build());
+				.build();
+			ResourceUtils.copy("/stub.jetty-conf.xml", jettyConf, model);
 
 		} catch (IOException e) {
 			Throwables.propagate(e);
@@ -123,7 +124,7 @@ public class GwtDevTask extends AbstractTask {
 	private JavaAction execJetty() {
 		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
 		JettyServerBuilder jettyBuilder = new JettyServerBuilder();
-		jettyBuilder.configure(getProject(), putnami.getJetty());
+		jettyBuilder.configure(getProject(), putnami.getJetty(), jettyConf);
 		JavaAction jetty = jettyBuilder.buildJavaAction();
 		jetty.execute(this);
 		return jetty;
@@ -161,10 +162,6 @@ public class GwtDevTask extends AbstractTask {
 		sdmAction.execute(this);
 		lock.acquireUninterruptibly();
 		return sdmAction;
-	}
-
-	public void configureJetty(JettyOption options) {
-		options.setJettyConf(new File(getProject().getBuildDir(), "putnami/conf/jetty-dev-conf.xml"));
 	}
 
 	public void configureCodeServer(final Project project, final PutnamiExtension extention) {

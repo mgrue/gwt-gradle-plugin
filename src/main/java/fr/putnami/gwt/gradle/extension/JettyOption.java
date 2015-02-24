@@ -19,10 +19,6 @@ import java.io.File;
 public class JettyOption extends JavaOption {
 
 	/**
-	 * jetty xml conf.
-	 */
-	private File jettyConf;
-	/**
 	 * interface to listen on.
 	 */
 	private String bindAddress = "";
@@ -47,18 +43,6 @@ public class JettyOption extends JavaOption {
 	 */
 	private String stopKey = "JETTY-STOP";
 
-	public File getJettyConf() {
-		return jettyConf;
-	}
-
-	public void setJettyConf(File jettyConf) {
-		this.jettyConf = jettyConf;
-	}
-
-	public void setJettyConf(String jettyConf) {
-		this.jettyConf = new File(jettyConf);
-	}
-
 	public String getBindAddress() {
 		return bindAddress;
 	}
@@ -71,20 +55,12 @@ public class JettyOption extends JavaOption {
 		return logRequestFile;
 	}
 
-	public void setLogRequestFile(File logRequestFile) {
-		this.logRequestFile = logRequestFile;
-	}
-
 	public void setLogRequestFile(String logRequestFile) {
 		this.logRequestFile = new File(logRequestFile);
 	}
 
 	public File getLogFile() {
 		return logFile;
-	}
-
-	public void setLogFile(File logFile) {
-		this.logFile = logFile;
 	}
 
 	public void setLogFile(String logFile) {

@@ -214,10 +214,6 @@ public class CompilerOption extends JavaOption {
 		this.missingDepsFile = new File(missingDepsFile);
 	}
 
-	public void setMissingDepsFile(File missingDepsFile) {
-		this.missingDepsFile = missingDepsFile;
-	}
-
 	public Integer getOptimize() {
 		return optimize;
 	}
@@ -298,20 +294,12 @@ public class CompilerOption extends JavaOption {
 		return war;
 	}
 
-	public void setWar(File war) {
-		this.war = war;
-	}
-
 	public void setWar(String war) {
 		this.war = new File(war);
 	}
 
 	public File getDeploy() {
 		return deploy;
-	}
-
-	public void setDeploy(File deploy) {
-		this.deploy = deploy;
 	}
 
 	public void setDeploy(String deploy) {
@@ -322,20 +310,12 @@ public class CompilerOption extends JavaOption {
 		return extra;
 	}
 
-	public void setExtra(File extra) {
-		this.extra = extra;
-	}
-
 	public void setExtra(String extra) {
 		this.extra = new File(extra);
 	}
 
 	public File getSaveSourceOutput() {
 		return saveSourceOutput;
-	}
-
-	public void setSaveSourceOutput(File saveSourceOutput) {
-		this.saveSourceOutput = saveSourceOutput;
 	}
 
 	public void setSaveSourceOutput(String saveSourceOutput) {
@@ -401,13 +381,13 @@ public class CompilerOption extends JavaOption {
 	public void init(Project project) {
 		final File buildDir = new File(project.getBuildDir(), "putnami");
 
-		setWar(new File(buildDir, "out"));
-		setWorkDir(new File(buildDir, "work"));
-		setGen(new File(buildDir, "extra/gen"));
-		setDeploy(new File(buildDir, "extra/deploy"));
-		setExtra(new File(buildDir, "extra"));
-		setSaveSourceOutput(new File(buildDir, "extra/source"));
-		setMissingDepsFile(new File(buildDir, "extra/missingDepsFile"));
+		this.war = new File(buildDir, "out");
+		this.workDir = new File(buildDir, "work");
+		this.gen = new File(buildDir, "extra/gen");
+		this.deploy = new File(buildDir, "extra/deploy");
+		this.extra = new File(buildDir, "extra");
+		this.saveSourceOutput = new File(buildDir, "extra/source");
+		this.missingDepsFile = new File(buildDir, "extra/missingDepsFile");
 	}
 
 }

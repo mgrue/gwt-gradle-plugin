@@ -23,9 +23,9 @@ import org.gradle.api.tasks.bundling.War;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import fr.putnami.gwt.gradle.action.JavaAction;
-import fr.putnami.gwt.gradle.extension.JettyOption;
 import fr.putnami.gwt.gradle.extension.PutnamiExtension;
 import fr.putnami.gwt.gradle.helper.JettyServerBuilder;
 import fr.putnami.gwt.gradle.util.ResourceUtils;
@@ -33,6 +33,8 @@ import fr.putnami.gwt.gradle.util.ResourceUtils;
 public class GwtRunTask extends AbstractTask {
 
 	public static final String NAME = "gwtRun";
+
+	private File jettyConf;
 
 	public GwtRunTask() {
 		setName(NAME);
@@ -43,15 +45,14 @@ public class GwtRunTask extends AbstractTask {
 
 	@TaskAction
 	public void exec() throws Exception {
-		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
-		JettyOption jettyOption = putnami.getJetty();
 		War warTask = (War) getProject().getTasks().getByName("war");
 
 		try {
-			ResourceUtils.copy("/stub.jetty-conf.xml", jettyOption.getJettyConf(),
-				new ImmutableMap.Builder<String, String>()
+			this.jettyConf = new File(getProject().getBuildDir(), "putnami/conf/jetty-run-conf.xml");
+			Map<String, String> model = new ImmutableMap.Builder<String, String>()
 					.put("__WAR_FILE__", warTask.getArchivePath().getAbsolutePath())
-					.build());
+					.build();
+			ResourceUtils.copy("/stub.jetty-conf.xml", jettyConf, model);
 		} catch (IOException e) {
 			Throwables.propagate(e);
 		}
@@ -63,14 +64,10 @@ public class GwtRunTask extends AbstractTask {
 	private JavaAction execJetty() {
 		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
 		JettyServerBuilder jettyBuilder = new JettyServerBuilder();
-		jettyBuilder.configure(getProject(), putnami.getJetty());
+		jettyBuilder.configure(getProject(), putnami.getJetty(), jettyConf);
 		JavaAction jetty = jettyBuilder.buildJavaAction();
 		jetty.execute(this);
 		return jetty;
-	}
-
-	public void configureJetty(final JettyOption options) {
-		options.setJettyConf(new File(getProject().getBuildDir(), "putnami/conf/jetty-run-conf.xml"));
 	}
 
 }

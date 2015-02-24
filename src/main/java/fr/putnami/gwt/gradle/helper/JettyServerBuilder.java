@@ -19,6 +19,8 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.plugins.WarPlugin;
 
+import java.io.File;
+
 import fr.putnami.gwt.gradle.PwtLibPlugin;
 import fr.putnami.gwt.gradle.action.JavaAction;
 import fr.putnami.gwt.gradle.extension.JettyOption;
@@ -31,7 +33,7 @@ public class JettyServerBuilder extends JavaCommandBuilder {
 		setMainClass("org.eclipse.jetty.runner.Runner");
 	}
 
-	public void configure(Project project, JettyOption jettyOption) {
+	public void configure(Project project, JettyOption jettyOption, File jettyConf) {
 		ConfigurationContainer configs = project.getConfigurations();
 
 		Configuration runtimeConf = configs.getByName(WarPlugin.PROVIDED_RUNTIME_CONFIGURATION_NAME);
@@ -55,7 +57,7 @@ public class JettyServerBuilder extends JavaCommandBuilder {
 		addArg("--stop-port", jettyOption.getStopPort());
 		addArg("--stop-key", jettyOption.getStopKey());
 
-		addArg(jettyOption.getJettyConf().getAbsolutePath());
+		addArg(jettyConf.getAbsolutePath());
 	}
 
 	public JavaAction buildJavaAction() {
