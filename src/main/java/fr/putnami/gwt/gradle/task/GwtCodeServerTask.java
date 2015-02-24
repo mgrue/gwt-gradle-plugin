@@ -26,6 +26,7 @@ import fr.putnami.gwt.gradle.extension.DevOption;
 import fr.putnami.gwt.gradle.extension.PutnamiExtension;
 import fr.putnami.gwt.gradle.helper.CodeServerBuilder;
 import fr.putnami.gwt.gradle.util.ProjectUtils;
+import fr.putnami.gwt.gradle.util.ResourceUtils;
 
 public class GwtCodeServerTask extends AbstractTask {
 
@@ -46,9 +47,12 @@ public class GwtCodeServerTask extends AbstractTask {
 		SourceSet mainSourceSet = javaConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
 		final FileCollection sources = getProject().files(mainSourceSet.getAllJava().getSrcDirs());
 
+		ResourceUtils.ensureDir(putnami.getDev().getLauncherDir());
+
 		CodeServerBuilder sdmBuilder = new CodeServerBuilder();
 		sdmBuilder.addSrc(sources);
 		sdmBuilder.addSrc(ProjectUtils.listProjectDepsSrcDirs(getProject()));
+		sdmBuilder.addArg("-launcherDir", putnami.getDev().getLauncherDir());
 		sdmBuilder.configure(getProject(), putnami.getDev(), putnami.getModule());
 
 		JavaAction sdmAction = sdmBuilder.buildJavaAction();

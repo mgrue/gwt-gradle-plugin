@@ -50,11 +50,6 @@ public class DevOption extends JavaOption {
 	 */
 	private Boolean enforceStrictResources;
 	/**
-	 * The root of the directory tree where the code server willwrite compiler output. If not
-	 * supplied, a temporary directorywill be used.
-	 */
-	private File workDir;
-	/**
 	 * Compiles faster by reusing data from the previous compile.
 	 */
 	private Boolean incremental;
@@ -76,7 +71,19 @@ public class DevOption extends JavaOption {
 	 */
 	private MethodNameDisplayMode methodNameDisplayMode;
 
+	/**
+	 * The root of the directory tree where the code server willwrite compiler output. If not
+	 * supplied, a temporary directorywill be used.
+	 */
+	private File workDir;
+	/**
+	 * Dev war folder.
+	 */
 	private File war;
+	/**
+	 * Launcher dir, folder where CodeServer will deploy the *.nocache.js
+	 */
+	private File launcherDir;
 
 	public String getBindAddress() {
 		return bindAddress;
@@ -134,18 +141,6 @@ public class DevOption extends JavaOption {
 		this.enforceStrictResources = enforceStrictResources;
 	}
 
-	public File getWorkDir() {
-		return workDir;
-	}
-
-	public void setWorkDir(File workDir) {
-		this.workDir = workDir;
-	}
-
-	public void setWorkDir(String workDir) {
-		this.workDir = new File(workDir);
-	}
-
 	public Boolean getIncremental() {
 		return incremental;
 	}
@@ -186,19 +181,36 @@ public class DevOption extends JavaOption {
 		this.methodNameDisplayMode = MethodNameDisplayMode.valueOf(methodNameDisplayMode);
 	}
 
+	public File getWorkDir() {
+		return workDir;
+	}
+
+	public void setWorkDir(String workDir) {
+		this.workDir = new File(workDir);
+	}
+
 	public File getWar() {
 		return war;
 	}
 
-	public void setWar(File war) {
-		this.war = war;
+	public void setWar(String war) {
+		if (war != null) {
+			this.war = new File(war);
+		}
+	}
+
+	public void setLauncherDir(String launcherDir) {
+		this.launcherDir = new File(launcherDir);
+	}
+
+	public File getLauncherDir() {
+		return launcherDir;
 	}
 
 	public void init(Project project) {
 		final File buildDir = new File(project.getBuildDir(), "putnami");
 
-		setWar(new File(buildDir, "warDev"));
-		setWorkDir(new File(buildDir, "work"));
+		this.war = new File(buildDir, "warDev");
+		this.workDir = new File(buildDir, "work");
 	}
-
 }
