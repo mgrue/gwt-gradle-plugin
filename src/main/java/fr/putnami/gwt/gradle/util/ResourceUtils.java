@@ -68,7 +68,9 @@ public final class ResourceUtils {
 			}
 		}
 
-		target.getParentFile().mkdirs();
+		if (target.getParentFile() != null) {
+			target.getParentFile().mkdirs();
+		}
 		FileWriter writer = new FileWriter(target);
 		writer.write(template);
 		writer.close();
