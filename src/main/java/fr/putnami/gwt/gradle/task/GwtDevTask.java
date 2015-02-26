@@ -19,14 +19,12 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import org.gradle.api.Project;
-import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.ConventionMapping;
 import org.gradle.api.internal.IConventionAware;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.WarPluginConvention;
 import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskAction;
 
@@ -43,14 +41,12 @@ import fr.putnami.gwt.gradle.extension.DevOption;
 import fr.putnami.gwt.gradle.extension.PutnamiExtension;
 import fr.putnami.gwt.gradle.helper.CodeServerBuilder;
 import fr.putnami.gwt.gradle.helper.JettyServerBuilder;
-import fr.putnami.gwt.gradle.util.ProjectUtils;
 import fr.putnami.gwt.gradle.util.ResourceUtils;
 
 public class GwtDevTask extends AbstractTask {
 
 	public static final String NAME = "gwtDev";
 
-	private FileCollection src;
 	private List<String> modules = Lists.newArrayList();
 	private File jettyConf;
 
@@ -135,8 +131,6 @@ public class GwtDevTask extends AbstractTask {
 		DevOption devOption = putnami.getDev();
 
 		CodeServerBuilder sdmBuilder = new CodeServerBuilder();
-		sdmBuilder.addSrc(getSrc());
-		sdmBuilder.addSrc(ProjectUtils.listProjectDepsSrcDirs(getProject()));
 		sdmBuilder.addArg("-launcherDir", devOption.getWar());
 		sdmBuilder.configure(getProject(), putnami.getDev(), getModules());
 
@@ -168,10 +162,6 @@ public class GwtDevTask extends AbstractTask {
 		final DevOption options = extention.getDev();
 		options.init(project);
 
-		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
-		SourceSet mainSourceSet = javaConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-		final FileCollection sources = getProject().files(mainSourceSet.getAllJava().getSrcDirs());
-
 		ConventionMapping convention = ((IConventionAware) this).getConventionMapping();
 		convention.map("modules", new Callable<List<String>>() {
 			@Override
@@ -179,22 +169,11 @@ public class GwtDevTask extends AbstractTask {
 				return extention.getModule();
 			}
 		});
-		convention.map("src", new Callable<FileCollection>() {
-			@Override
-			public FileCollection call() throws Exception {
-				return sources;
-			}
-		});
 	}
 
 	@Input
 	public List<String> getModules() {
 		return modules;
-	}
-
-	@InputFiles
-	public FileCollection getSrc() {
-		return src;
 	}
 
 }

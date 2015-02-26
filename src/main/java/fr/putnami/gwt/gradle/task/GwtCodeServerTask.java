@@ -15,17 +15,13 @@
 package fr.putnami.gwt.gradle.task;
 
 import org.gradle.api.Project;
-import org.gradle.api.file.FileCollection;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.JavaPluginConvention;
-import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskAction;
 
 import fr.putnami.gwt.gradle.action.JavaAction;
 import fr.putnami.gwt.gradle.extension.DevOption;
 import fr.putnami.gwt.gradle.extension.PutnamiExtension;
 import fr.putnami.gwt.gradle.helper.CodeServerBuilder;
-import fr.putnami.gwt.gradle.util.ProjectUtils;
 import fr.putnami.gwt.gradle.util.ResourceUtils;
 
 public class GwtCodeServerTask extends AbstractTask {
@@ -43,15 +39,9 @@ public class GwtCodeServerTask extends AbstractTask {
 	public void exec() throws Exception {
 		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
 
-		JavaPluginConvention javaConvention = getProject().getConvention().getPlugin(JavaPluginConvention.class);
-		SourceSet mainSourceSet = javaConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-		final FileCollection sources = getProject().files(mainSourceSet.getAllJava().getSrcDirs());
-
 		ResourceUtils.ensureDir(putnami.getDev().getLauncherDir());
 
 		CodeServerBuilder sdmBuilder = new CodeServerBuilder();
-		sdmBuilder.addSrc(sources);
-		sdmBuilder.addSrc(ProjectUtils.listProjectDepsSrcDirs(getProject()));
 		sdmBuilder.addArg("-launcherDir", putnami.getDev().getLauncherDir());
 		sdmBuilder.configure(getProject(), putnami.getDev(), putnami.getModule());
 

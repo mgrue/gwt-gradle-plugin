@@ -14,14 +14,22 @@
  */
 package fr.putnami.gwt.gradle.helper;
 
+import com.google.common.collect.Lists;
+
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
+import org.gradle.api.artifacts.Dependency;
+import org.gradle.api.artifacts.DependencySet;
+import org.gradle.api.artifacts.ProjectDependency;
+import org.gradle.api.file.FileCollection;
+import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.List;
 
 import fr.putnami.gwt.gradle.PwtLibPlugin;
 import fr.putnami.gwt.gradle.action.JavaAction;
@@ -41,6 +49,7 @@ public class CodeServerBuilder extends JavaCommandBuilder {
 
 		SourceSet mainSourceSet = project.getConvention()
 			.getPlugin(JavaPluginConvention.class).getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+		FileCollection sources = project.files(mainSourceSet.getAllJava().getSrcDirs());
 
 		configureJavaArgs(devOption);
 
@@ -48,6 +57,9 @@ public class CodeServerBuilder extends JavaCommandBuilder {
 		addClassPath(mainSourceSet.getAllJava().getSrcDirs());
 		addClassPath(mainSourceSet.getCompileClasspath().getAsPath());
 		addClassPath(sdmConf.getAsPath());
+
+		addSrc(sources);
+		addSrc(listProjectDepsSrcDirs(project));
 
 		addArg("-bindAddress", devOption.getBindAddress());
 		addArgIf(devOption.getFailOnError(), "-failOnError", "-nofailOnError");
@@ -67,7 +79,33 @@ public class CodeServerBuilder extends JavaCommandBuilder {
 		}
 	}
 
-	public void addSrc(Iterable<File> sources) {
+	public JavaAction buildJavaAction() {
+		return new JavaAction(this.toString());
+	}
+
+	private Collection<File> listProjectDepsSrcDirs(Project project) {
+		ConfigurationContainer configs = project.getConfigurations();
+		Configuration compileConf = configs.getByName(JavaPlugin.COMPILE_CONFIGURATION_NAME);
+		DependencySet depSet = compileConf.getAllDependencies();
+
+		List<File> result = Lists.newArrayList();
+		for (Dependency dep : depSet) {
+			if (dep instanceof ProjectDependency) {
+				Project projectDependency = ((ProjectDependency) dep).getDependencyProject();
+				if (projectDependency.getPlugins().hasPlugin(PwtLibPlugin.class)) {
+					JavaPluginConvention javaConvention = projectDependency.getConvention().getPlugin(JavaPluginConvention.class);
+					SourceSet mainSourceSet = javaConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+
+					for (File file : mainSourceSet.getAllSource().getSrcDirs()) {
+						result.add(file);
+					}
+				}
+			}
+		}
+		return result;
+	}
+
+	private void addSrc(Iterable<File> sources) {
 		for (File srcDir : sources) {
 			if (srcDir.isDirectory()) {
 				addArg("-src", srcDir);
@@ -75,7 +113,4 @@ public class CodeServerBuilder extends JavaCommandBuilder {
 		}
 	}
 
-	public JavaAction buildJavaAction() {
-		return new JavaAction(this.toString());
-	}
 }
