@@ -139,13 +139,16 @@ public class GwtDevTask extends AbstractTask {
 		final Semaphore lock = new Semaphore(1);
 
 		sdmAction.setInfoLogger(new ProcessLogger() {
+			private boolean started = false;
+
 			@Override
 			protected void printLine(String line) {
 				super.printLine(line);
 				if (line.contains("The code server is ready")) {
+					this.started = true;
 					lock.release();
 				}
-				if (line.contains("[ERROR]")) {
+				if (!started && line.contains("[ERROR]")) {
 					sdmAction.kill();
 					lock.release();
 				}
