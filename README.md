@@ -31,9 +31,6 @@ This plugin helps to build GWT project with Gradle. The main goals is build weba
     |-- java
     |-- resources
     |-- webapp
-  |-- test
-    |-- java
-    |-- resources
 ```
 
 * You can init the project with those commands
@@ -58,7 +55,7 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'fr.putnami.gwt:putnami-gradle-plugin:0.1.2'
+		classpath 'fr.putnami.gwt:putnami-gradle-plugin:0.2.0'
 	}
 }
 
@@ -105,7 +102,7 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'fr.putnami.gwt:putnami-gradle-plugin:0.1.2'
+		classpath 'fr.putnami.gwt:putnami-gradle-plugin:0.2.0'
 	}
 }
 
