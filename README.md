@@ -168,7 +168,7 @@ Can be tuned with the following parametters:
 putnami{
 	compile {
 		/** The level of logging detail (ERROR, WARN, INFO, TRACE, DEBUG, SPAM, ALL) */
-		logLevel = INFO
+		logLevel = "INFO"
 		/** Compile a report that tells the "Story of Your Compile". */
 		compileReport = true
 		/** Compile quickly with minimal optimizations. */
@@ -202,7 +202,7 @@ putnami{
 		debugJava = true
 		debugPort = 8000
 		debugSuspend = false
-		javaArgs = "-Xmx256m", "-Xms256m"
+		javaArgs = ["-Xmx256m", "-Xms256m"]
 	}
 }
 ```
@@ -237,7 +237,7 @@ putnami{
 		debugJava = true
 		debugPort = 8000
 		debugSuspend = false
-		javaArgs = "-Xmx256m", "-Xms256m"
+		javaArgs = ["-Xmx256m", "-Xms256m"]
 	}
 }
 ```
@@ -279,7 +279,7 @@ putnami{
 		debugJava = true
 		debugPort = 8000
 		debugSuspend = false
-		javaArgs = "-Xmx256m", "-Xms256m"
+		javaArgs = ["-Xmx256m", "-Xms256m"]
 	}
 }
 ```
