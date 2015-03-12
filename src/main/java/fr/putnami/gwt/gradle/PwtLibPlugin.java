@@ -18,6 +18,7 @@ import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
+import org.gradle.api.file.FileCollection;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.MavenPlugin;
@@ -72,11 +73,23 @@ public class PwtLibPlugin implements Plugin<Project> {
 						JavaPlugin.COMPILE_CONFIGURATION_NAME, "com.google.gwt:gwt-servlet" + ":" + gwtVersion);
 				}
 
-				// dependencies.add(providedConfiguration, CONF_GWT_SDM);
-
 				dependencies.add(CONF_JETTY, "org.eclipse.jetty:jetty-runner" + ":" + jettyVersion);
+
+				includeSourcesForTest(project);
 			}
 		});
+	}
+
+	private void includeSourcesForTest(Project project) {
+		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
+		SourceSet mainSourset = javaConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+		SourceSet testSourset = javaConvention.getSourceSets().getByName(SourceSet.TEST_SOURCE_SET_NAME);
+
+		FileCollection testClasspath = project
+				.files(mainSourset.getAllSource().getSrcDirs().toArray())
+				.plus(project.files(testSourset.getAllSource().getSrcDirs().toArray()))
+				.plus(testSourset.getRuntimeClasspath());
+		testSourset.setRuntimeClasspath(testClasspath);
 	}
 
 	private void includeSourcesToJar(Project project) {
