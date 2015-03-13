@@ -25,6 +25,7 @@ import org.gradle.api.plugins.MavenPlugin;
 import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.bundling.Jar;
+import org.gradle.api.tasks.testing.Test;
 
 import fr.putnami.gwt.gradle.extension.PutnamiExtension;
 
@@ -90,6 +91,9 @@ public class PwtLibPlugin implements Plugin<Project> {
 				.plus(project.files(testSourset.getAllSource().getSrcDirs().toArray()))
 				.plus(testSourset.getRuntimeClasspath());
 		testSourset.setRuntimeClasspath(testClasspath);
+
+		Test test = project.getTasks().withType(Test.class).getByName("test");
+		test.getSystemProperties().put("gwt.persistentunitcachedir", project.getBuildDir() + "/putnami/test");
 	}
 
 	private void includeSourcesToJar(Project project) {
