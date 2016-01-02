@@ -138,6 +138,8 @@ public class CompilerOption extends JavaOption {
 	 */
 	private JsInteropMode jsInteropMode;
 
+	private Boolean generateJsInteropExports;
+
 	public LogLevel getLogLevel() {
 		return logLevel;
 	}
@@ -376,6 +378,14 @@ public class CompilerOption extends JavaOption {
 
 	public void setJsInteropMode(JsInteropMode jsInteropMode) {
 		this.jsInteropMode = jsInteropMode;
+	}
+
+	public Boolean getGenerateJsInteropExports() {
+		return generateJsInteropExports;
+	}
+
+	public void setGenerateJsInteropExports(Boolean generateJsInteropExports) {
+		this.generateJsInteropExports = generateJsInteropExports;
 	}
 
 	public void init(Project project) {

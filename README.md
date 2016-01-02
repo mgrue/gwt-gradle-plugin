@@ -189,8 +189,10 @@ putnami{
 		localWorkersMem = 2048
 		/** Emit extra information allow chrome dev tools to display Java identifiers in many places instead of JavaScript functions. (NONE, ONLY_METHOD_NAME, ABBREVIATED, FULL)*/
 		methodNameDisplayMode = "NONE"
-		/** Specifies JsInterop mode, either NONE, JS, or CLOSURE. */
-		jsInteropMode = "NONE"
+		/** Specifies JsInterop mode (NONE, JS, CLOSURE). JsInterop Experimental (GWT 2.7) */
+		jsInteropMode = "JS"
+		/** Generate and export JsInterop (since GWT 2.8) */
+		generateJsInteropExports = true
 		
 		/** shown all compile errors */
         strict = false
@@ -263,8 +265,10 @@ putnami{
 		sourceLevel = "1.6"
 		/** The level of logging detail (ERROR, WARN, INFO, TRACE, DEBUG, SPAM, ALL) */
 		logLevel = "INFO"
-		/** Specifies JsInterop mode (NONE, JS, CLOSURE). */
+		/** Specifies JsInterop mode (NONE, JS, CLOSURE). JsInterop Experimental (GWT 2.7) */
 		jsInteropMode = "JS"
+		/** Generate and export JsInterop (since GWT 2.8) */
+		generateJsInteropExports = true
 		/** Emit extra information allow chrome dev tools to display Java identifiers in many placesinstead of JavaScript functions. (NONE, ONLY_METHOD_NAME, ABBREVIATED, FULL) */
 		methodNameDisplayMode = "NONE"
 		/** shown all compile errors */

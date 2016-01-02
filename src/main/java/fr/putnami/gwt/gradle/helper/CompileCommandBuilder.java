@@ -78,6 +78,7 @@ public class CompileCommandBuilder extends JavaCommandBuilder {
 		addArgIf(compilerOptions.getClosureCompiler(), "-XclosureCompiler", "-XnoclosureCompiler");
 
 		addArg("-XjsInteropMode", compilerOptions.getJsInteropMode());
+		addArgIf(compilerOptions.getGenerateJsInteropExports(), "-generateJsInteropExports");
 
 		for (String module : modules) {
 			addArg(module);
