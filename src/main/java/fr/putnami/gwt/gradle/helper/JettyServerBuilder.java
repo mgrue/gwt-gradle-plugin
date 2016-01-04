@@ -26,7 +26,6 @@ import fr.putnami.gwt.gradle.action.JavaAction;
 import fr.putnami.gwt.gradle.extension.JettyOption;
 import fr.putnami.gwt.gradle.util.ResourceUtils;
 
-
 public class JettyServerBuilder extends JavaCommandBuilder {
 
 	public JettyServerBuilder() {

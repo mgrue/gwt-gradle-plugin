@@ -36,7 +36,6 @@ import fr.putnami.gwt.gradle.action.JavaAction;
 import fr.putnami.gwt.gradle.extension.DevOption;
 import fr.putnami.gwt.gradle.util.ResourceUtils;
 
-
 public class CodeServerBuilder extends JavaCommandBuilder {
 
 	public CodeServerBuilder() {

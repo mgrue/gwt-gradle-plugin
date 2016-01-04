@@ -26,7 +26,6 @@ import fr.putnami.gwt.gradle.PwtLibPlugin;
 import fr.putnami.gwt.gradle.action.JavaAction;
 import fr.putnami.gwt.gradle.extension.CompilerOption;
 
-
 public class CompileCommandBuilder extends JavaCommandBuilder {
 
 	public CompileCommandBuilder() {

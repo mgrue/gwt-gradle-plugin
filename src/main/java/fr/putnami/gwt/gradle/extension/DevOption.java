@@ -81,7 +81,7 @@ public class DevOption extends JavaOption {
 	 */
 	private File war;
 	/**
-	 * Launcher dir, folder where CodeServer will deploy the *.nocache.js
+	 * Launcher dir, folder where CodeServer will deploy the *.nocache.js .
 	 */
 	private File launcherDir;
 
