@@ -134,10 +134,12 @@ public class CompilerOption extends JavaOption {
 	 */
 	private Boolean closureCompiler;
 	/**
-	 * Specifies JsInterop mode, either NONE, JS, or CLOSURE.
+	 * Specifies JsInterop mode, either NONE, JS, or CLOSURE (till GWT 2.7.x ).
 	 */
 	private JsInteropMode jsInteropMode;
-
+	/**
+	 * Generate and export JsInterop (since GWT 2.8)
+	 */
 	private Boolean generateJsInteropExports;
 
 	public LogLevel getLogLevel() {

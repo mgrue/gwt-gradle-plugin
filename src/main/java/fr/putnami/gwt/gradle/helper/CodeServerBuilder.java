@@ -72,6 +72,7 @@ public class CodeServerBuilder extends JavaCommandBuilder {
 		addArg("-logLevel", devOption.getLogLevel());
 		addArg("-XmethodNameDisplayMode", devOption.getMethodNameDisplayMode());
 		addArg("-XjsInteropMode", devOption.getJsInteropMode());
+		addArgIf(devOption.getGenerateJsInteropExports(), "-generateJsInteropExports");
 
 		for (String module : modules) {
 			addArg(module);

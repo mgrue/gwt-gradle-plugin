@@ -62,10 +62,6 @@ public class DevOption extends JavaOption {
 	 */
 	private LogLevel logLevel = LogLevel.ERROR;
 	/**
-	 * Specifies JsInterop mode.
-	 */
-	private JsInteropMode jsInteropMode;
-	/**
 	 * Emit extra information allow chrome dev tools to display Java identifiers in many places
 	 * instead of JavaScript functions.
 	 */
@@ -84,6 +80,14 @@ public class DevOption extends JavaOption {
 	 * Launcher dir, folder where CodeServer will deploy the *.nocache.js .
 	 */
 	private File launcherDir;
+	/**
+	 * Specifies JsInterop mode, either NONE, JS, or CLOSURE (till GWT 2.7.x ).
+	 */
+	private JsInteropMode jsInteropMode;
+	/**
+	 * Generate and export JsInterop (since GWT 2.8)
+	 */
+	private Boolean generateJsInteropExports;
 
 	public String getBindAddress() {
 		return bindAddress;
@@ -171,6 +175,14 @@ public class DevOption extends JavaOption {
 
 	public void setJsInteropMode(String jsInteropMode) {
 		this.jsInteropMode = JsInteropMode.valueOf(jsInteropMode);
+	}
+
+	public Boolean getGenerateJsInteropExports() {
+		return generateJsInteropExports;
+	}
+
+	public void setGenerateJsInteropExports(Boolean generateJsInteropExports) {
+		this.generateJsInteropExports = generateJsInteropExports;
 	}
 
 	public MethodNameDisplayMode getMethodNameDisplayMode() {
