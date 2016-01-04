@@ -79,6 +79,14 @@ public class CompileCommandBuilder extends JavaCommandBuilder {
 		addArg("-XjsInteropMode", compilerOptions.getJsInteropMode());
 		addArgIf(compilerOptions.getGenerateJsInteropExports(), "-generateJsInteropExports");
 
+		if (compilerOptions.getExtraArgs() != null) {
+			for (String arg : compilerOptions.getExtraArgs()) {
+				if (arg != null && arg.length() > 0) {
+					addArg(arg);
+				}
+			}
+		}
+
 		for (String module : modules) {
 			addArg(module);
 		}

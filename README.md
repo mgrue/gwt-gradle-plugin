@@ -193,6 +193,9 @@ putnami{
 		jsInteropMode = "JS"
 		/** Generate and export JsInterop (since GWT 2.8) */
 		generateJsInteropExports = true
+
+		/** Extra args can be used to experiment arguments */
+		extraArgs = ["-firstArgument", "-secondArgument"]
 		
 		/** shown all compile errors */
         strict = false
@@ -275,6 +278,9 @@ putnami{
         strict = false
         /** disable this internal server */
         noServer = false
+
+		/** Extra args can be used to experiment arguments */
+		extraArgs = ["-firstArgument", "-secondArgument"]
 		
 		/** Java args */
 		maxHeapSize="1024m"

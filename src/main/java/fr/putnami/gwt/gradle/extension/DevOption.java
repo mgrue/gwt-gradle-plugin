@@ -14,9 +14,13 @@
  */
 package fr.putnami.gwt.gradle.extension;
 
+import com.google.common.collect.Lists;
+
 import org.gradle.api.Project;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 public class DevOption extends JavaOption {
 
@@ -88,6 +92,11 @@ public class DevOption extends JavaOption {
 	 * Generate and export JsInterop (since GWT 2.8)
 	 */
 	private Boolean generateJsInteropExports;
+
+	/**
+	 * GWT extra args, can be used to experiment arguments.
+	 */
+	private List<String> extraArgs = Lists.newArrayList();
 
 	public String getBindAddress() {
 		return bindAddress;
@@ -183,6 +192,14 @@ public class DevOption extends JavaOption {
 
 	public void setGenerateJsInteropExports(Boolean generateJsInteropExports) {
 		this.generateJsInteropExports = generateJsInteropExports;
+	}
+
+	public List<String> getExtraArgs() {
+		return extraArgs;
+	}
+
+	public void setExtraArgs(String... extraArgs) {
+		this.extraArgs.addAll(Arrays.asList(extraArgs));
 	}
 
 	public MethodNameDisplayMode getMethodNameDisplayMode() {

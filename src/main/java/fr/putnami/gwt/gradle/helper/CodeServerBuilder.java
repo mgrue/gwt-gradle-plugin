@@ -74,6 +74,14 @@ public class CodeServerBuilder extends JavaCommandBuilder {
 		addArg("-XjsInteropMode", devOption.getJsInteropMode());
 		addArgIf(devOption.getGenerateJsInteropExports(), "-generateJsInteropExports");
 
+		if (devOption.getExtraArgs() != null) {
+			for (String arg : devOption.getExtraArgs()) {
+				if (arg != null && arg.length() > 0) {
+					addArg(arg);
+				}
+			}
+		}
+
 		for (String module : modules) {
 			addArg(module);
 		}
