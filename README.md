@@ -10,10 +10,10 @@ This plugin helps to build GWT project with Gradle. The main goals is build weba
 **Why to use it?**
 
 * DevMode on standalone Jetty 9 container.
-* DevMode works with multi module project. 
+* DevMode works with multi module project.
 * Ease of use.
 * Gradle is faster and easier than Maven
- 
+
 ## Requirements ##
 
 * Java 7 or higher.
@@ -21,7 +21,7 @@ This plugin helps to build GWT project with Gradle. The main goals is build weba
 
 ## Quick start ##
 
-* First you need java and gradle installed on your workstation. 
+* First you need java and gradle installed on your workstation.
 * Init your project with this structure
 
 ```
@@ -93,7 +93,8 @@ To use the lastest **snapshot** you can add `maven{ url 'https://oss.sonatype.or
 ```
 
 * In the build .gradle file put:
-```
+
+```groovy
 apply plugin: 'fr.putnami.gwt'
 apply plugin: 'eclipse'
 
@@ -115,12 +116,13 @@ putnami{
 }
 ```
 
+
 * right click on the project and configure>convert to Gradle project
 * Go to Window>Show View>Other>gradle tasks. In the gradle tasks window double click eclipse.
 * Make sure that the GPE(Google Plugin for Eclipse) is installed.
 * Right click on your project and go to Properties>google>Web Application
 * Check the check box labeled this project has a war directory and select src/main/webapp as your war directory.
-* Then go to the properties for web toolkit. Check the check box labeled use Google Web Toolkit. Make sure not to use an SDK from before 2.7.0. Add all of your gwt entry point modules. To tell the plugin to gwt compile right click your project and go to google>gwt compile, add all of your modules and click compile. 
+* Then go to the properties for web toolkit. Check the check box labeled use Google Web Toolkit. Make sure not to use an SDK from before 2.7.0. Add all of your gwt entry point modules. To tell the plugin to gwt compile right click your project and go to google>gwt compile, add all of your modules and click compile.
 
 
 ## Samples ##
@@ -131,14 +133,49 @@ We offer you 3 build samples:
 * **WebApp project** : Simple GWT project [pgp-sample-webapp](https://github.com/Putnami/putnami-gradle-plugin/tree/master/samples/pgp-sample-webapp).
 * **Multi-modules project** : Project composed with a library and a webapp [pgp-sample-multimodules](https://github.com/Putnami/putnami-gradle-plugin/tree/master/samples/pgp-sample-multimodules).
 
+
 ## Advanced usages ##
 
 ### Plugins ###
 
 The Putnami Gradle Plugin is usefull either to build GWT's library or webapp.
 
-* apply plugin: **'fr.putnami.gwt-lib'** : To build a library. This plugin installs properly all the GWT dependencies on your project and adds the java sources into the target jar artifact. 
-* apply plugin: **'fr.putnami.gwt'** : To build a webapp. This plugin installs properly all the GWT dependencies and provide all the usefull tasks helping you to work efficiently on your projects. 
+* apply plugin: **'fr.putnami.gwt-lib'** : To build a library. This plugin installs properly all the GWT dependencies on your project and adds the java sources into the target jar artifact.
+* apply plugin: **'fr.putnami.gwt'** : To build a webapp. This plugin installs properly all the GWT dependencies and provide all the usefull tasks helping you to work efficiently on your projects.
+
+### Debug server side ###
+
+To debug the server side (jetty), you can use the the below configuration then run ``gradle gwtDev`` and attach a remote debugger with your favorite IDE.
+
+
+```groovy
+putnami{
+    jetty {
+        /** enable debugging. */
+        debugJava = true
+        /** debug port to listen. */
+        debugPort = 8000
+        /** wait for debugger attachment. */
+        debugSuspend = false
+    }
+}
+```
+
+### Debug client side ###
+
+The first way to debug the client side is to use the developer tools of your browsers. All modern browser provide powerfull tools to browse and put breakpoint on the java sources exposed by GWT code server.
+
+You can also use the eclipse plugin SDBG ( http://sdbg.github.io/) to debug in your IDE. Once the plugin installed you have to:
+
+1. run the task ``gwtDev`` or ``gwtCodeServer``
+2. in the eclipse debug configuration add a launch chrome.
+3. set the url (I.E. http://localhost:8080/)
+4. set the project where the sources are.
+5. Run the configuration
+6. Add some breakpoints.
+
+And enjoy.
+
 
 ### Tasks and configuration ###
 
@@ -148,7 +185,7 @@ The Putnami Gradle Plugin is usefull either to build GWT's library or webapp.
 putnami{
 	/** Module to compile, can be multiple */
 	module 'fr.putnami.gradle.sample.multimodule.app.App'
-	
+
 	/** GWT version */
 	gwtVersion = "2.7.0"
 	/** Add the gwt-servlet lib */
@@ -196,10 +233,10 @@ putnami{
 
 		/** Extra args can be used to experiment arguments */
 		extraArgs = ["-firstArgument", "-secondArgument"]
-		
+
 		/** shown all compile errors */
         strict = false
-		
+
 		/** Java args */
 		maxHeapSize="1024m"
 		minHeapSize="512m"
@@ -234,7 +271,7 @@ putnami{
 		stopPort = 8089
 		/** security string for stop command. */
 		stopKey = "JETTY-STOP"
-		
+
 		/** Java args */
 		maxHeapSize="1024m"
 		minHeapSize="512m"
@@ -247,7 +284,7 @@ putnami{
 }
 ```
 
-* **gwtDev** Run the CodeServer (SDM) and Jetty 9 
+* **gwtDev** Run the CodeServer (SDM) and Jetty 9
 
 The SDM is tuned with the following parametters, the jetty is configured from the previous configuration.
 
@@ -281,7 +318,7 @@ putnami{
 
 		/** Extra args can be used to experiment arguments */
 		extraArgs = ["-firstArgument", "-secondArgument"]
-		
+
 		/** Java args */
 		maxHeapSize="1024m"
 		minHeapSize="512m"
@@ -316,12 +353,12 @@ To report an issue, please use the project [issue tracker](https://github.com/Pu
 ### Contribute ###
 
 You'd love to contribute your code, nice :)
-First be sure that your code respect the project code style and formating. 
+First be sure that your code respect the project code style and formating.
 All the documentation is [here](https://github.com/Putnami/putnami-gradle-plugin/blob/master/settings/README.md)
 
 If you are an eclipse user, it could be nice if you follow the workspace setup instructions.
 
-Every pullrequest will be review with a great consideration, and with a full open mind. 
+Every pullrequest will be review with a great consideration, and with a full open mind.
 
 
 ## License ##
@@ -339,7 +376,7 @@ You can have a look at the licence details on a https://www.gnu.org/licenses/lgp
 
 ---
 
-We hope that this plugin will help you to build great apps. 
+We hope that this plugin will help you to build great apps.
 
 Best regards.
 
