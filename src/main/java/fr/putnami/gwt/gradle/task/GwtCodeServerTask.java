@@ -30,7 +30,7 @@ public class GwtCodeServerTask extends AbstractTask {
 
 	public GwtCodeServerTask() {
 		setName(NAME);
-		setDescription("Run CodeServer");
+		setDescription("Run CodeServer in SuperDevMode");
 
 		dependsOn(JavaPlugin.COMPILE_JAVA_TASK_NAME, JavaPlugin.PROCESS_RESOURCES_TASK_NAME);
 	}
