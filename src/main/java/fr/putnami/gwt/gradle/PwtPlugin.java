@@ -37,11 +37,11 @@ import fr.putnami.gwt.gradle.task.GwtStopTask;
 
 public class PwtPlugin implements Plugin<Project> {
 
-	private static final Logger logger = Logging.getLogger(PwtPlugin.class);
+	private static final Logger LOGGER = Logging.getLogger(PwtPlugin.class);
 
 	@Override
 	public void apply(final Project project) {
-		logger.debug("apply pwt plugin");
+		LOGGER.debug("apply pwt plugin");
 		project.getPlugins().apply(PwtLibPlugin.class);
 		project.getPlugins().apply(WarPlugin.class);
 
