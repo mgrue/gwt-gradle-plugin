@@ -115,8 +115,8 @@ public class PutnamiExtension {
 		return module;
 	}
 
-	public void module(String... module) {
-		this.module.addAll(Arrays.asList(module));
+	public void module(String... modules) {
+		this.module.addAll(Arrays.asList(modules));
 	}
 
 }

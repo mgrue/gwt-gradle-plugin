@@ -50,14 +50,15 @@ public class PwtLibPlugin implements Plugin<Project> {
 
 		project.afterEvaluate(new Action<Project>() {
 			@Override
-			public void execute(final Project project) {
+			public void execute(final Project p) {
 				String gwtVersion = extention.getGwtVersion();
 				String jettyVersion = extention.getJettyVersion();
 
-				DependencyHandler dependencies = project.getDependencies();
+				DependencyHandler dependencies = p.getDependencies();
 
-				String providedConfiguration = project.getPlugins().hasPlugin("war") ?
-					WarPlugin.PROVIDED_COMPILE_CONFIGURATION_NAME : JavaPlugin.COMPILE_CONFIGURATION_NAME;
+				String providedConfiguration = p.getPlugins().hasPlugin("war")
+					? WarPlugin.PROVIDED_COMPILE_CONFIGURATION_NAME
+					: JavaPlugin.COMPILE_CONFIGURATION_NAME;
 
 				dependencies.add(CONF_GWT_SDM, "com.google.gwt:gwt-codeserver" + ":" + gwtVersion);
 				dependencies.add(CONF_GWT_SDM, "com.google.gwt:gwt-user" + ":" + gwtVersion);
@@ -76,7 +77,7 @@ public class PwtLibPlugin implements Plugin<Project> {
 
 				dependencies.add(CONF_JETTY, "org.eclipse.jetty:jetty-runner" + ":" + jettyVersion);
 
-				includeSourcesForTest(project);
+				includeSourcesForTest(p);
 			}
 		});
 	}
@@ -87,9 +88,9 @@ public class PwtLibPlugin implements Plugin<Project> {
 		SourceSet testSourset = javaConvention.getSourceSets().getByName(SourceSet.TEST_SOURCE_SET_NAME);
 
 		FileCollection testClasspath = project
-				.files(mainSourset.getAllSource().getSrcDirs().toArray())
-				.plus(project.files(testSourset.getAllSource().getSrcDirs().toArray()))
-				.plus(testSourset.getRuntimeClasspath());
+			.files(mainSourset.getAllSource().getSrcDirs().toArray())
+			.plus(project.files(testSourset.getAllSource().getSrcDirs().toArray()))
+			.plus(testSourset.getRuntimeClasspath());
 		testSourset.setRuntimeClasspath(testClasspath);
 
 		Test test = project.getTasks().withType(Test.class).getByName("test");

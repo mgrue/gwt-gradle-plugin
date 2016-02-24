@@ -56,8 +56,8 @@ public abstract class JavaCommandBuilder {
 		return this;
 	}
 
-	public JavaCommandBuilder addJavaArgs(String javaArgs) {
-		this.javaArgs.add(javaArgs);
+	public JavaCommandBuilder addJavaArgs(String javaArg) {
+		this.javaArgs.add(javaArg);
 		return this;
 	}
 
