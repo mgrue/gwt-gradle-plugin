@@ -17,12 +17,13 @@ package fr.putnami.gwt.gradle;
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.MavenPlugin;
-import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.api.tasks.testing.Test;
@@ -43,8 +44,11 @@ public class PwtLibPlugin implements Plugin<Project> {
 		final PutnamiExtension extention =
 			project.getExtensions().create(PutnamiExtension.PWT_EXTENSION, PutnamiExtension.class);
 
-		project.getConfigurations().create(CONF_GWT_SDM);
-		project.getConfigurations().create(CONF_JETTY);
+		ConfigurationContainer configurationContainer = project.getConfigurations();
+		Configuration gwtConfig = configurationContainer.create(CONF_GWT_SDM).setVisible(false);
+		configurationContainer.create(CONF_JETTY).setVisible(false);
+
+		configurationContainer.getByName(JavaPlugin.COMPILE_CONFIGURATION_NAME).extendsFrom(gwtConfig);
 
 		includeSourcesToJar(project);
 
@@ -56,15 +60,8 @@ public class PwtLibPlugin implements Plugin<Project> {
 
 				DependencyHandler dependencies = p.getDependencies();
 
-				String providedConfiguration = p.getPlugins().hasPlugin("war")
-					? WarPlugin.PROVIDED_COMPILE_CONFIGURATION_NAME
-					: JavaPlugin.COMPILE_CONFIGURATION_NAME;
-
 				dependencies.add(CONF_GWT_SDM, "com.google.gwt:gwt-codeserver" + ":" + gwtVersion);
 				dependencies.add(CONF_GWT_SDM, "com.google.gwt:gwt-user" + ":" + gwtVersion);
-
-				dependencies.add(providedConfiguration, "com.google.gwt:gwt-user" + ":" + gwtVersion);
-				dependencies.add(providedConfiguration, "com.google.gwt:gwt-dev" + ":" + gwtVersion);
 
 				if (extention.isGwtElementalLib()) {
 					dependencies.add(
