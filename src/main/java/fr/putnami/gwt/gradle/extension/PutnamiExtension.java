@@ -29,6 +29,7 @@ public class PutnamiExtension {
 	private String gwtVersion = "2.7.0";
 	private boolean gwtServletLib = false;
 	private boolean gwtElementalLib = false;
+	private boolean googlePluginEclipse = false;
 	private String jettyVersion = "9.2.7.v20150116";
 
 	/**
@@ -70,6 +71,14 @@ public class PutnamiExtension {
 
 	public void setGwtElementalLib(boolean gwtElementalLib) {
 		this.gwtElementalLib = gwtElementalLib;
+	}
+
+	public boolean isGooglePluginEclipse() {
+		return googlePluginEclipse;
+	}
+
+	public void setGooglePluginEclipse(boolean googlePluginEclipse) {
+		this.googlePluginEclipse = googlePluginEclipse;
 	}
 
 	public DevOption getDev() {

@@ -18,6 +18,11 @@ import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.artifacts.ConfigurationContainer;
+import org.gradle.api.file.FileCollection;
+import org.gradle.api.logging.Logger;
+import org.gradle.api.logging.Logging;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.tasks.bundling.War;
@@ -32,12 +37,15 @@ import fr.putnami.gwt.gradle.task.GwtStopTask;
 
 public class PwtPlugin implements Plugin<Project> {
 
+	private static final Logger logger = Logging.getLogger(PwtPlugin.class);
+
 	@Override
 	public void apply(final Project project) {
+		logger.debug("apply pwt plugin");
 		project.getPlugins().apply(PwtLibPlugin.class);
 		project.getPlugins().apply(WarPlugin.class);
 
-//		createSetUpTask(project);
+		// createSetUpTask(project);
 		createCheckTask(project);
 		createCompileTask(project);
 		createCodeServerTask(project);
@@ -94,6 +102,12 @@ public class PwtPlugin implements Plugin<Project> {
 				warTask.from(extension.getCompile().getWar());
 			}
 		});
+
+		ConfigurationContainer configurationContainer = project.getConfigurations();
+		Configuration gwtConfig = configurationContainer.getByName(PwtLibPlugin.CONF_GWT_SDM);
+		FileCollection warClasspath = warTask.getClasspath()
+			.minus(gwtConfig);
+		warTask.setClasspath(warClasspath);
 	}
 
 	private void createRunTask(final Project project) {

@@ -113,6 +113,8 @@ repositories {
 
 putnami{
 	module 'your.gwt.module.to.compile'
+	/** add gwt nature on eclipse projec. require apply plugin: 'eclipse' to work. default : false*/
+	googlePluginEclipse = true
 }
 ```
 
