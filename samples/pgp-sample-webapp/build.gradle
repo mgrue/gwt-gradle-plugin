@@ -1,9 +1,11 @@
+
 buildscript {
 	repositories {
+		mavenLocal()
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'fr.putnami.gwt:putnami-gradle-plugin:0.2.0'
+		classpath 'fr.putnami.gwt:putnami-gradle-plugin:0.3.0-SNAPSHOT'
 	}
 }
 
@@ -13,9 +15,17 @@ group = 'fr.putnami.pwt.gradle.samples'
 version = '0'
 
 repositories {
+	mavenLocal()
 	mavenCentral()
 }
 
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
 putnami{
 	module 'fr.putnami.gradle.sample.webapp.App'
+	gwtVersion='2.8.0-beta1'
+	compile {
+		sourceLevel = '1.8'
+	}
 }
