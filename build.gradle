@@ -1,9 +1,13 @@
 buildscript {
 	repositories {
 		jcenter()
+		maven {
+		  url "https://plugins.gradle.org/m2/"
+		}
 	}
 	dependencies {
 		classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
+		classpath "com.gradle.publish:plugin-publish-plugin:0.9.4"
 	}
 }
 
@@ -13,6 +17,7 @@ apply plugin: 'maven'
 apply plugin: 'checkstyle'
 apply plugin: 'license'	
 apply plugin: 'signing'
+apply plugin: "com.gradle.plugin-publish"
 
 group = 'fr.putnami.gwt'
 version = '0.3.0-SNAPSHOT'
@@ -58,6 +63,20 @@ artifacts {
 signing {
 	required { gradle.taskGraph.hasTask("uploadArchives") }
     sign configurations.archives
+}
+
+pluginBundle {
+  website = 'http://www.gradle.org/'
+  vcsUrl = 'https://github.com/Putnami/putnami-gradle-plugin'
+  description = 'Putnami GWT Gradle Plugin'
+  tags = ['gwt', 'putnami']
+
+  plugins {
+    greetingsPlugin {
+      id = 'fr.putnami.gwt'
+      displayName = 'Putnami Gradle Plugin'
+    }
+  }
 }
 
 uploadArchives {
