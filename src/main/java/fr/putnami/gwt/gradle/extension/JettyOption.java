@@ -75,12 +75,20 @@ public class JettyOption extends JavaOption {
 		this.port = port;
 	}
 
+	public void setPort(String port) {
+		this.port = Integer.valueOf(port);
+	}
+
 	public int getStopPort() {
 		return stopPort;
 	}
 
 	public void setStopPort(int stopPort) {
 		this.stopPort = stopPort;
+	}
+
+	public void setStopPort(String stopPort) {
+		this.stopPort = Integer.valueOf(stopPort);
 	}
 
 	public String getStopKey() {

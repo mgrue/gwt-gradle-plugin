@@ -89,7 +89,7 @@ public class DevOption extends JavaOption {
 	 */
 	private JsInteropMode jsInteropMode;
 	/**
-	 * Generate and export JsInterop (since GWT 2.8)
+	 * Generate and export JsInterop (since GWT 2.8).
 	 */
 	private Boolean generateJsInteropExports;
 
@@ -114,12 +114,20 @@ public class DevOption extends JavaOption {
 		this.noServer = noServer;
 	}
 
+	public void setNoServer(String noServer) {
+		this.noServer = Boolean.valueOf(noServer);
+	}
+
 	public Boolean getStrict() {
 		return strict;
 	}
 
 	public void setStrict(Boolean strict) {
 		this.strict = strict;
+	}
+
+	public void setStrict(String strict) {
+		this.strict = Boolean.valueOf(strict);
 	}
 
 	public Boolean getFailOnError() {
@@ -130,12 +138,20 @@ public class DevOption extends JavaOption {
 		this.failOnError = failOnError;
 	}
 
+	public void setFailOnError(String failOnError) {
+		this.failOnError = Boolean.valueOf(failOnError);
+	}
+
 	public Boolean getPrecompile() {
 		return precompile;
 	}
 
 	public void setPrecompile(Boolean precompile) {
 		this.precompile = precompile;
+	}
+
+	public void setPrecompile(String precompile) {
+		this.precompile = Boolean.valueOf(precompile);
 	}
 
 	public Integer getPort() {
@@ -146,6 +162,10 @@ public class DevOption extends JavaOption {
 		this.port = port;
 	}
 
+	public void setPort(String port) {
+		this.port = Integer.valueOf(port);
+	}
+
 	public Boolean getEnforceStrictResources() {
 		return enforceStrictResources;
 	}
@@ -154,12 +174,20 @@ public class DevOption extends JavaOption {
 		this.enforceStrictResources = enforceStrictResources;
 	}
 
+	public void setEnforceStrictResources(String enforceStrictResources) {
+		this.enforceStrictResources = Boolean.valueOf(enforceStrictResources);
+	}
+
 	public Boolean getIncremental() {
 		return incremental;
 	}
 
 	public void setIncremental(Boolean incremental) {
 		this.incremental = incremental;
+	}
+
+	public void setIncremental(String incremental) {
+		this.incremental = Boolean.valueOf(incremental);
 	}
 
 	public String getSourceLevel() {

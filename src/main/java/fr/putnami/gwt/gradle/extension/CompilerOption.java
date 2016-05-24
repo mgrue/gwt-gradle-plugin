@@ -142,7 +142,7 @@ public class CompilerOption extends JavaOption {
 	 */
 	private JsInteropMode jsInteropMode;
 	/**
-	 * Generate and export JsInterop (since GWT 2.8)
+	 * Generate and export JsInterop (since GWT 2.8).
 	 */
 	private Boolean generateJsInteropExports;
 
@@ -171,6 +171,10 @@ public class CompilerOption extends JavaOption {
 		this.strict = strict;
 	}
 
+	public void setStrict(String strict) {
+		this.strict = Boolean.valueOf(strict);
+	}
+
 	public File getWorkDir() {
 		return workDir;
 	}
@@ -191,6 +195,10 @@ public class CompilerOption extends JavaOption {
 		this.compileReport = compileReport;
 	}
 
+	public void setCompileReport(String compileReport) {
+		this.compileReport = Boolean.parseBoolean(compileReport);
+	}
+
 	public Boolean getDraftCompile() {
 		return draftCompile;
 	}
@@ -199,12 +207,20 @@ public class CompilerOption extends JavaOption {
 		this.draftCompile = draftCompile;
 	}
 
+	public void setDraftCompile(String draftCompile) {
+		this.draftCompile = Boolean.parseBoolean(draftCompile);
+	}
+
 	public Boolean getCheckAssertions() {
 		return checkAssertions;
 	}
 
 	public void setCheckAssertions(Boolean checkAssertions) {
 		this.checkAssertions = checkAssertions;
+	}
+
+	public void setCheckAssertions(String checkAssertions) {
+		this.checkAssertions = Boolean.valueOf(checkAssertions);
 	}
 
 	public File getGen() {
@@ -235,6 +251,10 @@ public class CompilerOption extends JavaOption {
 		this.optimize = optimize;
 	}
 
+	public void setOptimize(String optimize) {
+		this.optimize = Integer.valueOf(optimize);
+	}
+
 	public Boolean getOverlappingSourceWarnings() {
 		return overlappingSourceWarnings;
 	}
@@ -249,6 +269,10 @@ public class CompilerOption extends JavaOption {
 
 	public void setSaveSource(Boolean saveSource) {
 		this.saveSource = saveSource;
+	}
+
+	public void setSaveSource(String saveSource) {
+		this.saveSource = Boolean.parseBoolean(saveSource);
 	}
 
 	public CodeStyle getStyle() {
@@ -271,6 +295,10 @@ public class CompilerOption extends JavaOption {
 		this.failOnError = failOnError;
 	}
 
+	public void setFailOnError(String failOnError) {
+		this.failOnError = Boolean.parseBoolean(failOnError);
+	}
+
 	public String getSourceLevel() {
 		return sourceLevel;
 	}
@@ -287,6 +315,10 @@ public class CompilerOption extends JavaOption {
 		this.localWorkers = localWorkers;
 	}
 
+	public void setLocalWorkers(String localWorkers) {
+		this.localWorkers = Integer.valueOf(localWorkers);
+	}
+
 	public Integer getLocalWorkersMem() {
 		return localWorkersMem;
 	}
@@ -295,12 +327,20 @@ public class CompilerOption extends JavaOption {
 		this.localWorkersMem = localWorkersMem;
 	}
 
+	public void setLocalWorkersMem(String localWorkersMem) {
+		this.localWorkersMem = Integer.valueOf(localWorkersMem);
+	}
+
 	public Boolean getIncremental() {
 		return incremental;
 	}
 
 	public void setIncremental(Boolean incremental) {
 		this.incremental = incremental;
+	}
+
+	public void setIncremental(String incremental) {
+		this.incremental = Boolean.parseBoolean(incremental);
 	}
 
 	public File getWar() {
@@ -355,12 +395,20 @@ public class CompilerOption extends JavaOption {
 		this.enforceStrictResources = enforceStrictResources;
 	}
 
+	public void setEnforceStrictResources(String enforceStrictResources) {
+		this.enforceStrictResources = Boolean.parseBoolean(enforceStrictResources);
+	}
+
 	public Boolean getCheckCasts() {
 		return checkCasts;
 	}
 
 	public void setCheckCasts(Boolean checkCasts) {
 		this.checkCasts = checkCasts;
+	}
+
+	public void setCheckCasts(String checkCasts) {
+		this.checkCasts = Boolean.parseBoolean(checkCasts);
 	}
 
 	public Boolean getClassMetadata() {
@@ -371,12 +419,20 @@ public class CompilerOption extends JavaOption {
 		this.classMetadata = classMetadata;
 	}
 
+	public void setClassMetadata(String classMetadata) {
+		this.classMetadata = Boolean.parseBoolean(classMetadata);
+	}
+
 	public Boolean getClosureCompiler() {
 		return closureCompiler;
 	}
 
 	public void setClosureCompiler(Boolean closureCompiler) {
 		this.closureCompiler = closureCompiler;
+	}
+
+	public void setClosureCompiler(String closureCompiler) {
+		this.closureCompiler = Boolean.parseBoolean(closureCompiler);
 	}
 
 	public JsInteropMode getJsInteropMode() {
@@ -397,6 +453,10 @@ public class CompilerOption extends JavaOption {
 
 	public void setGenerateJsInteropExports(Boolean generateJsInteropExports) {
 		this.generateJsInteropExports = generateJsInteropExports;
+	}
+
+	public void setGenerateJsInteropExports(String generateJsInteropExports) {
+		this.generateJsInteropExports = Boolean.parseBoolean(generateJsInteropExports);
 	}
 
 	public List<String> getExtraArgs() {

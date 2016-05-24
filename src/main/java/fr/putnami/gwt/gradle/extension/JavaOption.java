@@ -78,11 +78,19 @@ public class JavaOption {
 		this.debugPort = debugPort;
 	}
 
+	public void setDebugPort(String debugPort) {
+		this.debugPort = Integer.valueOf(debugPort);
+	}
+
 	public boolean isDebugSuspend() {
 		return debugSuspend;
 	}
 
 	public void setDebugSuspend(boolean debugSuspend) {
 		this.debugSuspend = debugSuspend;
+	}
+
+	public void setDebugSuspend(String debugSuspend) {
+		this.debugSuspend = Boolean.valueOf(debugSuspend);
 	}
 }
