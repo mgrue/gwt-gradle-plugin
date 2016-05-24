@@ -20,7 +20,7 @@ apply plugin: 'signing'
 apply plugin: "com.gradle.plugin-publish"
 
 group = 'fr.putnami.gwt'
-version = '0.3.0-SNAPSHOT'
+version = '0.3.0'
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
@@ -66,15 +66,19 @@ signing {
 }
 
 pluginBundle {
-  website = 'http://www.gradle.org/'
+  website = 'http://putnami.org/'
   vcsUrl = 'https://github.com/Putnami/putnami-gradle-plugin'
   description = 'Putnami GWT Gradle Plugin'
   tags = ['gwt', 'putnami']
 
   plugins {
-    greetingsPlugin {
+    gwtPlugin {
       id = 'fr.putnami.gwt'
-      displayName = 'Putnami Gradle Plugin'
+      displayName = 'Putnami GWT Plugin'
+    }
+    gwtLibPlugin {
+      id = 'fr.putnami.gwt-lib'
+      displayName = 'Putnami GWT lib Plugin'
     }
   }
 }
