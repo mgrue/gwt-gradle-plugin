@@ -34,6 +34,7 @@ import java.util.List;
 import fr.putnami.gwt.gradle.PwtLibPlugin;
 import fr.putnami.gwt.gradle.action.JavaAction;
 import fr.putnami.gwt.gradle.extension.DevOption;
+import fr.putnami.gwt.gradle.extension.PutnamiExtension;
 import fr.putnami.gwt.gradle.util.ResourceUtils;
 
 public class CodeServerBuilder extends JavaCommandBuilder {
@@ -45,6 +46,8 @@ public class CodeServerBuilder extends JavaCommandBuilder {
 	public void configure(Project project, DevOption devOption, Collection<String> modules) {
 		ConfigurationContainer configs = project.getConfigurations();
 		Configuration sdmConf = configs.getByName(PwtLibPlugin.CONF_GWT_SDM);
+
+		PutnamiExtension putnami = project.getExtensions().getByType(PutnamiExtension.class);
 
 		SourceSet mainSourceSet = project.getConvention()
 			.getPlugin(JavaPluginConvention.class).getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
@@ -69,7 +72,9 @@ public class CodeServerBuilder extends JavaCommandBuilder {
 		addArg("-workDir", ResourceUtils.ensureDir(devOption.getWorkDir()));
 		addArgIf(devOption.getIncremental(), "-incremental", "-noincremental");
 		addArg("-sourceLevel", devOption.getSourceLevel());
-		addArg("-logLevel", devOption.getLogLevel());
+		if (!putnami.getGwtVersion().startsWith("2.6")) {
+			addArg("-logLevel", devOption.getLogLevel());
+		}
 		addArg("-XmethodNameDisplayMode", devOption.getMethodNameDisplayMode());
 		addArg("-XjsInteropMode", devOption.getJsInteropMode());
 		addArgIf(devOption.getGenerateJsInteropExports(), "-generateJsInteropExports");

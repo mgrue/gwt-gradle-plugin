@@ -70,7 +70,7 @@ public class GwtDevTask extends AbstractTask {
 		try {
 			this.jettyConf = new File(getProject().getBuildDir(), "putnami/conf/jetty-run-conf.xml");
 			Map<String, String> model = new ImmutableMap.Builder<String, String>()
-					.put("__WAR_FILE__", sdmOption.getWar().getAbsolutePath())
+				.put("__WAR_FILE__", sdmOption.getWar().getAbsolutePath())
 				.build();
 			ResourceUtils.copy("/stub.jetty-conf.xml", jettyConf, model);
 
@@ -131,7 +131,9 @@ public class GwtDevTask extends AbstractTask {
 		DevOption devOption = putnami.getDev();
 
 		CodeServerBuilder sdmBuilder = new CodeServerBuilder();
-		sdmBuilder.addArg("-launcherDir", devOption.getWar());
+		if (!putnami.getGwtVersion().startsWith("2.6")) {
+			sdmBuilder.addArg("-launcherDir", devOption.getWar());
+		}
 		sdmBuilder.configure(getProject(), putnami.getDev(), getModules());
 
 		final JavaAction sdmAction = sdmBuilder.buildJavaAction();

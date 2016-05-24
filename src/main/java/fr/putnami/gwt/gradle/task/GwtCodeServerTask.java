@@ -42,7 +42,9 @@ public class GwtCodeServerTask extends AbstractTask {
 		ResourceUtils.ensureDir(putnami.getDev().getLauncherDir());
 
 		CodeServerBuilder sdmBuilder = new CodeServerBuilder();
-		sdmBuilder.addArg("-launcherDir", putnami.getDev().getLauncherDir());
+		if (!putnami.getGwtVersion().startsWith("2.6")) {
+			sdmBuilder.addArg("-launcherDir", putnami.getDev().getLauncherDir());
+		}
 		sdmBuilder.configure(getProject(), putnami.getDev(), putnami.getModule());
 
 		JavaAction sdmAction = sdmBuilder.buildJavaAction();
