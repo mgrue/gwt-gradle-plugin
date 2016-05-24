@@ -1,12 +1,3 @@
-buildscript {
-	repositories {
-		mavenLocal()
-		mavenCentral()
-	}
-	dependencies {
-		classpath 'fr.putnami.gwt:putnami-gradle-plugin:0.3.0-SNAPSHOT'
-	}
-}
 
 allprojects {
 	group = 'fr.putnami.pwt.gradle.samples'

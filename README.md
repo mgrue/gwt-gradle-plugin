@@ -48,15 +48,8 @@ touch build.gradle
 * Apply the plugin **fr.putnami.gwt** in your *build.gradle* file
 
 ```groovy
-apply plugin: 'fr.putnami.gwt'
-
-buildscript {
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath 'fr.putnami.gwt:putnami-gradle-plugin:0.2.0'
-	}
+plugins {
+  id "fr.putnami.gwt" version "0.3.0"
 }
 
 repositories {
@@ -92,19 +85,12 @@ To use the lastest **snapshot** you can add `maven{ url 'https://oss.sonatype.or
     |-- webapp
 ```
 
-* In the build .gradle file put:
+* In the `build.gradle` file put:
 
 ```groovy
-apply plugin: 'fr.putnami.gwt'
 apply plugin: 'eclipse'
-
-buildscript {
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath 'fr.putnami.gwt:putnami-gradle-plugin:0.2.0'
-	}
+plugins {
+  id "fr.putnami.gwt" version "0.3.0"
 }
 
 repositories {
