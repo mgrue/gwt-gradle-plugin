@@ -47,19 +47,33 @@ touch build.gradle
 
 * Apply the plugin **fr.putnami.gwt** in your *build.gradle* file
 
+To apply the plugin, please add one of the following snippets to your *build.gradle* file:
+
+**Gradle >= 2.1**
+
 ```groovy
 plugins {
-  id "fr.putnami.gwt" version "0.3.0"
-}
-
-repositories {
-	mavenCentral()
-}
-
-putnami{
-	module 'your.gwt.module.to.compile'
+    id "fr.putnami.gwt" version "0.3.0"
 }
 ```
+
+Currently the "plugins" notation cannot be used for applying the plugin for sub projects, when used from the root build script.
+
+**Gradle < 2.1**
+
+```groovy
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'fr.putnami.gwt:putnamigradleplugin:0.3.0'
+    }
+}
+apply plugin: 'fr.putnami.gwt'
+```
+
+If you have a multi project build make sure to apply the plugin and the plugin configuration to every project.
 
 * Then use the commands below:
   * `gradle gwtRun` To run the webapp
