@@ -67,7 +67,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'fr.putnami.gwt:putnamigradleplugin:0.3.0'
+        classpath 'fr.putnami.gwt:putnami-gradle-plugin:0.3.0'
     }
 }
 apply plugin: 'fr.putnami.gwt'
