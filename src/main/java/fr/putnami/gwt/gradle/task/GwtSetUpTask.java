@@ -36,7 +36,6 @@ public class GwtSetUpTask extends AbstractTask {
 	private List<String> modules;
 
 	public GwtSetUpTask() {
-		setName(NAME);
 		setDescription("Set up the GWT project from a skeleton");
 	}
 

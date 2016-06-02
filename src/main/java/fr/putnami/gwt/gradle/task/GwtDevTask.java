@@ -51,7 +51,6 @@ public class GwtDevTask extends AbstractTask {
 	private File jettyConf;
 
 	public GwtDevTask() {
-		setName(NAME);
 		setDescription("Run DevMode");
 
 		dependsOn(JavaPlugin.COMPILE_JAVA_TASK_NAME, JavaPlugin.PROCESS_RESOURCES_TASK_NAME);

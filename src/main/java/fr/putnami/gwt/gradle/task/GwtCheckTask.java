@@ -44,7 +44,6 @@ public class GwtCheckTask extends AbstractTask {
 	private File war;
 
 	public GwtCheckTask() {
-		setName(NAME);
 		setDescription("Check the GWT modules");
 
 		dependsOn(JavaPlugin.COMPILE_JAVA_TASK_NAME, JavaPlugin.PROCESS_RESOURCES_TASK_NAME);
