@@ -46,7 +46,6 @@ public class GwtCompileTask extends AbstractTask {
 	private FileCollection src;
 
 	public GwtCompileTask() {
-		setName(NAME);
 		setDescription("Compile the GWT modules");
 
 		dependsOn(JavaPlugin.COMPILE_JAVA_TASK_NAME, JavaPlugin.PROCESS_RESOURCES_TASK_NAME);

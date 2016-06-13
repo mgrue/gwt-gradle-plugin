@@ -37,7 +37,6 @@ public class GwtRunTask extends AbstractTask {
 	private File jettyConf;
 
 	public GwtRunTask() {
-		setName(NAME);
 		setDescription("Run jetty with the GW the GWT modules");
 
 		dependsOn(WarPlugin.WAR_TASK_NAME);

@@ -27,7 +27,6 @@ public class GwtStopTask extends AbstractTask {
 	public static final String NAME = "gwtStop";
 
 	public GwtStopTask() {
-		setName(NAME);
 		setDescription("Stop jetty");
 	}
 
