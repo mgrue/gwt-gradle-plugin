@@ -74,8 +74,6 @@ public class CompileCommandBuilder extends JavaCommandBuilder {
 		addArgIf(compilerOptions.getSaveSource(), "-saveSource", "-nosaveSource");
 		addArg("-XmethodNameDisplayMode", compilerOptions.getMethodNameDisplayMode());
 
-		addArgIf(compilerOptions.getClosureCompiler(), "-XclosureCompiler", "-XnoclosureCompiler");
-
 		addArg("-XjsInteropMode", compilerOptions.getJsInteropMode());
 		addArgIf(compilerOptions.getGenerateJsInteropExports(), "-generateJsInteropExports");
 

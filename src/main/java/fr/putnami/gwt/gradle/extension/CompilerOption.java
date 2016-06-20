@@ -133,11 +133,6 @@ public class CompilerOption extends JavaOption {
 	 */
 	private Boolean classMetadata;
 	/**
-	 * EXPERIMENTAL: Compile output Javascript with the Closure compiler for even further
-	 * optimizations.
-	 */
-	private Boolean closureCompiler;
-	/**
 	 * Specifies JsInterop mode, either NONE, JS, or CLOSURE (till GWT 2.7.x ).
 	 */
 	private JsInteropMode jsInteropMode;
@@ -421,18 +416,6 @@ public class CompilerOption extends JavaOption {
 
 	public void setClassMetadata(String classMetadata) {
 		this.classMetadata = Boolean.parseBoolean(classMetadata);
-	}
-
-	public Boolean getClosureCompiler() {
-		return closureCompiler;
-	}
-
-	public void setClosureCompiler(Boolean closureCompiler) {
-		this.closureCompiler = closureCompiler;
-	}
-
-	public void setClosureCompiler(String closureCompiler) {
-		this.closureCompiler = Boolean.parseBoolean(closureCompiler);
 	}
 
 	public JsInteropMode getJsInteropMode() {
