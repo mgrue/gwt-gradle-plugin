@@ -14,6 +14,8 @@
  */
 package fr.putnami.gwt.gradle.task;
 
+import com.google.common.base.Strings;
+
 import org.gradle.api.Project;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.ConventionMapping;
@@ -56,6 +58,10 @@ public class GwtCompileTask extends AbstractTask {
 
 		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
 		CompilerOption compilerOptions = putnami.getCompile();
+		if (!Strings.isNullOrEmpty(putnami.getSourceLevel()) &&
+			Strings.isNullOrEmpty(compilerOptions.getSourceLevel())) {
+			compilerOptions.setSourceLevel(putnami.getSourceLevel());
+		}
 
 		CompileCommandBuilder commandBuilder = new CompileCommandBuilder();
 		commandBuilder.configure(getProject(), compilerOptions, getSrc(), getWar(), getModules());
@@ -71,7 +77,6 @@ public class GwtCompileTask extends AbstractTask {
 
 	public void configure(final Project project, final PutnamiExtension extention) {
 		final CompilerOption options = extention.getCompile();
-
 		options.init(getProject());
 		options.setLocalWorkers(evalWorkers(options));
 

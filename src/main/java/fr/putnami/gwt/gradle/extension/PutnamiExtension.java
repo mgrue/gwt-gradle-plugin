@@ -31,6 +31,10 @@ public class PutnamiExtension {
 	private boolean gwtElementalLib = false;
 	private boolean googlePluginEclipse = false;
 	private String jettyVersion = "9.2.7.v20150116";
+	/**
+	 * Specifies Java source level.
+	 */
+	private String sourceLevel;
 
 	/**
 	 * GWT Module to compile.
@@ -120,6 +124,14 @@ public class PutnamiExtension {
 		return this;
 	}
 
+	public String getSourceLevel() {
+		return sourceLevel;
+	}
+
+	public void setSourceLevel(String sourceLevel) {
+		this.sourceLevel = sourceLevel;
+	}
+
 	public List<String> getModule() {
 		return module;
 	}
@@ -127,5 +139,4 @@ public class PutnamiExtension {
 	public void module(String... modules) {
 		this.module.addAll(Arrays.asList(modules));
 	}
-
 }

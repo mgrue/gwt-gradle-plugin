@@ -14,6 +14,7 @@
  */
 package fr.putnami.gwt.gradle.task;
 
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -72,7 +73,6 @@ public class GwtDevTask extends AbstractTask {
 				.put("__WAR_FILE__", sdmOption.getWar().getAbsolutePath())
 				.build();
 			ResourceUtils.copy("/stub.jetty-conf.xml", jettyConf, model);
-
 		} catch (IOException e) {
 			Throwables.propagate(e);
 		}
@@ -128,6 +128,10 @@ public class GwtDevTask extends AbstractTask {
 	private JavaAction execSdm() {
 		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
 		DevOption devOption = putnami.getDev();
+		if (!Strings.isNullOrEmpty(putnami.getSourceLevel()) &&
+			Strings.isNullOrEmpty(devOption.getSourceLevel())) {
+			devOption.setSourceLevel(putnami.getSourceLevel());
+		}
 
 		CodeServerBuilder sdmBuilder = new CodeServerBuilder();
 		if (!putnami.getGwtVersion().startsWith("2.6")) {
@@ -179,5 +183,4 @@ public class GwtDevTask extends AbstractTask {
 	public List<String> getModules() {
 		return modules;
 	}
-
 }
