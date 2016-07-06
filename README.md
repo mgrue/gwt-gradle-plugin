@@ -53,7 +53,7 @@ To apply the plugin, please add one of the following snippets to your *build.gra
 
 ```groovy
 plugins {
-    id "fr.putnami.gwt" version "0.3.0"
+    id "fr.putnami.gwt" version "0.4.0"
 }
 ```
 
@@ -67,7 +67,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'fr.putnami.gwt:putnami-gradle-plugin:0.3.0'
+        classpath 'fr.putnami.gwt:putnami-gradle-plugin:0.4.0'
     }
 }
 apply plugin: 'fr.putnami.gwt'
@@ -104,7 +104,7 @@ To use the lastest **snapshot** you can add `maven{ url 'https://oss.sonatype.or
 ```groovy
 apply plugin: 'eclipse'
 plugins {
-  id "fr.putnami.gwt" version "0.3.0"
+  id "fr.putnami.gwt" version "0.4.0"
 }
 
 repositories {
