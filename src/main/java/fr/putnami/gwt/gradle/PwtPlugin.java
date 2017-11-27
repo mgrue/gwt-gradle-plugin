@@ -12,15 +12,27 @@
  * You should have received a copy of the GNU Lesser General Public License along with pwt. If not,
  * see <http://www.gnu.org/licenses/>.
  */
+/**
+ * This file is part of pwt.
+ * <p>
+ * pwt is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser
+ * General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * <p>
+ * pwt is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+ * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Lesser General Public License along with pwt. If not,
+ * see <http://www.gnu.org/licenses/>.
+ */
 package fr.putnami.gwt.gradle;
 
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
-import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
-import org.gradle.api.file.FileCollection;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.plugins.JavaBasePlugin;
@@ -104,10 +116,9 @@ public class PwtPlugin implements Plugin<Project> {
 		});
 
 		ConfigurationContainer configurationContainer = project.getConfigurations();
-		Configuration gwtConfig = configurationContainer.getByName(PwtLibPlugin.CONF_GWT_SDM);
-		FileCollection warClasspath = warTask.getClasspath()
-			.minus(gwtConfig);
-		warTask.setClasspath(warClasspath);
+		//		Configuration gwtConfig = configurationContainer.getByName(PwtLibPlugin.CONF_GWT_SDM);
+		//		FileCollection warClasspath = warTask.getClasspath().minus(gwtConfig);
+		//		warTask.setClasspath(warClasspath);
 	}
 
 	private void createRunTask(final Project project) {
@@ -120,6 +131,7 @@ public class PwtPlugin implements Plugin<Project> {
 		project.getTasks().withType(GwtCodeServerTask.class, new Action<GwtCodeServerTask>() {
 			@Override
 			public void execute(final GwtCodeServerTask task) {
+
 				task.configureCodeServer(project, extension);
 			}
 		});
@@ -135,5 +147,4 @@ public class PwtPlugin implements Plugin<Project> {
 			}
 		});
 	}
-
 }

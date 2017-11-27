@@ -24,7 +24,6 @@ import org.gradle.api.file.FileCollection;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.MavenPlugin;
-import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.api.tasks.testing.Test;
@@ -63,9 +62,16 @@ public class PwtLibPlugin implements Plugin<Project> {
 				String jettyVersion = extention.getJettyVersion();
 
 				DependencyHandler dependencies = p.getDependencies();
-				dependencies.add(CONF_GWT_SDM, "com.google.gwt:gwt-codeserver" + ":" + gwtVersion);
-				dependencies.add(CONF_GWT_SDM, "com.google.gwt:gwt-user" + ":" + gwtVersion);
-				dependencies.add(WarPlugin.PROVIDED_COMPILE_CONFIGURATION_NAME, "com.google.gwt:gwt-user" + ":" + gwtVersion);
+				dependencies.add(CONF_GWT_SDM,
+					"com.google.gwt:gwt-codeserver" + ":" + gwtVersion);
+				dependencies.add(CONF_GWT_SDM,
+					"com.google.gwt:gwt-user" + ":" + gwtVersion);
+				dependencies.add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME,
+					"com.google.gwt:gwt-codeserver" + ":" + gwtVersion);
+				dependencies.add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME,
+					"com.google.gwt:gwt-user" + ":" + gwtVersion);
+				dependencies.add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME,
+					"com.google.gwt:gwt-user" + ":" + gwtVersion);
 
 				if (extention.isGwtElementalLib()) {
 					dependencies.add(

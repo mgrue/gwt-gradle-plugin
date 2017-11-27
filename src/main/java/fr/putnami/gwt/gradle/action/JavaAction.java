@@ -50,12 +50,14 @@ public class JavaAction implements Action<Task> {
 					line = input.readLine();
 				}
 			} catch (IOException e) {
-				throw Throwables.propagate(e);
+				Throwables.throwIfUnchecked(e);
+				throw new RuntimeException(e);
 			} finally {
 				try {
 					stream.close();
 				} catch (IOException e) {
-					throw Throwables.propagate(e);
+					Throwables.throwIfUnchecked(e);
+					throw new RuntimeException(e);
 				}
 			}
 		}
