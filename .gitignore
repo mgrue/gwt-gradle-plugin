@@ -49,6 +49,9 @@ target/
 .project
 .settings
 .sonar
+.idea/
+*.iml
+out/
 
 # Cargo Containers #
 ######################
