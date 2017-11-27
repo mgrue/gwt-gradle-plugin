@@ -1,6 +1,4 @@
-plugins {
-  id "fr.putnami.gwt" version "0.3.0"
-}
+apply plugin: 'fr.putnami.gwt'
 
 dependencies{
 	compile project(':pgp-sample-multimodule-domain')

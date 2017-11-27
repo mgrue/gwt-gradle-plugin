@@ -1,4 +1,1 @@
-plugins {
-  id "fr.putnami.gwt-lib" version "0.3.0"
-}
-
+apply plugin: 'fr.putnami.gwt-lib'
