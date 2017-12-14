@@ -144,7 +144,7 @@ public class CompilerOption extends JavaOption {
 	/**
 	 * GWT extra args, can be used to experiment arguments.
 	 */
-	private List<String> extraArgs = Lists.newArrayList();
+	final private List<String> extraArgs = Lists.newArrayList();
 
 	public LogLevel getLogLevel() {
 		return logLevel;

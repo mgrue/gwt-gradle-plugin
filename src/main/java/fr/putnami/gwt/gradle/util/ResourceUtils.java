@@ -87,7 +87,7 @@ public final class ResourceUtils {
 
 		String[] files = source.list();
 		if (files != null) {
-			for (String fileName : source.list()) {
+			for (String fileName : files) {
 				File s = new File(source, fileName);
 				File t = new File(target, fileName);
 				if (s.isDirectory()) {

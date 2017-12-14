@@ -35,7 +35,7 @@ public class CompileCommandBuilder extends JavaCommandBuilder {
 	public void configure(Project project, CompilerOption compilerOptions, FileCollection sources, File war,
 		Collection<String> modules) {
 		Configuration sdmConf = project.getConfigurations().getByName(PwtLibPlugin.CONF_GWT_SDM);
-		Configuration compileConf = project.getConfigurations().getByName(JavaPlugin.COMPILE_CONFIGURATION_NAME);
+		Configuration compileConf = project.getConfigurations().getByName(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME);
 
 		configureJavaArgs(compilerOptions);
 		addJavaArgs("-Dgwt.persistentunitcachedir=" + project.getBuildDir() + "/putnami/work/cache");

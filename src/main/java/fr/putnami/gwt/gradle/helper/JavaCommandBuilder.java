@@ -104,7 +104,7 @@ public abstract class JavaCommandBuilder {
 
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(javaExec);
 
 		for (String arg : javaArgs) {
@@ -152,7 +152,7 @@ public abstract class JavaCommandBuilder {
 			addJavaArgs("-XX:MaxPermSize=" + javaOptions.getMaxPermSize());
 		}
 		if (javaOptions.isDebugJava()) {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=");
 			sb.append(javaOptions.getDebugPort());
 			sb.append(",suspend=");

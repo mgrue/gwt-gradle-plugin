@@ -39,7 +39,7 @@ public class PutnamiExtension {
 	/**
 	 * GWT Module to compile.
 	 */
-	private List<String> module = Lists.newArrayList();
+	final private List<String> module = Lists.newArrayList();
 
 	private CompilerOption compile = new CompilerOption();
 	private DevOption dev = new DevOption();

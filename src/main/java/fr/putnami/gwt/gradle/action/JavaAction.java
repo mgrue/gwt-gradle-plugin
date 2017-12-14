@@ -14,7 +14,6 @@
  */
 package fr.putnami.gwt.gradle.action;
 
-import com.google.common.base.Throwables;
 
 import org.gradle.api.Action;
 import org.gradle.api.Task;
@@ -42,24 +41,17 @@ public class JavaAction implements Action<Task> {
 
 		@Override
 		public void run() {
-			BufferedReader input = new BufferedReader(new InputStreamReader(stream));
-			try {
+			try(BufferedReader input = new BufferedReader(new InputStreamReader(stream))) {
 				String line = input.readLine();
 				while (!quit && line != null) {
 					printLine(line);
 					line = input.readLine();
 				}
-			} catch (IOException e) {
-				Throwables.throwIfUnchecked(e);
+				stream.close();
+			}catch (IOException e) {
 				throw new RuntimeException(e);
-			} finally {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					Throwables.throwIfUnchecked(e);
-					throw new RuntimeException(e);
-				}
 			}
+
 		}
 
 		protected void printLine(String line) {
@@ -100,7 +92,7 @@ public class JavaAction implements Action<Task> {
 				}
 			});
 		} catch (IOException e) {
-			throw Throwables.propagate(e);
+			throw new RuntimeException(e);
 		}
 		errorLogger.setStream(process.getErrorStream());
 		errorLogger.setLevel(LogLevel.ERROR);
@@ -125,7 +117,7 @@ public class JavaAction implements Action<Task> {
 		try {
 			process.waitFor();
 		} catch (InterruptedException e) {
-			throw Throwables.propagate(e);
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -133,7 +125,7 @@ public class JavaAction implements Action<Task> {
 		try {
 			process.waitFor();
 		} catch (InterruptedException e) {
-			throw Throwables.propagate(e);
+			throw new RuntimeException(e);
 		}
 	}
 

@@ -98,7 +98,7 @@ public class CodeServerBuilder extends JavaCommandBuilder {
 
 	private Collection<File> listProjectDepsSrcDirs(Project project) {
 		ConfigurationContainer configs = project.getConfigurations();
-		Configuration compileConf = configs.getByName(JavaPlugin.COMPILE_CONFIGURATION_NAME);
+		Configuration compileConf = configs.getByName(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME);
 		DependencySet depSet = compileConf.getAllDependencies();
 
 		List<File> result = Lists.newArrayList();
@@ -109,9 +109,7 @@ public class CodeServerBuilder extends JavaCommandBuilder {
 					JavaPluginConvention javaConvention = projectDependency.getConvention().getPlugin(JavaPluginConvention.class);
 					SourceSet mainSourceSet = javaConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
 
-					for (File file : mainSourceSet.getAllSource().getSrcDirs()) {
-						result.add(file);
-					}
+					result.addAll(mainSourceSet.getAllSource().getSrcDirs());
 				}
 			}
 		}

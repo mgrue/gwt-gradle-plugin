@@ -17,5 +17,5 @@ package fr.putnami.gwt.gradle.extension;
 public enum JsInteropMode {
 		NONE,
 		JS,
-		CLOSURE;
+		CLOSURE
 }

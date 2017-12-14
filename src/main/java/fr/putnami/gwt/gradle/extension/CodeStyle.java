@@ -29,5 +29,5 @@ public enum CodeStyle {
 		/**
 		 * DETAILED
 		 */
-		DETAILED;
+		DETAILED
 }

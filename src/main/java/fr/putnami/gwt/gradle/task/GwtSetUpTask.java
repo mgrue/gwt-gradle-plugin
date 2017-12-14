@@ -72,7 +72,7 @@ public class GwtSetUpTask extends AbstractTask {
 
 		mapping.map("modules", new Callable<List<String>>() {
 			@Override
-			public List<String> call() throws Exception {
+			public List<String> call()  {
 				return extension.getModule();
 			}
 		});

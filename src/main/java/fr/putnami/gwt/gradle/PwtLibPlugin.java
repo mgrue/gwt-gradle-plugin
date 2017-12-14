@@ -75,11 +75,11 @@ public class PwtLibPlugin implements Plugin<Project> {
 
 				if (extention.isGwtElementalLib()) {
 					dependencies.add(
-						JavaPlugin.COMPILE_CONFIGURATION_NAME, "com.google.gwt:gwt-elemental" + ":" + gwtVersion);
+						JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME, "com.google.gwt:gwt-elemental" + ":" + gwtVersion);
 				}
 				if (extention.isGwtServletLib()) {
 					dependencies.add(
-						JavaPlugin.COMPILE_CONFIGURATION_NAME, "com.google.gwt:gwt-servlet" + ":" + gwtVersion);
+						JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME, "com.google.gwt:gwt-servlet" + ":" + gwtVersion);
 				}
 
 				dependencies.add(CONF_JETTY, "org.eclipse.jetty:jetty-runner" + ":" + jettyVersion);

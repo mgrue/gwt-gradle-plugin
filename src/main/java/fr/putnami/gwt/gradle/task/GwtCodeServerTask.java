@@ -37,7 +37,7 @@ public class GwtCodeServerTask extends AbstractTask {
 	}
 
 	@TaskAction
-	public void exec() throws Exception {
+	public void exec() {
 		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
 		if (!Strings.isNullOrEmpty(putnami.getSourceLevel()) &&
 			Strings.isNullOrEmpty(putnami.getDev().getSourceLevel())) {

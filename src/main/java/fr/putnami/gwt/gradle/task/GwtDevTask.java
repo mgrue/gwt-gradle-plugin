@@ -15,7 +15,6 @@
 package fr.putnami.gwt.gradle.task;
 
 import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
@@ -48,7 +47,7 @@ public class GwtDevTask extends AbstractTask {
 
 	public static final String NAME = "gwtDev";
 
-	private List<String> modules = Lists.newArrayList();
+	final private List<String> modules = Lists.newArrayList();
 	private File jettyConf;
 
 	public GwtDevTask() {
@@ -74,7 +73,7 @@ public class GwtDevTask extends AbstractTask {
 				.build();
 			ResourceUtils.copy("/stub.jetty-conf.xml", jettyConf, model);
 		} catch (IOException e) {
-			Throwables.propagate(e);
+			throw new RuntimeException(e);
 		}
 
 		JavaAction sdm = execSdm();
@@ -101,7 +100,11 @@ public class GwtDevTask extends AbstractTask {
 			for (File file : mainSourceSet.getResources().getSrcDirs()) {
 				ResourceUtils.copyDirectory(file, classesDir);
 			}
-			ResourceUtils.copyDirectory(mainSourceSet.getOutput().getClassesDir(), classesDir);
+
+			for(File fc: mainSourceSet.getOutput().getClassesDirs()){
+				ResourceUtils.copyDirectory(fc, classesDir);
+			}
+
 			for (File file : mainSourceSet.getOutput().getFiles()) {
 				if (file.exists() && file.isFile()) {
 					ResourceUtils.copy(file, new File(classesDir, file.getName()));
@@ -173,7 +176,7 @@ public class GwtDevTask extends AbstractTask {
 		ConventionMapping convention = ((IConventionAware) this).getConventionMapping();
 		convention.map("modules", new Callable<List<String>>() {
 			@Override
-			public List<String> call() throws Exception {
+			public List<String> call()  {
 				return extention.getModule();
 			}
 		});

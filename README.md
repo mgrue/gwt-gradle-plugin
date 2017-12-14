@@ -17,7 +17,7 @@ This plugin helps to build GWT project with Gradle. The main goals is build weba
 ## Requirements ##
 
 * Java 7 or higher.
-* Gradle 2 or higher. https://gradle.org
+* Gradle 4 or higher. https://gradle.org
 
 ## Quick start ##
 
@@ -360,7 +360,7 @@ All the documentation is [here](https://github.com/Putnami/putnami-gradle-plugin
 
 If you are an eclipse user, it could be nice if you follow the workspace setup instructions.
 
-Every pullrequest will be review with a great consideration, and with a full open mind.
+Every pull request will be review with a great consideration, and with a full open mind.
 
 
 ## License ##

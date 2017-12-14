@@ -84,26 +84,26 @@ public class GwtCompileTask extends AbstractTask {
 		SourceSet mainSourceSet = javaConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
 		final FileCollection sources = getProject()
 			.files(project.files(mainSourceSet.getOutput().getResourcesDir()))
-			.plus(project.files(mainSourceSet.getOutput().getClassesDir()))
+			.plus(project.files(mainSourceSet.getOutput().getClassesDirs()))
 			.plus(getProject().files(mainSourceSet.getAllSource().getSrcDirs()));
 
 		ConventionMapping mapping = ((IConventionAware) this).getConventionMapping();
 
 		mapping.map("modules", new Callable<List<String>>() {
 			@Override
-			public List<String> call() throws Exception {
+			public List<String> call()  {
 				return extention.getModule();
 			}
 		});
 		mapping.map("war", new Callable<File>() {
 			@Override
-			public File call() throws Exception {
+			public File call()  {
 				return options.getWar();
 			}
 		});
 		mapping.map("src", new Callable<FileCollection>() {
 			@Override
-			public FileCollection call() throws Exception {
+			public FileCollection call()  {
 				return sources;
 			}
 		});

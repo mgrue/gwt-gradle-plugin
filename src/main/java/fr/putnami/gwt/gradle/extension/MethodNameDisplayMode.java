@@ -18,5 +18,5 @@ public enum MethodNameDisplayMode {
 		NONE,
 		ONLY_METHOD_NAME,
 		ABBREVIATED,
-		FULL;
+		FULL
 }

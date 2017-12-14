@@ -21,5 +21,5 @@ public enum LogLevel {
 		TRACE,
 		DEBUG,
 		SPAM,
-		ALL;
+		ALL
 }

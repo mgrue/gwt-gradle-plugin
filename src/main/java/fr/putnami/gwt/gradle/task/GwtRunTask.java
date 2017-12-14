@@ -14,7 +14,6 @@
  */
 package fr.putnami.gwt.gradle.task;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 
 import org.gradle.api.plugins.WarPlugin;
@@ -43,7 +42,7 @@ public class GwtRunTask extends AbstractTask {
 	}
 
 	@TaskAction
-	public void exec() throws Exception {
+	public void exec()  {
 		War warTask = (War) getProject().getTasks().getByName("war");
 
 		try {
@@ -53,7 +52,7 @@ public class GwtRunTask extends AbstractTask {
 					.build();
 			ResourceUtils.copy("/stub.jetty-conf.xml", jettyConf, model);
 		} catch (IOException e) {
-			Throwables.propagate(e);
+			throw new RuntimeException(e);
 		}
 
 		JavaAction jetty = execJetty();

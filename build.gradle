@@ -40,7 +40,7 @@ checkstyle{
 
 license {
 	skipExistingHeaders = true
-	header rootProject.file('settings/LICENSE_LGPL_HEADER');
+	header rootProject.file('settings/LICENSE_LGPL_HEADER')
 	ext.projectName = project.name
 	exclude "**/skeleton/**"
 }
