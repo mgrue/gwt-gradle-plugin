@@ -21,7 +21,7 @@ import java.util.List;
 
 public class JavaOption {
 
-	final private List<String> javaArgs = Lists.newArrayList();
+	private final List<String> javaArgs = Lists.newArrayList();
 
 	private String maxHeapSize;
 	private String minHeapSize;

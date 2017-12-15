@@ -42,19 +42,13 @@ public class GwtRunTask extends AbstractTask {
 	}
 
 	@TaskAction
-	public void exec()  {
+	public void exec() throws Exception {
 		War warTask = (War) getProject().getTasks().getByName("war");
-
-		try {
-			this.jettyConf = new File(getProject().getBuildDir(), "putnami/conf/jetty-run-conf.xml");
-			Map<String, String> model = new ImmutableMap.Builder<String, String>()
+		jettyConf = new File(getProject().getBuildDir(), "putnami/conf/jetty-run-conf.xml");
+		Map<String, String> model = new ImmutableMap.Builder<String, String>()
 					.put("__WAR_FILE__", warTask.getArchivePath().getAbsolutePath())
 					.build();
-			ResourceUtils.copy("/stub.jetty-conf.xml", jettyConf, model);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-
+		ResourceUtils.copy("/stub.jetty-conf.xml", jettyConf, model);
 		JavaAction jetty = execJetty();
 		jetty.join();
 	}

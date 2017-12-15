@@ -47,7 +47,7 @@ public class GwtDevTask extends AbstractTask {
 
 	public static final String NAME = "gwtDev";
 
-	final private List<String> modules = Lists.newArrayList();
+	private final List<String> modules = Lists.newArrayList();
 	private File jettyConf;
 
 	public GwtDevTask() {
@@ -66,15 +66,13 @@ public class GwtDevTask extends AbstractTask {
 		ResourceUtils.ensureDir(sdmOption.getWar());
 		ResourceUtils.ensureDir(sdmOption.getWorkDir());
 
-		try {
-			this.jettyConf = new File(getProject().getBuildDir(), "putnami/conf/jetty-run-conf.xml");
-			Map<String, String> model = new ImmutableMap.Builder<String, String>()
+
+		jettyConf = new File(getProject().getBuildDir(), "putnami/conf/jetty-run-conf.xml");
+		Map<String, String> model = new ImmutableMap.Builder<String, String>()
 				.put("__WAR_FILE__", sdmOption.getWar().getAbsolutePath())
 				.build();
-			ResourceUtils.copy("/stub.jetty-conf.xml", jettyConf, model);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		ResourceUtils.copy("/stub.jetty-conf.xml", jettyConf, model);
+
 
 		JavaAction sdm = execSdm();
 		if (sdm.isAlive()) {
@@ -101,8 +99,8 @@ public class GwtDevTask extends AbstractTask {
 				ResourceUtils.copyDirectory(file, classesDir);
 			}
 
-			for(File fc: mainSourceSet.getOutput().getClassesDirs()){
-				ResourceUtils.copyDirectory(fc, classesDir);
+			for (File f: mainSourceSet.getOutput().getClassesDirs()) {
+				ResourceUtils.copyDirectory(f, classesDir);
 			}
 
 			for (File file : mainSourceSet.getOutput().getFiles()) {

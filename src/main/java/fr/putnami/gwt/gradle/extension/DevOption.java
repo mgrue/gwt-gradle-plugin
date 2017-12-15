@@ -96,7 +96,7 @@ public class DevOption extends JavaOption {
 	/**
 	 * GWT extra args, can be used to experiment arguments.
 	 */
-	final private List<String> extraArgs = Lists.newArrayList();
+	private final List<String> extraArgs = Lists.newArrayList();
 
 	public String getBindAddress() {
 		return bindAddress;

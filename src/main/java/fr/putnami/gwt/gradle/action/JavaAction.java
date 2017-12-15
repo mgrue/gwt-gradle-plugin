@@ -14,7 +14,6 @@
  */
 package fr.putnami.gwt.gradle.action;
 
-
 import org.gradle.api.Action;
 import org.gradle.api.Task;
 import org.gradle.api.logging.LogLevel;
@@ -41,14 +40,14 @@ public class JavaAction implements Action<Task> {
 
 		@Override
 		public void run() {
-			try(BufferedReader input = new BufferedReader(new InputStreamReader(stream))) {
+			try (BufferedReader input = new BufferedReader(new InputStreamReader(stream))) {
 				String line = input.readLine();
 				while (!quit && line != null) {
 					printLine(line);
 					line = input.readLine();
 				}
 				stream.close();
-			}catch (IOException e) {
+			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
 
