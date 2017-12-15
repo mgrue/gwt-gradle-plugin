@@ -60,20 +60,14 @@ public class GwtDevTask extends AbstractTask {
 	public void exec() throws Exception {
 		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
 		DevOption sdmOption = putnami.getDev();
-
 		createWarExploded(sdmOption);
-
 		ResourceUtils.ensureDir(sdmOption.getWar());
 		ResourceUtils.ensureDir(sdmOption.getWorkDir());
-
-
 		jettyConf = new File(getProject().getBuildDir(), "putnami/conf/jetty-run-conf.xml");
 		Map<String, String> model = new ImmutableMap.Builder<String, String>()
 				.put("__WAR_FILE__", sdmOption.getWar().getAbsolutePath())
 				.build();
 		ResourceUtils.copy("/stub.jetty-conf.xml", jettyConf, model);
-
-
 		JavaAction sdm = execSdm();
 		if (sdm.isAlive()) {
 			JavaAction jetty = execJetty();

@@ -21,7 +21,6 @@ import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.bundling.War;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Map;
 
 import fr.putnami.gwt.gradle.action.JavaAction;
