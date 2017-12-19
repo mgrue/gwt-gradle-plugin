@@ -50,7 +50,6 @@ public class JavaAction implements Action<Task> {
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
-
 		}
 
 		protected void printLine(String line) {
