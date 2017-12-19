@@ -98,7 +98,7 @@ public class CodeServerBuilder extends JavaCommandBuilder {
 
 	private Collection<File> listProjectDepsSrcDirs(Project project) {
 		ConfigurationContainer configs = project.getConfigurations();
-		Configuration compileConf = configs.getByName(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME);
+		Configuration compileConf = configs.getByName(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME);
 		DependencySet depSet = compileConf.getAllDependencies();
 
 		List<File> result = Lists.newArrayList();
