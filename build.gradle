@@ -40,15 +40,15 @@ pluginBundle {
   website = 'https://github.com/esoco/gwt-gradle-plugin'
   vcsUrl = 'https://github.com/esoco/gwt-gradle-plugin.git'
   description = 'GWT Gradle Plugin'
-  tags = ['gwt']
+  tags = ['gwt', 'java']
 
   plugins {
     gwtPlugin {
-      id = 'gwt'
+      id = 'de.esoco.gwt'
       displayName = 'Gradle GWT plugin'
     }
     gwtLibPlugin {
-      id = 'gwt-lib'
+      id = 'de.esoco.gwt-lib'
       displayName = 'Gradle GWT lib plugin'
     }
   }
