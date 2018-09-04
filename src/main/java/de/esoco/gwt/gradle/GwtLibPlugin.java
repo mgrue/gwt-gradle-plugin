@@ -31,7 +31,7 @@ import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.api.tasks.testing.Test;
 import org.gradle.plugins.ide.eclipse.model.EclipseModel;
 
-public class PwtLibPlugin implements Plugin<Project> {
+public class GwtLibPlugin implements Plugin<Project> {
 
 	public static final String CONF_GWT_SDM = "gwtSdk";
 	public static final String CONF_JETTY = "jettyConf";
@@ -123,9 +123,9 @@ public class PwtLibPlugin implements Plugin<Project> {
 					final EclipseModel eclipseModel = project.getExtensions().getByType(EclipseModel.class);
 					eclipseModel.getProject().natures(ECLIPSE_NATURE);
 					eclipseModel.getProject().buildCommand(ECLIPSE_BUILDER_PROJECT_VALIDATOR);
-					project.getPlugins().withType(PwtPlugin.class, new Action<PwtPlugin>() {
+					project.getPlugins().withType(GwtPlugin.class, new Action<GwtPlugin>() {
 						@Override
-						public void execute(PwtPlugin warPlugin) {
+						public void execute(GwtPlugin warPlugin) {
 							eclipseModel.getProject().buildCommand(ECLIPSE_BUILDER_WEBAPP_VALIDATOR);
 						}
 					});

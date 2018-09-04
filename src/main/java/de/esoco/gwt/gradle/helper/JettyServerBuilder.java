@@ -19,7 +19,7 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.plugins.WarPlugin;
 
-import de.esoco.gwt.gradle.PwtLibPlugin;
+import de.esoco.gwt.gradle.GwtLibPlugin;
 import de.esoco.gwt.gradle.action.JavaAction;
 import de.esoco.gwt.gradle.extension.JettyOption;
 import de.esoco.gwt.gradle.util.ResourceUtils;
@@ -36,7 +36,7 @@ public class JettyServerBuilder extends JavaCommandBuilder {
 		ConfigurationContainer configs = project.getConfigurations();
 
 		Configuration runtimeConf = configs.getByName(WarPlugin.PROVIDED_RUNTIME_CONFIGURATION_NAME);
-		Configuration jettyClassPath = configs.getByName(PwtLibPlugin.CONF_JETTY);
+		Configuration jettyClassPath = configs.getByName(GwtLibPlugin.CONF_JETTY);
 
 		configureJavaArgs(jettyOption);
 

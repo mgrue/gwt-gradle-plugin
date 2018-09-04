@@ -27,7 +27,7 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
 
-import de.esoco.gwt.gradle.PwtLibPlugin;
+import de.esoco.gwt.gradle.GwtLibPlugin;
 import de.esoco.gwt.gradle.action.JavaAction;
 import de.esoco.gwt.gradle.extension.DevOption;
 import de.esoco.gwt.gradle.extension.PutnamiExtension;
@@ -45,7 +45,7 @@ public class CodeServerBuilder extends JavaCommandBuilder {
 
 	public void configure(Project project, DevOption devOption, Collection<String> modules) {
 		ConfigurationContainer configs = project.getConfigurations();
-		Configuration sdmConf = configs.getByName(PwtLibPlugin.CONF_GWT_SDM);
+		Configuration sdmConf = configs.getByName(GwtLibPlugin.CONF_GWT_SDM);
 
 		PutnamiExtension putnami = project.getExtensions().getByType(PutnamiExtension.class);
 
@@ -105,7 +105,7 @@ public class CodeServerBuilder extends JavaCommandBuilder {
 		for (Dependency dep : depSet) {
 			if (dep instanceof ProjectDependency) {
 				Project projectDependency = ((ProjectDependency) dep).getDependencyProject();
-				if (projectDependency.getPlugins().hasPlugin(PwtLibPlugin.class)) {
+				if (projectDependency.getPlugins().hasPlugin(GwtLibPlugin.class)) {
 					JavaPluginConvention javaConvention = projectDependency.getConvention().getPlugin(JavaPluginConvention.class);
 					SourceSet mainSourceSet = javaConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
 

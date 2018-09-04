@@ -19,7 +19,7 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.plugins.JavaPlugin;
 
-import de.esoco.gwt.gradle.PwtLibPlugin;
+import de.esoco.gwt.gradle.GwtLibPlugin;
 import de.esoco.gwt.gradle.action.JavaAction;
 import de.esoco.gwt.gradle.extension.CompilerOption;
 
@@ -34,7 +34,7 @@ public class CompileCommandBuilder extends JavaCommandBuilder {
 
 	public void configure(Project project, CompilerOption compilerOptions, FileCollection sources, File war,
 		Collection<String> modules) {
-		Configuration sdmConf = project.getConfigurations().getByName(PwtLibPlugin.CONF_GWT_SDM);
+		Configuration sdmConf = project.getConfigurations().getByName(GwtLibPlugin.CONF_GWT_SDM);
 		Configuration compileConf = project.getConfigurations().getByName(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME);
 
 		configureJavaArgs(compilerOptions);

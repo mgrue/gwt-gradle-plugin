@@ -47,14 +47,14 @@ import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.tasks.bundling.War;
 
-public class PwtPlugin implements Plugin<Project> {
+public class GwtPlugin implements Plugin<Project> {
 
-	private static final Logger LOGGER = Logging.getLogger(PwtPlugin.class);
+	private static final Logger LOGGER = Logging.getLogger(GwtPlugin.class);
 
 	@Override
 	public void apply(final Project project) {
 		LOGGER.debug("apply pwt plugin");
-		project.getPlugins().apply(PwtLibPlugin.class);
+		project.getPlugins().apply(GwtLibPlugin.class);
 		project.getPlugins().apply(WarPlugin.class);
 
 		// createSetUpTask(project);
@@ -116,7 +116,7 @@ public class PwtPlugin implements Plugin<Project> {
 		});
 
 		ConfigurationContainer configurationContainer = project.getConfigurations();
-		//		Configuration gwtConfig = configurationContainer.getByName(PwtLibPlugin.CONF_GWT_SDM);
+		//		Configuration gwtConfig = configurationContainer.getByName(GwtLibPlugin.CONF_GWT_SDM);
 		//		FileCollection warClasspath = warTask.getClasspath().minus(gwtConfig);
 		//		warTask.setClasspath(warClasspath);
 	}
