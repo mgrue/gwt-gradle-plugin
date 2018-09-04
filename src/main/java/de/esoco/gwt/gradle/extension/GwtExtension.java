@@ -26,6 +26,7 @@ import groovy.lang.Closure;
 public class GwtExtension {
 	
 	public static final String NAME = "gwt";
+	public static final String DIRECTORY = "gwt";
 
 	private String gwtVersion = "2.7.0";
 	private boolean gwtServletLib = false;

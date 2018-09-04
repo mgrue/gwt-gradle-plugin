@@ -14,13 +14,13 @@
  */
 package de.esoco.gwt.gradle.extension;
 
-import com.google.common.collect.Lists;
-
-import org.gradle.api.Project;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+
+import org.gradle.api.Project;
+
+import com.google.common.collect.Lists;
 
 /**
  * GWT Compiler options.
@@ -451,7 +451,7 @@ public class CompilerOption extends JavaOption {
 	}
 
 	public void init(Project project) {
-		final File buildDir = new File(project.getBuildDir(), "putnami");
+		final File buildDir = new File(project.getBuildDir(), GwtExtension.DIRECTORY);
 
 		this.war = new File(buildDir, "out");
 		this.workDir = new File(buildDir, "work");

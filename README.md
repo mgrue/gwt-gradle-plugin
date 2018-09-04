@@ -1,4 +1,4 @@
-Putnami Gradle Plugin
+GWT Gradle Plugin
 ===================
 
 Travis build status [![Build Status](https://travis-ci.org/Putnami/putnami-gradle-plugin.svg?branch=master)](https://travis-ci.org/Putnami/putnami-gradle-plugin)

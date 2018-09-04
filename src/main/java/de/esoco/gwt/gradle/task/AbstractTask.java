@@ -14,13 +14,13 @@
  */
 package de.esoco.gwt.gradle.task;
 
+import de.esoco.gwt.gradle.extension.GwtExtension;
+
 import org.gradle.api.DefaultTask;
 
-public class AbstractTask extends DefaultTask {
-
-	public static final String PWT_GROUP = "Putnami";
+public abstract class AbstractTask extends DefaultTask {
 
 	public AbstractTask() {
-		setGroup(PWT_GROUP);
+		setGroup(GwtExtension.NAME);
 	}
 }

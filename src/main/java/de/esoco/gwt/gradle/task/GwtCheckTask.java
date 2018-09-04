@@ -14,6 +14,15 @@
  */
 package de.esoco.gwt.gradle.task;
 
+import de.esoco.gwt.gradle.action.JavaAction;
+import de.esoco.gwt.gradle.extension.CompilerOption;
+import de.esoco.gwt.gradle.extension.GwtExtension;
+import de.esoco.gwt.gradle.helper.CompileCommandBuilder;
+
+import java.io.File;
+import java.util.List;
+import java.util.concurrent.Callable;
+
 import org.gradle.api.Project;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.ConventionMapping;
@@ -25,15 +34,6 @@ import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskAction;
-
-import de.esoco.gwt.gradle.action.JavaAction;
-import de.esoco.gwt.gradle.extension.CompilerOption;
-import de.esoco.gwt.gradle.extension.GwtExtension;
-import de.esoco.gwt.gradle.helper.CompileCommandBuilder;
-
-import java.io.File;
-import java.util.List;
-import java.util.concurrent.Callable;
 
 public class GwtCheckTask extends AbstractTask {
 
@@ -52,8 +52,8 @@ public class GwtCheckTask extends AbstractTask {
 	@TaskAction
 	public void exec() {
 
-		GwtExtension putnami = getProject().getExtensions().getByType(GwtExtension.class);
-		CompilerOption compilerOptions = putnami.getCompile();
+		GwtExtension extension = getProject().getExtensions().getByType(GwtExtension.class);
+		CompilerOption compilerOptions = extension.getCompile();
 		CompileCommandBuilder commandBuilder = new CompileCommandBuilder();
 		commandBuilder.addArg("-validateOnly");
 		commandBuilder.configure(getProject(), compilerOptions, getSrc(), null, getModules());

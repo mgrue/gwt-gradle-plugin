@@ -14,13 +14,13 @@
  */
 package de.esoco.gwt.gradle.task;
 
-import org.gradle.api.tasks.TaskAction;
-
-import de.esoco.gwt.gradle.extension.JettyOption;
 import de.esoco.gwt.gradle.extension.GwtExtension;
+import de.esoco.gwt.gradle.extension.JettyOption;
 
 import java.io.OutputStream;
 import java.net.Socket;
+
+import org.gradle.api.tasks.TaskAction;
 
 public class GwtStopTask extends AbstractTask {
 
@@ -32,8 +32,8 @@ public class GwtStopTask extends AbstractTask {
 
 	@TaskAction
 	public void exec() throws Exception {
-		GwtExtension putnami = getProject().getExtensions().getByType(GwtExtension.class);
-		JettyOption jettyOption = putnami.getJetty();
+		GwtExtension extension = getProject().getExtensions().getByType(GwtExtension.class);
+		JettyOption jettyOption = extension.getJetty();
 
 		getLogger().info("Stopping jetty");
 		Socket soket = new Socket("localhost", jettyOption.getStopPort());

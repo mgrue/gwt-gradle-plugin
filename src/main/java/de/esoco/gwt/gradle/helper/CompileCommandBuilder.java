@@ -14,17 +14,18 @@
  */
 package de.esoco.gwt.gradle.helper;
 
+import de.esoco.gwt.gradle.GwtLibPlugin;
+import de.esoco.gwt.gradle.action.JavaAction;
+import de.esoco.gwt.gradle.extension.CompilerOption;
+import de.esoco.gwt.gradle.extension.GwtExtension;
+
+import java.io.File;
+import java.util.Collection;
+
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.plugins.JavaPlugin;
-
-import de.esoco.gwt.gradle.GwtLibPlugin;
-import de.esoco.gwt.gradle.action.JavaAction;
-import de.esoco.gwt.gradle.extension.CompilerOption;
-
-import java.io.File;
-import java.util.Collection;
 
 public class CompileCommandBuilder extends JavaCommandBuilder {
 
@@ -38,7 +39,8 @@ public class CompileCommandBuilder extends JavaCommandBuilder {
 		Configuration compileConf = project.getConfigurations().getByName(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME);
 
 		configureJavaArgs(compilerOptions);
-		addJavaArgs("-Dgwt.persistentunitcachedir=" + project.getBuildDir() + "/putnami/work/cache");
+		addJavaArgs("-Dgwt.persistentunitcachedir=" + project.getBuildDir() + "/" + 
+		            GwtExtension.DIRECTORY + "/work/cache");
 
 		for (File sourceDir : sources) {
 			addClassPath(sourceDir.getAbsolutePath());

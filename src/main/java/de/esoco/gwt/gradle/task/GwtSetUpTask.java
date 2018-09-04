@@ -14,13 +14,6 @@
  */
 package de.esoco.gwt.gradle.task;
 
-import com.google.common.collect.ImmutableMap;
-
-import org.gradle.api.Project;
-import org.gradle.api.internal.ConventionMapping;
-import org.gradle.api.internal.IConventionAware;
-import org.gradle.api.tasks.TaskAction;
-
 import de.esoco.gwt.gradle.extension.GwtExtension;
 import de.esoco.gwt.gradle.util.ResourceUtils;
 
@@ -28,6 +21,13 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+
+import org.gradle.api.Project;
+import org.gradle.api.internal.ConventionMapping;
+import org.gradle.api.internal.IConventionAware;
+import org.gradle.api.tasks.TaskAction;
+
+import com.google.common.collect.ImmutableMap;
 
 public class GwtSetUpTask extends AbstractTask {
 
@@ -42,12 +42,12 @@ public class GwtSetUpTask extends AbstractTask {
 	@TaskAction
 	public void exec() throws Exception {
 
-		GwtExtension putnami = getProject().getExtensions().getByType(GwtExtension.class);
+		GwtExtension extension = getProject().getExtensions().getByType(GwtExtension.class);
 		File projectDir = getProject().getProjectDir();
 		File srcMainJava = ResourceUtils.ensureDir(new File(projectDir, "src/main/java"));
 		File srcMainWebapp = ResourceUtils.ensureDir(new File(projectDir, "src/main/webapp"));
 
-		for (String module : putnami.getModule()) {
+		for (String module : extension.getModule()) {
 			String moduleName = module.substring(module.lastIndexOf('.') + 1);
 			String packageName = module.substring(0, module.lastIndexOf('.'));
 			String packagePath = packageName.replaceAll("\\.", "/");

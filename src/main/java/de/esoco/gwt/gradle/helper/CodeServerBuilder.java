@@ -14,7 +14,15 @@
  */
 package de.esoco.gwt.gradle.helper;
 
-import com.google.common.collect.Lists;
+import de.esoco.gwt.gradle.GwtLibPlugin;
+import de.esoco.gwt.gradle.action.JavaAction;
+import de.esoco.gwt.gradle.extension.DevOption;
+import de.esoco.gwt.gradle.extension.GwtExtension;
+import de.esoco.gwt.gradle.util.ResourceUtils;
+
+import java.io.File;
+import java.util.Collection;
+import java.util.List;
 
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -27,15 +35,7 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
 
-import de.esoco.gwt.gradle.GwtLibPlugin;
-import de.esoco.gwt.gradle.action.JavaAction;
-import de.esoco.gwt.gradle.extension.DevOption;
-import de.esoco.gwt.gradle.extension.GwtExtension;
-import de.esoco.gwt.gradle.util.ResourceUtils;
-
-import java.io.File;
-import java.util.Collection;
-import java.util.List;
+import com.google.common.collect.Lists;
 
 public class CodeServerBuilder extends JavaCommandBuilder {
 
@@ -47,7 +47,7 @@ public class CodeServerBuilder extends JavaCommandBuilder {
 		ConfigurationContainer configs = project.getConfigurations();
 		Configuration sdmConf = configs.getByName(GwtLibPlugin.CONF_GWT_SDM);
 
-		GwtExtension putnami = project.getExtensions().getByType(GwtExtension.class);
+		GwtExtension extension = project.getExtensions().getByType(GwtExtension.class);
 
 		SourceSet mainSourceSet = project.getConvention()
 			.getPlugin(JavaPluginConvention.class).getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
@@ -72,7 +72,7 @@ public class CodeServerBuilder extends JavaCommandBuilder {
 		addArg("-workDir", ResourceUtils.ensureDir(devOption.getWorkDir()));
 		addArgIf(devOption.getIncremental(), "-incremental", "-noincremental");
 		addArg("-sourceLevel", devOption.getSourceLevel());
-		if (!putnami.getGwtVersion().startsWith("2.6")) {
+		if (!extension.getGwtVersion().startsWith("2.6")) {
 			addArg("-logLevel", devOption.getLogLevel());
 		}
 		addArg("-XmethodNameDisplayMode", devOption.getMethodNameDisplayMode());

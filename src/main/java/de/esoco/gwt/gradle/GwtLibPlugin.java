@@ -102,7 +102,7 @@ public class GwtLibPlugin implements Plugin<Project> {
 		testSourset.setRuntimeClasspath(testClasspath);
 
 		Test test = project.getTasks().withType(Test.class).getByName("test");
-		test.getSystemProperties().put("gwt.persistentunitcachedir", project.getBuildDir() + "/putnami/test");
+		test.getSystemProperties().put("gwt.persistentunitcachedir", project.getBuildDir() + "/gwt-gradle/test");
 	}
 
 	private void includeSourcesToJar(Project project) {

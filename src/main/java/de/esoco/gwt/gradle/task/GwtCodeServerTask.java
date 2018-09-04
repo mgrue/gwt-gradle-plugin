@@ -14,8 +14,6 @@
  */
 package de.esoco.gwt.gradle.task;
 
-import com.google.common.base.Strings;
-
 import de.esoco.gwt.gradle.action.JavaAction;
 import de.esoco.gwt.gradle.extension.DevOption;
 import de.esoco.gwt.gradle.extension.GwtExtension;
@@ -25,6 +23,8 @@ import de.esoco.gwt.gradle.util.ResourceUtils;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.tasks.TaskAction;
+
+import com.google.common.base.Strings;
 
 public class GwtCodeServerTask extends AbstractTask {
 
@@ -38,19 +38,19 @@ public class GwtCodeServerTask extends AbstractTask {
 
 	@TaskAction
 	public void exec() {
-		GwtExtension putnami = getProject().getExtensions().getByType(GwtExtension.class);
-		if (!Strings.isNullOrEmpty(putnami.getSourceLevel()) &&
-			Strings.isNullOrEmpty(putnami.getDev().getSourceLevel())) {
-			putnami.getDev().setSourceLevel(putnami.getSourceLevel());
+		GwtExtension extension = getProject().getExtensions().getByType(GwtExtension.class);
+		if (!Strings.isNullOrEmpty(extension.getSourceLevel()) &&
+			Strings.isNullOrEmpty(extension.getDev().getSourceLevel())) {
+			extension.getDev().setSourceLevel(extension.getSourceLevel());
 		}
 
-		ResourceUtils.ensureDir(putnami.getDev().getLauncherDir());
+		ResourceUtils.ensureDir(extension.getDev().getLauncherDir());
 
 		CodeServerBuilder sdmBuilder = new CodeServerBuilder();
-		if (!putnami.getGwtVersion().startsWith("2.6")) {
-			sdmBuilder.addArg("-launcherDir", putnami.getDev().getLauncherDir());
+		if (!extension.getGwtVersion().startsWith("2.6")) {
+			sdmBuilder.addArg("-launcherDir", extension.getDev().getLauncherDir());
 		}
-		sdmBuilder.configure(getProject(), putnami.getDev(), putnami.getModule());
+		sdmBuilder.configure(getProject(), extension.getDev(), extension.getModule());
 
 		JavaAction sdmAction = sdmBuilder.buildJavaAction();
 		sdmAction.execute(this);

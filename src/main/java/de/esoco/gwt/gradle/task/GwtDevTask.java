@@ -14,20 +14,6 @@
  */
 package de.esoco.gwt.gradle.task;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-
-import org.gradle.api.Project;
-import org.gradle.api.internal.ConventionMapping;
-import org.gradle.api.internal.IConventionAware;
-import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.JavaPluginConvention;
-import org.gradle.api.plugins.WarPluginConvention;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.SourceSet;
-import org.gradle.api.tasks.TaskAction;
-
 import de.esoco.gwt.gradle.action.JavaAction;
 import de.esoco.gwt.gradle.action.JavaAction.ProcessLogger;
 import de.esoco.gwt.gradle.extension.DevOption;
@@ -42,6 +28,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Semaphore;
+
+import org.gradle.api.Project;
+import org.gradle.api.internal.ConventionMapping;
+import org.gradle.api.internal.IConventionAware;
+import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.WarPluginConvention;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.TaskAction;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 
 public class GwtDevTask extends AbstractTask {
 
@@ -58,12 +58,13 @@ public class GwtDevTask extends AbstractTask {
 
 	@TaskAction
 	public void exec() throws Exception {
-		GwtExtension putnami = getProject().getExtensions().getByType(GwtExtension.class);
-		DevOption sdmOption = putnami.getDev();
+		GwtExtension extension = getProject().getExtensions().getByType(GwtExtension.class);
+		DevOption sdmOption = extension.getDev();
 		createWarExploded(sdmOption);
 		ResourceUtils.ensureDir(sdmOption.getWar());
 		ResourceUtils.ensureDir(sdmOption.getWorkDir());
-		jettyConf = new File(getProject().getBuildDir(), "putnami/conf/jetty-run-conf.xml");
+		jettyConf = new File(getProject().getBuildDir(), GwtExtension.DIRECTORY + 
+			                                             "/conf/jetty-run-conf.xml");
 		Map<String, String> model = new ImmutableMap.Builder<String, String>()
 				.put("__WAR_FILE__", sdmOption.getWar().getAbsolutePath())
 				.build();
@@ -112,27 +113,27 @@ public class GwtDevTask extends AbstractTask {
 	}
 
 	private JavaAction execJetty() {
-		GwtExtension putnami = getProject().getExtensions().getByType(GwtExtension.class);
+		GwtExtension extension = getProject().getExtensions().getByType(GwtExtension.class);
 		JettyServerBuilder jettyBuilder = new JettyServerBuilder();
-		jettyBuilder.configure(getProject(), putnami.getJetty(), jettyConf);
+		jettyBuilder.configure(getProject(), extension.getJetty(), jettyConf);
 		JavaAction jetty = jettyBuilder.buildJavaAction();
 		jetty.execute(this);
 		return jetty;
 	}
 
 	private JavaAction execSdm() {
-		GwtExtension putnami = getProject().getExtensions().getByType(GwtExtension.class);
-		DevOption devOption = putnami.getDev();
-		if (!Strings.isNullOrEmpty(putnami.getSourceLevel()) &&
+		GwtExtension extension = getProject().getExtensions().getByType(GwtExtension.class);
+		DevOption devOption = extension.getDev();
+		if (!Strings.isNullOrEmpty(extension.getSourceLevel()) &&
 			Strings.isNullOrEmpty(devOption.getSourceLevel())) {
-			devOption.setSourceLevel(putnami.getSourceLevel());
+			devOption.setSourceLevel(extension.getSourceLevel());
 		}
 
 		CodeServerBuilder sdmBuilder = new CodeServerBuilder();
-		if (!putnami.getGwtVersion().startsWith("2.6")) {
+		if (!extension.getGwtVersion().startsWith("2.6")) {
 			sdmBuilder.addArg("-launcherDir", devOption.getWar());
 		}
-		sdmBuilder.configure(getProject(), putnami.getDev(), getModules());
+		sdmBuilder.configure(getProject(), extension.getDev(), getModules());
 
 		final JavaAction sdmAction = sdmBuilder.buildJavaAction();
 
