@@ -45,7 +45,7 @@ public class CodeServerBuilder extends JavaCommandBuilder {
 
 	public void configure(Project project, DevOption devOption, Collection<String> modules) {
 		ConfigurationContainer configs = project.getConfigurations();
-		Configuration sdmConf = configs.getByName(GwtLibPlugin.CONF_GWT_SDM);
+		Configuration sdmConf = configs.getByName(GwtLibPlugin.CONF_GWT_SDK);
 
 		GwtExtension extension = project.getExtensions().getByType(GwtExtension.class);
 

@@ -35,7 +35,7 @@ public class CompileCommandBuilder extends JavaCommandBuilder {
 
 	public void configure(Project project, CompilerOption compilerOptions, FileCollection sources, File war,
 		Collection<String> modules) {
-		Configuration sdmConf = project.getConfigurations().getByName(GwtLibPlugin.CONF_GWT_SDM);
+		Configuration sdmConf = project.getConfigurations().getByName(GwtLibPlugin.CONF_GWT_SDK);
 		Configuration compileConf = project.getConfigurations().getByName(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME);
 
 		configureJavaArgs(compilerOptions);

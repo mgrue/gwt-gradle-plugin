@@ -32,7 +32,7 @@ import org.gradle.plugins.ide.eclipse.model.EclipseModel;
 
 public class GwtLibPlugin implements Plugin<Project> {
 
-	public static final String CONF_GWT_SDM = "gwtSdk";
+	public static final String CONF_GWT_SDK = "gwtSdk";
 	public static final String CONF_JETTY = "jettyConf";
 
 	private static final String ECLIPSE_NATURE = "com.gwtplugins.gwt.eclipse.core.gwtNature";
@@ -50,7 +50,7 @@ public class GwtLibPlugin implements Plugin<Project> {
 
 		ConfigurationContainer configurationContainer = project.getConfigurations();
 		
-		configurationContainer.create(CONF_GWT_SDM).setVisible(false);
+		configurationContainer.create(CONF_GWT_SDK).setVisible(false);
 		configurationContainer.create(CONF_JETTY).setVisible(false);
 
 		includeSourcesToJar(project);
@@ -62,9 +62,9 @@ public class GwtLibPlugin implements Plugin<Project> {
 				String jettyVersion = extension.getJettyVersion();
 
 				DependencyHandler dependencies = p.getDependencies();
-				dependencies.add(CONF_GWT_SDM,
+				dependencies.add(CONF_GWT_SDK,
 					"com.google.gwt:gwt-codeserver" + ":" + gwtVersion);
-				dependencies.add(CONF_GWT_SDM,
+				dependencies.add(CONF_GWT_SDK,
 					"com.google.gwt:gwt-user" + ":" + gwtVersion);
 				dependencies.add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME,
 					"com.google.gwt:gwt-codeserver" + ":" + gwtVersion);
