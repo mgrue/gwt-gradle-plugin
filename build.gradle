@@ -1,27 +1,9 @@
-buildscript {
-	repositories {
-		jcenter()
-		maven {
-		  url "https://plugins.gradle.org/m2/"
-		}
-	}
-	dependencies {
-		classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
-		classpath "com.gradle.publish:plugin-publish-plugin:0.9.9"
-	}
-}
-
 apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'maven-publish'
-apply plugin: 'checkstyle'
-apply plugin: 'license'
-apply plugin: 'signing'
-apply plugin: "com.gradle.plugin-publish"
+apply plugin: 'java-library'
 apply plugin: 'eclipse'
+plugins { id "com.gradle.plugin-publish" version "0.10.0" }
 
 group = 'de.esoco.gwt'
-version = '0.7.0-SNAPSHOT'
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
@@ -35,111 +17,63 @@ dependencies {
 	compile "com.google.guava:guava:23.5-jre"
 }
 
-checkstyle{
-	configFile rootProject.file('settings/checkstyle/pwt-checkstyle.xml')
-}
-
-license {
-	skipExistingHeaders = true
-	header rootProject.file('settings/LICENSE_LGPL_HEADER')
-	ext.projectName = project.name
-	exclude "**/skeleton/**"
-}
-
 project.tasks.jar.dependsOn project.tasks.licenseFormat
 
 task javadocJar(type: Jar) {
 	classifier = 'javadoc'
     from javadoc
 }
-task sourcesJar(type: Jar) {
+task sourceJar(type: Jar) {
 	classifier = 'sources'
 	from sourceSets.main.allSource
 }
 
 artifacts {
-    archives javadocJar, sourcesJar
-}
-
-signing {
-	required { gradle.taskGraph.hasTask("uploadArchives") }
-    sign configurations.archives
-}
-
-publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			from components.java
-
-			groupId = project.group
-			version = project.version
-
-			artifact sourcesJar { classifier 'sources' }
-			artifact javadocJar { classifier 'javadoc' }
-		}
-	}
+    archives javadocJar, sourceJar
 }
 
 pluginBundle {
-  website = 'http://putnami.org/'
-  vcsUrl = 'https://github.com/Putnami/putnami-gradle-plugin'
-  description = 'Putnami GWT Gradle Plugin'
-  tags = ['gwt', 'putnami']
+  website = 'https://github.com/esoco/gwt-gradle-plugin'
+  vcsUrl = 'https://github.com/esoco/gwt-gradle-plugin.git'
+  description = 'GWT Gradle Plugin'
+  tags = ['gwt']
 
   plugins {
     gwtPlugin {
-      id = 'fr.putnami.gwt'
-      displayName = 'Putnami GWT Plugin'
+      id = 'gwt'
+      displayName = 'Gradle GWT plugin'
     }
     gwtLibPlugin {
-      id = 'fr.putnami.gwt-lib'
-      displayName = 'Putnami GWT lib Plugin'
+      id = 'gwt-lib'
+      displayName = 'Gradle GWT lib plugin'
     }
   }
 }
 
-uploadArchives {
-	repositories {
-	    mavenDeployer {
-			beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-			//OSS Repository
-			if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword')) {
-				repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-					authentication(userName: ossrhUsername, password: ossrhPassword)
-				}
-				snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-					authentication(userName: ossrhUsername, password: ossrhPassword)
-				}
-			}
-			else {
-				repository(url : new File(rootProject.buildDir, 'repoRelease').toURI())
-			}
+// ----------- Bintray Release -----------
 
-        	pom.project {
-				url 'http://pwt.putnami.org'
-				name project.name
-				description 'Putnami Gradle Plugin'
-				scm {
-					connection 'scm:git:git@github.com:Putnami/putnami-gradle-plugin.git'
-    	            developerConnection 'scm:git:git@github.com:Putnami/putnami-gradle-plugin.git'
-	                url 'git@github.com:Putnami/putnami-gradle-plugin.git'
-                }
-                licenses {
-                	license {
-            	        name 'GNU Lesser General Public License'
-        	            url 'http://www.gnu.org/licenses/lgpl-3.0.html'
-    	                distribution 'repo'
-	                }
-                }
-			 	developers {
-					developer {
-						id 'fdumay'
-						name 'Fabien Dumay'
-						email 'fabien.dumay@putnami.com'
-					}
-	        	}
-        	}
-    	}
-	}
+buildscript {
+    repositories { jcenter() }
+    dependencies { classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+' }
+}
+plugins { id "com.jfrog.bintray" version "1.+" }
+
+bintray {
+	user = project.hasProperty('bintrayUser') ?
+				project.property('bintrayUser') :
+				System.getenv('BINTRAY_USER')
+	key = project.hasProperty('bintrayApiKey') ?
+				project.property('bintrayApiKey') :
+				System.getenv('BINTRAY_API_KEY')
+    configurations = ['archives']
+    publish = true
+
+	pkg {
+		repo = 'esoco'
+		name = project.name
+		version {
+			name = project.version
+	    }
+    }
 }
