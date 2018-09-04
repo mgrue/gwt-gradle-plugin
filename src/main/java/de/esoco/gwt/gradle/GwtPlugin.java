@@ -28,7 +28,7 @@
  */
 package de.esoco.gwt.gradle;
 
-import de.esoco.gwt.gradle.extension.PutnamiExtension;
+import de.esoco.gwt.gradle.extension.GwtExtension;
 import de.esoco.gwt.gradle.task.GwtCheckTask;
 import de.esoco.gwt.gradle.task.GwtCodeServerTask;
 import de.esoco.gwt.gradle.task.GwtCompileTask;
@@ -67,7 +67,7 @@ public class GwtPlugin implements Plugin<Project> {
 	}
 
 	// private void createSetUpTask(final Project project) {
-	// final PutnamiExtension extension = project.getExtensions().getByType(PutnamiExtension.class);
+	// final GwtExtension extension = project.getExtensions().getByType(GwtExtension.class);
 	// final Task setUpTask = project.getTasks().create(GwtSetUpTask.NAME, GwtSetUpTask.class);
 	// final Task javaTask = project.getTasks().getByName(JavaPlugin.COMPILE_JAVA_TASK_NAME);
 	// javaTask.dependsOn(GwtSetUpTask.NAME);
@@ -91,7 +91,7 @@ public class GwtPlugin implements Plugin<Project> {
 
 	private void createCheckTask(final Project project) {
 		project.getTasks().create(GwtCheckTask.NAME, GwtCheckTask.class);
-		final PutnamiExtension extension = project.getExtensions().getByType(PutnamiExtension.class);
+		final GwtExtension extension = project.getExtensions().getByType(GwtExtension.class);
 		final Task checkTask = project.getTasks().getByName(JavaBasePlugin.CHECK_TASK_NAME);
 		checkTask.dependsOn(GwtCheckTask.NAME);
 		project.getTasks().withType(GwtCheckTask.class, new Action<GwtCheckTask>() {
@@ -104,7 +104,7 @@ public class GwtPlugin implements Plugin<Project> {
 
 	private void createCompileTask(final Project project) {
 		project.getTasks().create(GwtCompileTask.NAME, GwtCompileTask.class);
-		final PutnamiExtension extension = project.getExtensions().getByType(PutnamiExtension.class);
+		final GwtExtension extension = project.getExtensions().getByType(GwtExtension.class);
 		final War warTask = project.getTasks().withType(War.class).getByName("war");
 		warTask.dependsOn(GwtCompileTask.NAME);
 		project.getTasks().withType(GwtCompileTask.class, new Action<GwtCompileTask>() {
@@ -127,7 +127,7 @@ public class GwtPlugin implements Plugin<Project> {
 
 	private void createCodeServerTask(final Project project) {
 		project.getTasks().create(GwtCodeServerTask.NAME, GwtCodeServerTask.class);
-		final PutnamiExtension extension = project.getExtensions().getByType(PutnamiExtension.class);
+		final GwtExtension extension = project.getExtensions().getByType(GwtExtension.class);
 		project.getTasks().withType(GwtCodeServerTask.class, new Action<GwtCodeServerTask>() {
 			@Override
 			public void execute(final GwtCodeServerTask task) {
@@ -139,7 +139,7 @@ public class GwtPlugin implements Plugin<Project> {
 
 	private void createDevTask(final Project project) {
 		project.getTasks().create(GwtDevTask.NAME, GwtDevTask.class);
-		final PutnamiExtension extension = project.getExtensions().getByType(PutnamiExtension.class);
+		final GwtExtension extension = project.getExtensions().getByType(GwtExtension.class);
 		project.getTasks().withType(GwtDevTask.class, new Action<GwtDevTask>() {
 			@Override
 			public void execute(final GwtDevTask task) {

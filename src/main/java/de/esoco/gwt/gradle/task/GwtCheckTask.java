@@ -28,7 +28,7 @@ import org.gradle.api.tasks.TaskAction;
 
 import de.esoco.gwt.gradle.action.JavaAction;
 import de.esoco.gwt.gradle.extension.CompilerOption;
-import de.esoco.gwt.gradle.extension.PutnamiExtension;
+import de.esoco.gwt.gradle.extension.GwtExtension;
 import de.esoco.gwt.gradle.helper.CompileCommandBuilder;
 
 import java.io.File;
@@ -52,7 +52,7 @@ public class GwtCheckTask extends AbstractTask {
 	@TaskAction
 	public void exec() {
 
-		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
+		GwtExtension putnami = getProject().getExtensions().getByType(GwtExtension.class);
 		CompilerOption compilerOptions = putnami.getCompile();
 		CompileCommandBuilder commandBuilder = new CompileCommandBuilder();
 		commandBuilder.addArg("-validateOnly");
@@ -65,7 +65,7 @@ public class GwtCheckTask extends AbstractTask {
 		}
 	}
 
-	public void configure(final Project project, final PutnamiExtension extention) {
+	public void configure(final Project project, final GwtExtension extention) {
 		final CompilerOption options = extention.getCompile();
 
 		options.init(getProject());

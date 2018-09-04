@@ -1,4 +1,0 @@
-include 'domain'
-project(":domain").name = "pgp-sample-multimodule-domain"
-include 'webapp'
-project(":webapp").name = "pgp-sample-multimodule-webapp"

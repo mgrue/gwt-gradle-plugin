@@ -17,7 +17,7 @@ package de.esoco.gwt.gradle.task;
 import org.gradle.api.tasks.TaskAction;
 
 import de.esoco.gwt.gradle.extension.JettyOption;
-import de.esoco.gwt.gradle.extension.PutnamiExtension;
+import de.esoco.gwt.gradle.extension.GwtExtension;
 
 import java.io.OutputStream;
 import java.net.Socket;
@@ -32,7 +32,7 @@ public class GwtStopTask extends AbstractTask {
 
 	@TaskAction
 	public void exec() throws Exception {
-		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
+		GwtExtension putnami = getProject().getExtensions().getByType(GwtExtension.class);
 		JettyOption jettyOption = putnami.getJetty();
 
 		getLogger().info("Stopping jetty");

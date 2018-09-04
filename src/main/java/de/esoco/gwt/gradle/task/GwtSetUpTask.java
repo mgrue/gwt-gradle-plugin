@@ -21,7 +21,7 @@ import org.gradle.api.internal.ConventionMapping;
 import org.gradle.api.internal.IConventionAware;
 import org.gradle.api.tasks.TaskAction;
 
-import de.esoco.gwt.gradle.extension.PutnamiExtension;
+import de.esoco.gwt.gradle.extension.GwtExtension;
 import de.esoco.gwt.gradle.util.ResourceUtils;
 
 import java.io.File;
@@ -42,7 +42,7 @@ public class GwtSetUpTask extends AbstractTask {
 	@TaskAction
 	public void exec() throws Exception {
 
-		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
+		GwtExtension putnami = getProject().getExtensions().getByType(GwtExtension.class);
 		File projectDir = getProject().getProjectDir();
 		File srcMainJava = ResourceUtils.ensureDir(new File(projectDir, "src/main/java"));
 		File srcMainWebapp = ResourceUtils.ensureDir(new File(projectDir, "src/main/webapp"));
@@ -67,7 +67,7 @@ public class GwtSetUpTask extends AbstractTask {
 		}
 	}
 
-	public void configure(final PutnamiExtension extension) {
+	public void configure(final GwtExtension extension) {
 		ConventionMapping mapping = ((IConventionAware) this).getConventionMapping();
 
 		mapping.map("modules", new Callable<List<String>>() {
@@ -82,7 +82,7 @@ public class GwtSetUpTask extends AbstractTask {
 		return modules;
 	}
 
-	public static boolean isEnable(final Project project, final PutnamiExtension extension) {
+	public static boolean isEnable(final Project project, final GwtExtension extension) {
 		String mainModule = null;
 		if (extension.getModule() != null &&
 			extension.getModule().size() > 0) {

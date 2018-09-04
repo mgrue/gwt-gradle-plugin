@@ -18,7 +18,7 @@ import com.google.common.base.Strings;
 
 import de.esoco.gwt.gradle.action.JavaAction;
 import de.esoco.gwt.gradle.extension.DevOption;
-import de.esoco.gwt.gradle.extension.PutnamiExtension;
+import de.esoco.gwt.gradle.extension.GwtExtension;
 import de.esoco.gwt.gradle.helper.CodeServerBuilder;
 import de.esoco.gwt.gradle.util.ResourceUtils;
 
@@ -38,7 +38,7 @@ public class GwtCodeServerTask extends AbstractTask {
 
 	@TaskAction
 	public void exec() {
-		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
+		GwtExtension putnami = getProject().getExtensions().getByType(GwtExtension.class);
 		if (!Strings.isNullOrEmpty(putnami.getSourceLevel()) &&
 			Strings.isNullOrEmpty(putnami.getDev().getSourceLevel())) {
 			putnami.getDev().setSourceLevel(putnami.getSourceLevel());
@@ -57,7 +57,7 @@ public class GwtCodeServerTask extends AbstractTask {
 		sdmAction.join();
 	}
 
-	public void configureCodeServer(final Project project, final PutnamiExtension extention) {
+	public void configureCodeServer(final Project project, final GwtExtension extention) {
 		final DevOption options = extention.getDev();
 		options.init(project);
 	}

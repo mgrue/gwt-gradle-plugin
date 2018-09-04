@@ -14,17 +14,18 @@
  */
 package de.esoco.gwt.gradle.extension;
 
-import com.google.common.collect.Lists;
-
-import org.gradle.util.ConfigureUtil;
-
 import java.util.Arrays;
 import java.util.List;
 
+import org.gradle.util.ConfigureUtil;
+
+import com.google.common.collect.Lists;
+
 import groovy.lang.Closure;
 
-public class PutnamiExtension {
-	public static final String PWT_EXTENSION = "putnami";
+public class GwtExtension {
+	
+	public static final String NAME = "gwt";
 
 	private String gwtVersion = "2.7.0";
 	private boolean gwtServletLib = false;
@@ -93,7 +94,7 @@ public class PutnamiExtension {
 		this.dev = dev;
 	}
 
-	public PutnamiExtension dev(Closure<DevOption> c) {
+	public GwtExtension dev(Closure<DevOption> c) {
 		ConfigureUtil.configure(c, dev);
 		return this;
 	}
@@ -106,7 +107,7 @@ public class PutnamiExtension {
 		this.compile = compile;
 	}
 
-	public PutnamiExtension compile(Closure<CompilerOption> c) {
+	public GwtExtension compile(Closure<CompilerOption> c) {
 		ConfigureUtil.configure(c, compile);
 		return this;
 	}
@@ -119,7 +120,7 @@ public class PutnamiExtension {
 		this.jetty = jetty;
 	}
 
-	public PutnamiExtension jetty(Closure<JettyOption> c) {
+	public GwtExtension jetty(Closure<JettyOption> c) {
 		ConfigureUtil.configure(c, jetty);
 		return this;
 	}

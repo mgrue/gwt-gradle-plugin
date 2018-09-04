@@ -14,12 +14,11 @@
  */
 package de.esoco.gwt.gradle;
 
-import de.esoco.gwt.gradle.extension.PutnamiExtension;
+import de.esoco.gwt.gradle.extension.GwtExtension;
 
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.file.FileCollection;
@@ -46,11 +45,12 @@ public class GwtLibPlugin implements Plugin<Project> {
 		project.getPlugins().apply(JavaPlugin.class);
 		project.getPlugins().apply(MavenPlugin.class);
 
-		final PutnamiExtension extention = project.getExtensions().create(PutnamiExtension.PWT_EXTENSION,
-			PutnamiExtension.class);
+		final GwtExtension extension = project.getExtensions().create(GwtExtension.NAME,
+			GwtExtension.class);
 
 		ConfigurationContainer configurationContainer = project.getConfigurations();
-		Configuration gwtConfig = configurationContainer.create(CONF_GWT_SDM).setVisible(false);
+		
+		configurationContainer.create(CONF_GWT_SDM).setVisible(false);
 		configurationContainer.create(CONF_JETTY).setVisible(false);
 
 		includeSourcesToJar(project);
@@ -58,8 +58,8 @@ public class GwtLibPlugin implements Plugin<Project> {
 		project.afterEvaluate(new Action<Project>() {
 			@Override
 			public void execute(final Project p) {
-				String gwtVersion = extention.getGwtVersion();
-				String jettyVersion = extention.getJettyVersion();
+				String gwtVersion = extension.getGwtVersion();
+				String jettyVersion = extension.getJettyVersion();
 
 				DependencyHandler dependencies = p.getDependencies();
 				dependencies.add(CONF_GWT_SDM,
@@ -73,11 +73,11 @@ public class GwtLibPlugin implements Plugin<Project> {
 				dependencies.add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME,
 					"com.google.gwt:gwt-user" + ":" + gwtVersion);
 
-				if (extention.isGwtElementalLib()) {
+				if (extension.isGwtElementalLib()) {
 					dependencies.add(
 						JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME, "com.google.gwt:gwt-elemental" + ":" + gwtVersion);
 				}
-				if (extention.isGwtServletLib()) {
+				if (extension.isGwtServletLib()) {
 					dependencies.add(
 						JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME, "com.google.gwt:gwt-servlet" + ":" + gwtVersion);
 				}
@@ -116,8 +116,8 @@ public class GwtLibPlugin implements Plugin<Project> {
 		project.afterEvaluate(new Action<Project>() {
 			@Override
 			public void execute(final Project p) {
-				final PutnamiExtension extention = (PutnamiExtension) project.getExtensions()
-					.getByName(PutnamiExtension.PWT_EXTENSION);
+				final GwtExtension extention = (GwtExtension) project.getExtensions()
+					.getByName(GwtExtension.NAME);
 
 				if (p.getPlugins().hasPlugin("eclipse") && extention.isGooglePluginEclipse()) {
 					final EclipseModel eclipseModel = project.getExtensions().getByType(EclipseModel.class);

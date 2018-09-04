@@ -31,7 +31,7 @@ import org.gradle.api.tasks.TaskAction;
 import de.esoco.gwt.gradle.action.JavaAction;
 import de.esoco.gwt.gradle.action.JavaAction.ProcessLogger;
 import de.esoco.gwt.gradle.extension.DevOption;
-import de.esoco.gwt.gradle.extension.PutnamiExtension;
+import de.esoco.gwt.gradle.extension.GwtExtension;
 import de.esoco.gwt.gradle.helper.CodeServerBuilder;
 import de.esoco.gwt.gradle.helper.JettyServerBuilder;
 import de.esoco.gwt.gradle.util.ResourceUtils;
@@ -58,7 +58,7 @@ public class GwtDevTask extends AbstractTask {
 
 	@TaskAction
 	public void exec() throws Exception {
-		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
+		GwtExtension putnami = getProject().getExtensions().getByType(GwtExtension.class);
 		DevOption sdmOption = putnami.getDev();
 		createWarExploded(sdmOption);
 		ResourceUtils.ensureDir(sdmOption.getWar());
@@ -112,7 +112,7 @@ public class GwtDevTask extends AbstractTask {
 	}
 
 	private JavaAction execJetty() {
-		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
+		GwtExtension putnami = getProject().getExtensions().getByType(GwtExtension.class);
 		JettyServerBuilder jettyBuilder = new JettyServerBuilder();
 		jettyBuilder.configure(getProject(), putnami.getJetty(), jettyConf);
 		JavaAction jetty = jettyBuilder.buildJavaAction();
@@ -121,7 +121,7 @@ public class GwtDevTask extends AbstractTask {
 	}
 
 	private JavaAction execSdm() {
-		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
+		GwtExtension putnami = getProject().getExtensions().getByType(GwtExtension.class);
 		DevOption devOption = putnami.getDev();
 		if (!Strings.isNullOrEmpty(putnami.getSourceLevel()) &&
 			Strings.isNullOrEmpty(devOption.getSourceLevel())) {
@@ -161,7 +161,7 @@ public class GwtDevTask extends AbstractTask {
 		return sdmAction;
 	}
 
-	public void configureCodeServer(final Project project, final PutnamiExtension extention) {
+	public void configureCodeServer(final Project project, final GwtExtension extention) {
 		final DevOption options = extention.getDev();
 		options.init(project);
 

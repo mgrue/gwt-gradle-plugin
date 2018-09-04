@@ -14,7 +14,16 @@
  */
 package de.esoco.gwt.gradle.task;
 
-import com.google.common.base.Strings;
+import de.esoco.gwt.gradle.action.JavaAction;
+import de.esoco.gwt.gradle.extension.CompilerOption;
+import de.esoco.gwt.gradle.extension.GwtExtension;
+import de.esoco.gwt.gradle.helper.CompileCommandBuilder;
+
+import java.io.File;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
+import java.util.List;
+import java.util.concurrent.Callable;
 
 import org.gradle.api.Action;
 import org.gradle.api.Project;
@@ -32,16 +41,7 @@ import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskAction;
 
-import de.esoco.gwt.gradle.action.JavaAction;
-import de.esoco.gwt.gradle.extension.CompilerOption;
-import de.esoco.gwt.gradle.extension.PutnamiExtension;
-import de.esoco.gwt.gradle.helper.CompileCommandBuilder;
-
-import java.io.File;
-import java.lang.management.ManagementFactory;
-import java.lang.management.OperatingSystemMXBean;
-import java.util.List;
-import java.util.concurrent.Callable;
+import com.google.common.base.Strings;
 
 public class GwtCompileTask extends AbstractTask {
 
@@ -60,11 +60,11 @@ public class GwtCompileTask extends AbstractTask {
 	@TaskAction
 	public void exec() {
 
-		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
-		CompilerOption compilerOptions = putnami.getCompile();
-		if (!Strings.isNullOrEmpty(putnami.getSourceLevel()) &&
+		GwtExtension extension = getProject().getExtensions().getByType(GwtExtension.class);
+		CompilerOption compilerOptions = extension.getCompile();
+		if (!Strings.isNullOrEmpty(extension.getSourceLevel()) &&
 			Strings.isNullOrEmpty(compilerOptions.getSourceLevel())) {
-			compilerOptions.setSourceLevel(putnami.getSourceLevel());
+			compilerOptions.setSourceLevel(extension.getSourceLevel());
 		}
 
 		CompileCommandBuilder commandBuilder = new CompileCommandBuilder();
@@ -79,8 +79,8 @@ public class GwtCompileTask extends AbstractTask {
 		getProject().getTasks().getByName(GwtCheckTask.NAME).setEnabled(false);
 	}
 
-	public void configure(final Project project, final PutnamiExtension extention) {
-		final CompilerOption options = extention.getCompile();
+	public void configure(final Project project, final GwtExtension extension) {
+		final CompilerOption options = extension.getCompile();
 		options.init(project);
 		options.setLocalWorkers(evalWorkers(options));
 
@@ -101,7 +101,7 @@ public class GwtCompileTask extends AbstractTask {
 		mapping.map("modules", new Callable<List<String>>() {
 			@Override
 			public List<String> call()  {
-				return extention.getModule();
+				return extension.getModule();
 			}
 		});
 		mapping.map("war", new Callable<File>() {

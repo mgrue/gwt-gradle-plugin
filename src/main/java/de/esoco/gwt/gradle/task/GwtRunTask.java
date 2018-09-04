@@ -21,7 +21,7 @@ import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.bundling.War;
 
 import de.esoco.gwt.gradle.action.JavaAction;
-import de.esoco.gwt.gradle.extension.PutnamiExtension;
+import de.esoco.gwt.gradle.extension.GwtExtension;
 import de.esoco.gwt.gradle.helper.JettyServerBuilder;
 import de.esoco.gwt.gradle.util.ResourceUtils;
 
@@ -53,7 +53,7 @@ public class GwtRunTask extends AbstractTask {
 	}
 
 	private JavaAction execJetty() {
-		PutnamiExtension putnami = getProject().getExtensions().getByType(PutnamiExtension.class);
+		GwtExtension putnami = getProject().getExtensions().getByType(GwtExtension.class);
 		JettyServerBuilder jettyBuilder = new JettyServerBuilder();
 		jettyBuilder.configure(getProject(), putnami.getJetty(), jettyConf);
 		JavaAction jetty = jettyBuilder.buildJavaAction();

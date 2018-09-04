@@ -30,7 +30,7 @@ import org.gradle.api.tasks.SourceSet;
 import de.esoco.gwt.gradle.GwtLibPlugin;
 import de.esoco.gwt.gradle.action.JavaAction;
 import de.esoco.gwt.gradle.extension.DevOption;
-import de.esoco.gwt.gradle.extension.PutnamiExtension;
+import de.esoco.gwt.gradle.extension.GwtExtension;
 import de.esoco.gwt.gradle.util.ResourceUtils;
 
 import java.io.File;
@@ -47,7 +47,7 @@ public class CodeServerBuilder extends JavaCommandBuilder {
 		ConfigurationContainer configs = project.getConfigurations();
 		Configuration sdmConf = configs.getByName(GwtLibPlugin.CONF_GWT_SDM);
 
-		PutnamiExtension putnami = project.getExtensions().getByType(PutnamiExtension.class);
+		GwtExtension putnami = project.getExtensions().getByType(GwtExtension.class);
 
 		SourceSet mainSourceSet = project.getConvention()
 			.getPlugin(JavaPluginConvention.class).getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);

@@ -1,9 +1,0 @@
-apply plugin: 'fr.putnami.gwt'
-
-dependencies{
-	compile project(':pgp-sample-multimodule-domain')
-}
-
-putnami{
-	module 'fr.putnami.gradle.sample.multimodule.app.App'
-}
