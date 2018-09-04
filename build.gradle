@@ -52,7 +52,6 @@ pluginBundle {
   }
 }
 
-
 // ----------- Bintray Release -----------
 
 apply plugin: 'com.jfrog.bintray'
