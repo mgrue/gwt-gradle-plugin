@@ -18,8 +18,9 @@ apply plugin: 'checkstyle'
 apply plugin: 'license'
 apply plugin: 'signing'
 apply plugin: "com.gradle.plugin-publish"
+apply plugin: 'eclipse'
 
-group = 'fr.putnami.gwt'
+group = 'de.esoco.gwt'
 version = '0.7.0-SNAPSHOT'
 
 sourceCompatibility = 1.7

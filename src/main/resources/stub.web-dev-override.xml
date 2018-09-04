@@ -34,7 +34,7 @@
 
 	<filter>
 		<filter-name>sdmFilter</filter-name>
-		<filter-class>fr.putnami.gwt.gradle.filter.NoCacheJsFilter</filter-class>
+		<filter-class>de.esoco.gwt.gradle.filter.NoCacheJsFilter</filter-class>
 		<init-param>
 			<param-name>LAUNCHER_DIR</param-name>
 			<param-value>__LAUNCHER_DIR__</param-value>
