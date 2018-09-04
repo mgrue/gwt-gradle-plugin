@@ -28,11 +28,11 @@ public class GwtExtension {
 	public static final String NAME = "gwt";
 	public static final String DIRECTORY = "gwt";
 
-	private String gwtVersion = "2.7.0";
+	private String gwtVersion = "2.8.2";
 	private boolean gwtServletLib = false;
 	private boolean gwtElementalLib = false;
 	private boolean googlePluginEclipse = false;
-	private String jettyVersion = "9.2.7.v20150116";
+	private String jettyVersion = "9.4.12.v20180830";
 	/**
 	 * Specifies Java source level.
 	 */
