@@ -31,7 +31,7 @@ public class GwtExtension {
 	private String gwtVersion = "2.8.2";
 	private boolean gwtServletLib = false;
 	private boolean gwtElementalLib = false;
-	private boolean googlePluginEclipse = false;
+	private boolean googlePluginEclipse = true;
 	private String jettyVersion = "9.4.12.v20180830";
 	/**
 	 * Specifies Java source level.
