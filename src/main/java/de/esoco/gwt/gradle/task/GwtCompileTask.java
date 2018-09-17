@@ -121,7 +121,8 @@ public class GwtCompileTask extends AbstractTask {
 	private void addSourceSet(FileCollection sources, Project project, String sourceSet) {
 		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
 		SourceSet mainSourceSet = javaConvention.getSourceSets().getByName(sourceSet);
-		sources.plus(project.files(mainSourceSet.getOutput().getResourcesDir()))
+		((ConfigurableFileCollection) sources)
+		    .from(project.files(mainSourceSet.getOutput().getResourcesDir()))
 			.plus(project.files(mainSourceSet.getOutput().getClassesDirs()))
 			.plus(project.files(mainSourceSet.getAllSource().getSrcDirs()));
 	}
