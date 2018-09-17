@@ -85,7 +85,7 @@ public class GwtCompileTask extends AbstractTask {
 		options.setLocalWorkers(evalWorkers(options));
 
 		final ConfigurableFileCollection sources = project.files();
-		addSourceSet(sources, project, SourceSet.MAIN_SOURCE_SET_NAME);
+			addSourceSet(sources, project, SourceSet.MAIN_SOURCE_SET_NAME);
 
 		final Configuration compileClasspath = project.getConfigurations().getByName(
 			JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME);
@@ -118,13 +118,13 @@ public class GwtCompileTask extends AbstractTask {
 		});
 	}
 
-	private void addSourceSet(FileCollection sources, Project project, String sourceSet) {
+	private void addSourceSet(ConfigurableFileCollection sources, Project project, String sourceSet) {
 		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
 		SourceSet mainSourceSet = javaConvention.getSourceSets().getByName(sourceSet);
-		((ConfigurableFileCollection) sources)
-		    .from(project.files(mainSourceSet.getOutput().getResourcesDir()))
-			.plus(project.files(mainSourceSet.getOutput().getClassesDirs()))
-			.plus(project.files(mainSourceSet.getAllSource().getSrcDirs()));
+		sources
+			.from(project.files(mainSourceSet.getOutput().getResourcesDir()))
+			.from(project.files(mainSourceSet.getOutput().getClassesDirs()))
+			.from(project.files(mainSourceSet.getAllSource().getSrcDirs()));
 	}
 
 	private int evalWorkers(CompilerOption options) {
