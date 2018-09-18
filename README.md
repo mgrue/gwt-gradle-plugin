@@ -23,7 +23,7 @@ your projects:
 
 ```groovy
 plugins {
-    id "de.esoco.gwt" version "1.0.0"
+    id "de.esoco.gwt" version "1.0.2"
 }
 ```
 
