@@ -23,7 +23,7 @@ your projects:
 
 ```groovy
 plugins {
-    id "de.esoco.gwt" version "1.0.2"
+    id "de.esoco.gwt" version "1.0.3"
 }
 ```
 
@@ -160,10 +160,15 @@ gwt {
 		 * Java identifiers in many places instead of JavaScript functions.
 		 * (NONE, ONLY_METHOD_NAME, ABBREVIATED, FULL)*/
 		methodNameDisplayMode = "NONE"
+
 		/** Specifies JsInterop mode (NONE, JS, CLOSURE) */
 		jsInteropMode = "JS"
 		/** Generate and export JsInterop (since GWT 2.8) */
 		generateJsInteropExports = true
+		/** Include filters for the JsInterop export if enabled (since GWT 2.8.1) */
+		includeJsInteropExports = ["filter1", "filter2"]
+		/** Exclude filters for the JsInterop export if enabled (since GWT 2.8.1) */
+		excludeJsInteropExports = ["filter1", "filter2"]
 
 		/** Extra args can be used to experiment arguments */
 		extraArgs = ["-firstArgument", "-secondArgument"]

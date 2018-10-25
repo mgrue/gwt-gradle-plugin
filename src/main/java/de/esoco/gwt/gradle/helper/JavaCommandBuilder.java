@@ -14,16 +14,16 @@
  */
 package de.esoco.gwt.gradle.helper;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-
-import org.gradle.internal.jvm.Jvm;
-
 import de.esoco.gwt.gradle.extension.JavaOption;
 
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.List;
+
+import org.gradle.internal.jvm.Jvm;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 public abstract class JavaCommandBuilder {
 
@@ -62,7 +62,9 @@ public abstract class JavaCommandBuilder {
 	}
 
 	public JavaCommandBuilder addArg(String argName) {
-		this.args.add(argName);
+		if (!Strings.isNullOrEmpty(argName)) {
+			this.args.add(argName);
+		}
 		return this;
 	}
 
@@ -96,9 +98,9 @@ public abstract class JavaCommandBuilder {
 		}
 	}
 
-	public void addArgIf(Boolean condition, String value) {
+	public void addArgIf(Boolean condition, String argName) {
 		if (Boolean.TRUE.equals(condition)) {
-			this.args.add(value);
+			addArg(argName);
 		}
 	}
 

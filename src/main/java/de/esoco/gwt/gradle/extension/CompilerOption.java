@@ -142,6 +142,16 @@ public class CompilerOption extends JavaOption {
 	private Boolean generateJsInteropExports;
 
 	/**
+	 * Include filters for JsInterop export (since GWT 2.8.1).
+	 */
+	private List<String> includeJsInteropExports;
+
+	/**
+	 * Include filters for JsInterop export (since GWT 2.8.1).
+	 */
+	private List<String> excludeJsInteropExports;
+	
+	/**
 	 * GWT extra args, can be used to experiment arguments.
 	 */
 	private final List<String> extraArgs = Lists.newArrayList();
@@ -442,14 +452,30 @@ public class CompilerOption extends JavaOption {
 		this.generateJsInteropExports = Boolean.parseBoolean(generateJsInteropExports);
 	}
 
+	public List<String> getIncludeJsInteropExports() {
+		return includeJsInteropExports;
+	}
+
+	public void setIncludeJsInteropExports(String... imports) {
+		this.includeJsInteropExports.addAll(Arrays.asList(imports));
+	}
+
+	public List<String> getExcludeJsInteropExports() {
+		return excludeJsInteropExports;
+	}
+	
+	public void setExcludeJsInteropExports(String... imports) {
+		this.excludeJsInteropExports.addAll(Arrays.asList(imports));
+	}
+	
 	public List<String> getExtraArgs() {
 		return extraArgs;
 	}
-
+	
 	public void setExtraArgs(String... extraArgs) {
 		this.extraArgs.addAll(Arrays.asList(extraArgs));
 	}
-
+	
 	public void init(Project project) {
 		final File buildDir = new File(project.getBuildDir(), GwtExtension.DIRECTORY);
 

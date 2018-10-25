@@ -77,13 +77,26 @@ public class CompileCommandBuilder extends JavaCommandBuilder {
 		addArg("-XmethodNameDisplayMode", compilerOptions.getMethodNameDisplayMode());
 
 		addArg("-XjsInteropMode", compilerOptions.getJsInteropMode());
-		addArgIf(compilerOptions.getGenerateJsInteropExports(), "-generateJsInteropExports");
 
+		if (compilerOptions.getGenerateJsInteropExports()) {
+			addArg("-generateJsInteropExports");
+
+			if (compilerOptions.getIncludeJsInteropExports() != null) {
+				for (String arg : compilerOptions.getIncludeJsInteropExports()) {
+					addArg("-includeJsInteropExports", arg);
+				}
+			}
+	
+			if (compilerOptions.getExcludeJsInteropExports() != null) {
+				for (String arg : compilerOptions.getExcludeJsInteropExports()) {
+					addArg("-excludeJsInteropExports", arg);
+				}
+			}
+		}
+	
 		if (compilerOptions.getExtraArgs() != null) {
 			for (String arg : compilerOptions.getExtraArgs()) {
-				if (arg != null && arg.length() > 0) {
-					addArg(arg);
-				}
+				addArg(arg);
 			}
 		}
 
