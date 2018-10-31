@@ -36,6 +36,7 @@ public class GwtLibPlugin implements Plugin<Project> {
 	public static final String CONF_JETTY = "jettyConf";
 
 	private static final String ECLIPSE_NATURE = "com.gwtplugins.gwt.eclipse.core.gwtNature";
+	private static final String ECLIPSE_GWT_CONTAINER = "com.gwtplugins.gwt.eclipse.core.GWT_CONTAINER";
 	private static final String ECLIPSE_BUILDER_PROJECT_VALIDATOR = "com.gwtplugins.gwt.eclipse.core.gwtProjectValidator";
 	private static final String ECLIPSE_BUILDER_WEBAPP_VALIDATOR = "com.gwtplugins.gdt.eclipse.core.webAppProjectValidator";
 
@@ -87,7 +88,8 @@ public class GwtLibPlugin implements Plugin<Project> {
 				includeSourcesForTest(p);
 			}
 		});
-		initGpe(project);
+		
+		initGwtEclipsePlugin(project);
 	}
 
 	private void includeSourcesForTest(Project project) {
@@ -113,17 +115,21 @@ public class GwtLibPlugin implements Plugin<Project> {
 		jarTask.from(mainSourset.getAllSource());
 	}
 
-	private void initGpe(final Project project) {
+	private void initGwtEclipsePlugin(final Project project) {
 		project.afterEvaluate(new Action<Project>() {
 			@Override
 			public void execute(final Project p) {
-				final GwtExtension extention = (GwtExtension) project.getExtensions()
+				final GwtExtension gwtExtension = (GwtExtension) project.getExtensions()
 					.getByName(GwtExtension.NAME);
 
-				if (p.getPlugins().hasPlugin("eclipse") && extention.isGooglePluginEclipse()) {
-					final EclipseModel eclipseModel = project.getExtensions().getByType(EclipseModel.class);
+				if (p.getPlugins().hasPlugin("eclipse") && gwtExtension.isGwtPluginEclipse()) {
+					final EclipseModel eclipseModel = 
+						project.getExtensions().getByType(EclipseModel.class);
+					
 					eclipseModel.getProject().natures(ECLIPSE_NATURE);
 					eclipseModel.getProject().buildCommand(ECLIPSE_BUILDER_PROJECT_VALIDATOR);
+					eclipseModel.getClasspath().getContainers().add(ECLIPSE_GWT_CONTAINER);
+					
 					project.getPlugins().withType(GwtPlugin.class, new Action<GwtPlugin>() {
 						@Override
 						public void execute(GwtPlugin warPlugin) {

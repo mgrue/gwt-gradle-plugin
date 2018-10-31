@@ -31,7 +31,7 @@ public class GwtExtension {
 	private String gwtVersion = "2.8.2";
 	private boolean gwtServletLib = false;
 	private boolean gwtElementalLib = false;
-	private boolean googlePluginEclipse = true;
+	private boolean gwtPluginEclipse = true;
 	private String jettyVersion = "9.4.12.v20180830";
 	/**
 	 * Specifies Java source level.
@@ -79,12 +79,12 @@ public class GwtExtension {
 		this.gwtElementalLib = gwtElementalLib;
 	}
 
-	public boolean isGooglePluginEclipse() {
-		return googlePluginEclipse;
+	public boolean isGwtPluginEclipse() {
+		return gwtPluginEclipse;
 	}
 
-	public void setGooglePluginEclipse(boolean googlePluginEclipse) {
-		this.googlePluginEclipse = googlePluginEclipse;
+	public void setGwtPluginEclipse(boolean gwtPluginEclipse) {
+		this.gwtPluginEclipse = gwtPluginEclipse;
 	}
 
 	public DevOption getDev() {

@@ -23,7 +23,7 @@ your projects:
 
 ```groovy
 plugins {
-    id "de.esoco.gwt" version "1.0.3"
+    id "de.esoco.gwt" version "1.0.4"
 }
 ```
 
@@ -53,8 +53,7 @@ When the plugin has been added the following GWT-specific Gradle tasks can be in
 
 ### On Eclipse ###
 
-The main purpose of this fork was to make this plugin work correctly with Eclipse by supporting the most recent GWT plugin for Eclipse (available from http://www.gwtproject.org/). For eclipse support just apply the standard Eclipse Gradle plugin in the `build.gradle` file. If you want to disable the support for
-the Eclipse GWT plugin while still using the Gradle Eclipse plugin set the configuration option `googlePluginEclipse` to **false** (the default is true if the Eclipse plugin is active):
+The main purpose of this fork was to make this plugin work correctly with Eclipse by supporting the most recent GWT plugin for Eclipse (available from http://www.gwtproject.org/). For eclipse support just apply the standard Eclipse Gradle plugin in the `build.gradle` file. If you want to disable the support for the Eclipse GWT plugin while still using the Gradle Eclipse plugin set the configuration option `gwtPluginEclipse` to **false** (the default is true if the Eclipse plugin is active):
 
 ```groovy
 apply plugin: 'eclipse'
@@ -63,7 +62,7 @@ apply plugin: 'eclipse'
 
 gwt {
 	module 'your.gwt.module.to.compile'
-	googlePluginEclipse = false
+	gwtPluginEclipse = false
 }
 ```
 
@@ -120,8 +119,8 @@ gwt {
 	gwtServletLib = false
 	/** Add the gwt-elemental lib */
 	gwtElementalLib = false
-	/** Add Google plugin config (only if plugin 'eclipse' is enabled) */
-	googlePluginEclipse = true
+	/** Add GWT plugin config (only if plugin 'eclipse' is enabled) */
+	gwtPluginEclipse = true
 	/** Jetty version */
 	jettyVersion = '9.4.12.v20180830'
 }
