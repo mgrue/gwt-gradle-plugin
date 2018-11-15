@@ -89,7 +89,7 @@ public class GwtCompileTask extends AbstractTask {
 
 		final Configuration compileClasspath = project.getConfigurations().getByName(
 			JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME);
-		compileClasspath.getAllDependencies().withType(ProjectDependency.class, new Action<ProjectDependency>() {
+		compileClasspath.getDependencies().withType(ProjectDependency.class, new Action<ProjectDependency>() {
 			@Override
 			public void execute(ProjectDependency dep) {
 				addSourceSet(sources, dep.getDependencyProject(), SourceSet.MAIN_SOURCE_SET_NAME);
