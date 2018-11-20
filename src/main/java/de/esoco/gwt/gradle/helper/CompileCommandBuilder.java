@@ -75,7 +75,6 @@ public class CompileCommandBuilder extends JavaCommandBuilder {
 			"-nooverlappingSourceWarnings");
 		addArgIf(compilerOptions.getSaveSource(), "-saveSource", "-nosaveSource");
 		addArg("-XmethodNameDisplayMode", compilerOptions.getMethodNameDisplayMode());
-
 		addArg("-XjsInteropMode", compilerOptions.getJsInteropMode());
 
 		if (compilerOptions.getGenerateJsInteropExports()) {

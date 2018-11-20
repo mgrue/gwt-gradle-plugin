@@ -139,7 +139,7 @@ public class CompilerOption extends JavaOption {
 	/**
 	 * Generate and export JsInterop (since GWT 2.8).
 	 */
-	private Boolean generateJsInteropExports;
+	private boolean generateJsInteropExports;
 
 	/**
 	 * Include filters for JsInterop export (since GWT 2.8.1).
@@ -440,12 +440,15 @@ public class CompilerOption extends JavaOption {
 		this.jsInteropMode = jsInteropMode;
 	}
 
-	public Boolean getGenerateJsInteropExports() {
+	public boolean getGenerateJsInteropExports() {
 		return generateJsInteropExports;
 	}
 
 	public void setGenerateJsInteropExports(Boolean generateJsInteropExports) {
-		this.generateJsInteropExports = generateJsInteropExports;
+		this.generateJsInteropExports = 
+			generateJsInteropExports != null ? 
+				generateJsInteropExports.booleanValue() : 
+				false;
 	}
 
 	public void setGenerateJsInteropExports(String generateJsInteropExports) {
