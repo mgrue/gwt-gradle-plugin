@@ -4,7 +4,14 @@ GWT Gradle Plugin
 Travis build status:
 [![Build Status](https://www.travis-ci.org/esoco/gwt-gradle-plugin.svg?branch=master)](https://www.travis-ci.org/esoco/gwt-gradle-plugin)
 
+Release notes
+-------------
 
+* 1.0.6: Supersedes 1.0.1 to 1.0.5 by fixing several bugs introduced by non-published functionality from fork
+* 1.0.0: first release after fork
+
+Project
+-------
 
 This is a fork of the ["Putnami GWT plugin"](https://github.com/Putnami/putnami-gradle-plugin)
 project which seems to be no longer maintained. It has been adapted to the most recent GWT version (2.8.2) and the associated Eclipse plugin and the version has been set to 1.0.0 as the current code can be considered quite stable. The project has been renamed to `gwt-gradle-plugin` but it is not related to the equally named but even longer abandoned [project by Steffen Schaefer](https://github.com/steffenschaefer/gwt-gradle-plugin).
@@ -23,7 +30,7 @@ your projects:
 
 ```groovy
 plugins {
-    id "de.esoco.gwt" version "1.0.5"
+    id "de.esoco.gwt" version "1.0.6"
 }
 ```
 
