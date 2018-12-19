@@ -1,7 +1,7 @@
 GWT Gradle Plugin
 ===================
 
-Travis build status:
+[![Gitter chat](https://badges.gitter.im/gwt-gradle-plugin/gitter.png)](https://gitter.im/gwt-gradle-plugin/community)&nbsp;&nbsp;&nbsp;
 [![Build Status](https://www.travis-ci.org/esoco/gwt-gradle-plugin.svg?branch=master)](https://www.travis-ci.org/esoco/gwt-gradle-plugin)
 
 Release notes
