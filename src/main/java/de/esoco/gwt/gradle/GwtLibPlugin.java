@@ -31,27 +31,28 @@ import org.gradle.api.tasks.testing.Test;
 import org.gradle.plugins.ide.eclipse.model.EclipseModel;
 import org.gradle.plugins.ide.eclipse.model.EclipseProject;
 
-public class GwtLibPlugin implements Plugin<Project> {
 
-	public static final String CONF_GWT_SDK = "gwtSdk";
-	public static final String CONF_JETTY = "jettyConf";
+public
+class GwtLibPlugin implements Plugin<Project> {
+	static public final String CONF_GWT_SDK = "gwtSdk";
+	static public final String CONF_JETTY   = "jettyConf";
 
-	private static final String ECLIPSE_NATURE = "com.gwtplugins.gwt.eclipse.core.gwtNature";
-	private static final String ECLIPSE_GWT_CONTAINER = "com.gwtplugins.gwt.eclipse.core.GWT_CONTAINER";
-	private static final String ECLIPSE_BUILDER_PROJECT_VALIDATOR = "com.gwtplugins.gwt.eclipse.core.gwtProjectValidator";
-	private static final String ECLIPSE_BUILDER_WEBAPP_VALIDATOR = "com.gwtplugins.gdt.eclipse.core.webAppProjectValidator";
+	static private final String ECLIPSE_NATURE                    = "com.gwtplugins.gwt.eclipse.core.gwtNature";
+	static private final String ECLIPSE_GWT_CONTAINER             = "com.gwtplugins.gwt.eclipse.core.GWT_CONTAINER";
+	static private final String ECLIPSE_BUILDER_PROJECT_VALIDATOR = "com.gwtplugins.gwt.eclipse.core.gwtProjectValidator";
+	static private final String ECLIPSE_BUILDER_WEBAPP_VALIDATOR  = "com.gwtplugins.gdt.eclipse.core.webAppProjectValidator";
 
 	@Override
 	public void apply(Project project) {
-
 		project.getPlugins().apply(JavaPlugin.class);
 		project.getPlugins().apply(MavenPlugin.class);
 
 		final GwtExtension extension = project.getExtensions().create(GwtExtension.NAME,
-			GwtExtension.class);
+		                                                              GwtExtension.class);
 
-		ConfigurationContainer configurationContainer = project.getConfigurations();
-		
+		ConfigurationContainer configurationContainer = project
+		                                                .getConfigurations();
+
 		configurationContainer.create(CONF_GWT_SDK).setVisible(false);
 		configurationContainer.create(CONF_JETTY).setVisible(false);
 
@@ -60,80 +61,93 @@ public class GwtLibPlugin implements Plugin<Project> {
 		project.afterEvaluate(p -> initDependencies(project, extension));
 	}
 
+	private void includeSourcesForTest(Project project) {
+		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
+		SourceSet            mainSourset    = javaConvention.getSourceSets()
+		                                                    .getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+		SourceSet            testSourset    = javaConvention.getSourceSets()
+		                                                    .getByName(SourceSet.TEST_SOURCE_SET_NAME);
+
+		FileCollection testClasspath = project.files(mainSourset.getAllSource()
+		                                             .getSrcDirs().toArray())
+		                                      .plus(project.files(testSourset
+		                                                          .getAllSource()
+		                                                          .getSrcDirs()
+		                                                          .toArray()))
+		                                      .plus(testSourset
+		                                            .getRuntimeClasspath());
+		testSourset.setRuntimeClasspath(testClasspath);
+
+		Test test = project.getTasks().withType(Test.class).getByName("test");
+		test.getSystemProperties().put("gwt.persistentunitcachedir",
+		                               project.getBuildDir() +
+		                               GwtExtension.DIRECTORY + "/test");
+	}
+
+	private void includeSourcesToJar(Project project) {
+		Jar                  jarTask        = project.getTasks()
+		                                             .withType(Jar.class)
+		                                             .getByName("jar");
+		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
+		SourceSet            mainSourset    = javaConvention.getSourceSets()
+		                                                    .getByName("main");
+		jarTask.from(mainSourset.getAllSource());
+	}
+
 	private void initDependencies(Project project, GwtExtension extension) {
-		String gwtVersion = extension.getGwtVersion();
+		String gwtVersion   = extension.getGwtVersion();
 		String jettyVersion = extension.getJettyVersion();
 
 		DependencyHandler dependencies = project.getDependencies();
 		dependencies.add(CONF_GWT_SDK,
-			"com.google.gwt:gwt-codeserver" + ":" + gwtVersion);
+		                 "com.google.gwt:gwt-codeserver" + ":" + gwtVersion);
 		dependencies.add(CONF_GWT_SDK,
-			"com.google.gwt:gwt-user" + ":" + gwtVersion);
+		                 "com.google.gwt:gwt-user" + ":" + gwtVersion);
 		dependencies.add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME,
-			"com.google.gwt:gwt-codeserver" + ":" + gwtVersion);
+		                 "com.google.gwt:gwt-codeserver" + ":" + gwtVersion);
 		dependencies.add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME,
-			"com.google.gwt:gwt-user" + ":" + gwtVersion);
+		                 "com.google.gwt:gwt-user" + ":" + gwtVersion);
 		dependencies.add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME,
-			"com.google.gwt:gwt-user" + ":" + gwtVersion);
+		                 "com.google.gwt:gwt-user" + ":" + gwtVersion);
 
 		if (extension.isGwtElementalLib()) {
-			dependencies.add(
-				JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME, "com.google.gwt:gwt-elemental" + ":" + gwtVersion);
-		}
-		if (extension.isGwtServletLib()) {
-			dependencies.add(
-				JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME, "com.google.gwt:gwt-servlet" + ":" + gwtVersion);
+			dependencies.add(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME,
+			                 "com.google.gwt:gwt-elemental" + ":" + gwtVersion);
 		}
 
-		dependencies.add(CONF_JETTY, "org.eclipse.jetty:jetty-runner" + ":" + jettyVersion);
+		if (extension.isGwtServletLib()) {
+			dependencies.add(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME,
+			                 "com.google.gwt:gwt-servlet" + ":" + gwtVersion);
+		}
+
+		dependencies.add(CONF_JETTY,
+		                 "org.eclipse.jetty:jetty-runner" + ":" + jettyVersion);
 
 		includeSourcesForTest(project);
 		initGwtEclipsePlugin(project);
 	}
 
-	private void includeSourcesForTest(Project project) {
-		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
-		SourceSet mainSourset = javaConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-		SourceSet testSourset = javaConvention.getSourceSets().getByName(SourceSet.TEST_SOURCE_SET_NAME);
-
-		FileCollection testClasspath = project
-			.files(mainSourset.getAllSource().getSrcDirs().toArray())
-			.plus(project.files(testSourset.getAllSource().getSrcDirs().toArray()))
-			.plus(testSourset.getRuntimeClasspath());
-		testSourset.setRuntimeClasspath(testClasspath);
-
-		Test test = project.getTasks().withType(Test.class).getByName("test");
-		test.getSystemProperties().put("gwt.persistentunitcachedir", 
-			                           project.getBuildDir() + GwtExtension.DIRECTORY + "/test");
-	}
-
-	private void includeSourcesToJar(Project project) {
-		Jar jarTask = project.getTasks().withType(Jar.class).getByName("jar");
-		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
-		SourceSet mainSourset = javaConvention.getSourceSets().getByName("main");
-		jarTask.from(mainSourset.getAllSource());
-	}
-
 	private void initGwtEclipsePlugin(final Project project) {
 		final GwtExtension gwtExtension = (GwtExtension) project.getExtensions()
-			.getByName(GwtExtension.NAME);
+		                                                        .getByName(GwtExtension.NAME);
 
-		if (project.getPlugins().hasPlugin("eclipse") && gwtExtension.isGwtPluginEclipse()) {
-			final EclipseModel eclipseModel = 
-				project.getExtensions().getByType(EclipseModel.class);
+		if (project.getPlugins().hasPlugin("eclipse") &&
+		    gwtExtension.isGwtPluginEclipse()) {
+			final EclipseModel eclipseModel = project.getExtensions().getByType(EclipseModel.class);
 
 			final EclipseProject eclipseProject = eclipseModel.getProject();
-			
+
 			eclipseProject.natures(ECLIPSE_NATURE);
 			eclipseProject.buildCommand(ECLIPSE_BUILDER_PROJECT_VALIDATOR);
 			eclipseModel.getClasspath().getContainers().add(ECLIPSE_GWT_CONTAINER);
-			
-			project.getPlugins().withType(GwtPlugin.class, new Action<GwtPlugin>() {
-				@Override
-				public void execute(GwtPlugin warPlugin) {
-					eclipseProject.buildCommand(ECLIPSE_BUILDER_WEBAPP_VALIDATOR);
-				}
-			});
+
+			project.getPlugins().withType(GwtPlugin.class,
+			                              new Action<GwtPlugin>() {
+						                      @Override
+						                      public void execute(GwtPlugin warPlugin) {
+						                          eclipseProject.buildCommand(ECLIPSE_BUILDER_WEBAPP_VALIDATOR);
+						                      }
+						                  });
 		}
 	}
 }
