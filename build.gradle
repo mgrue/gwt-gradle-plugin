@@ -13,11 +13,12 @@ apply plugin: 'java'
 apply plugin: 'java-library'
 apply plugin: 'eclipse'
 apply plugin: 'com.gradle.plugin-publish';
+apply plugin: 'maven-publish'
 
 group = 'de.esoco.gwt'
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
 	mavenCentral()
@@ -42,23 +43,33 @@ artifacts {
 }
 
 pluginBundle {
-  website = 'https://github.com/esoco/gwt-gradle-plugin'
-  vcsUrl = 'https://github.com/esoco/gwt-gradle-plugin.git'
-  description = 'GWT Gradle Plugin'
-  tags = ['gwt', 'java']
+	website = 'https://github.com/esoco/gwt-gradle-plugin'
+	vcsUrl = 'https://github.com/esoco/gwt-gradle-plugin.git'
+	description = 'GWT Gradle Plugin'
+	tags = ['gwt', 'java']
 
-  plugins {
-    gwtPlugin {
-      id = 'de.esoco.gwt'
-      displayName = 'Gradle GWT plugin'
-    }
-    gwtLibPlugin {
-      id = 'de.esoco.gwt-lib'
-      displayName = 'Gradle GWT lib plugin'
-    }
-  }
+	plugins {
+		gwtPlugin {
+			id = 'de.esoco.gwt'
+			displayName = 'Gradle GWT plugin'
+		}
+		gwtLibPlugin {
+			id = 'de.esoco.gwt-lib'
+			displayName = 'Gradle GWT lib plugin'
+		}
+	}
 }
 
+publishing {
+    publications {
+        pluginPublication (MavenPublication) {
+            from    components.java
+            groupId    project.group
+            artifactId project.name
+            version    project.version
+        }
+    }
+}
 // ----------- Bintray Release -----------
 
 apply plugin: 'com.jfrog.bintray'

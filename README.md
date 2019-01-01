@@ -7,6 +7,7 @@ GWT Gradle Plugin
 Release notes
 -------------
 
+* 1.0.7: adds `gwt-dev` to the WarPlugin.providedCompile dependency to exclude it from WAR
 * 1.0.6: Supersedes 1.0.1 to 1.0.5 by fixing several bugs introduced by non-published functionality from fork
 * 1.0.0: first release after fork
 
@@ -30,7 +31,7 @@ your projects:
 
 ```groovy
 plugins {
-    id "de.esoco.gwt" version "1.0.6"
+    id "de.esoco.gwt" version "1.0.7"
 }
 ```
 
