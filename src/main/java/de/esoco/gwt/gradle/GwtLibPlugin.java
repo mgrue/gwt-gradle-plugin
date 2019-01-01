@@ -25,6 +25,7 @@ import org.gradle.api.file.FileCollection;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.MavenPlugin;
+import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.api.tasks.testing.Test;
@@ -99,33 +100,37 @@ class GwtLibPlugin implements Plugin<Project> {
 	}
 
 	private void initDependencies(Project project, GwtExtension extension) {
-		String gwtVersion   = extension.getGwtVersion();
-		String jettyVersion = extension.getJettyVersion();
+		String gwtVersion     = extension.getGwtVersion();
+		String jettyVersion   = extension.getJettyVersion();
+		String sGwtUser       = "com.google.gwt:gwt-user:" + gwtVersion;
+		String sGwtCodeserver = "com.google.gwt:gwt-codeserver:" +
+		                        gwtVersion;
 
 		DependencyHandler dependencies = project.getDependencies();
-		dependencies.add(CONF_GWT_SDK,
-		                 "com.google.gwt:gwt-codeserver" + ":" + gwtVersion);
-		dependencies.add(CONF_GWT_SDK,
-		                 "com.google.gwt:gwt-user" + ":" + gwtVersion);
+		dependencies.add(CONF_GWT_SDK, sGwtCodeserver);
+		dependencies.add(CONF_GWT_SDK, sGwtUser);
 		dependencies.add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME,
-		                 "com.google.gwt:gwt-codeserver" + ":" + gwtVersion);
-		dependencies.add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME,
-		                 "com.google.gwt:gwt-user" + ":" + gwtVersion);
-		dependencies.add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME,
-		                 "com.google.gwt:gwt-user" + ":" + gwtVersion);
+		                 sGwtCodeserver);
+		dependencies.add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME, sGwtUser);
+		dependencies.add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME, sGwtUser);
 
 		if (extension.isGwtElementalLib()) {
 			dependencies.add(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME,
-			                 "com.google.gwt:gwt-elemental" + ":" + gwtVersion);
+			                 "com.google.gwt:gwt-elemental:" + gwtVersion);
 		}
 
 		if (extension.isGwtServletLib()) {
 			dependencies.add(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME,
-			                 "com.google.gwt:gwt-servlet" + ":" + gwtVersion);
+			                 "com.google.gwt:gwt-servlet:" + gwtVersion);
 		}
 
+		if (project.getPlugins().hasPlugin(WarPlugin.class)) {
+			dependencies.add(WarPlugin.PROVIDED_COMPILE_CONFIGURATION_NAME,
+			                 "com.google.gwt:gwt-dev:" + gwtVersion);
+		}
+		
 		dependencies.add(CONF_JETTY,
-		                 "org.eclipse.jetty:jetty-runner" + ":" + jettyVersion);
+		                 "org.eclipse.jetty:jetty-runner:" + jettyVersion);
 
 		includeSourcesForTest(project);
 		initGwtEclipsePlugin(project);
