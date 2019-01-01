@@ -47,8 +47,9 @@ class GwtLibPlugin implements Plugin<Project> {
 		project.getPlugins().apply(JavaPlugin.class);
 		project.getPlugins().apply(MavenPlugin.class);
 
-		final GwtExtension extension = project.getExtensions().create(GwtExtension.NAME,
-		                                                              GwtExtension.class);
+		final GwtExtension extension = project.getExtensions()
+		                                      .create(GwtExtension.NAME,
+		                                              GwtExtension.class);
 
 		ConfigurationContainer configurationContainer = project
 		                                                .getConfigurations();
@@ -62,11 +63,13 @@ class GwtLibPlugin implements Plugin<Project> {
 	}
 
 	private void includeSourcesForTest(Project project) {
-		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
-		SourceSet            mainSourset    = javaConvention.getSourceSets()
-		                                                    .getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-		SourceSet            testSourset    = javaConvention.getSourceSets()
-		                                                    .getByName(SourceSet.TEST_SOURCE_SET_NAME);
+		JavaPluginConvention javaConvention = project.getConvention()
+		                                             .getPlugin(JavaPluginConvention.class);
+
+		SourceSet mainSourset = javaConvention.getSourceSets()
+		                                      .getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+		SourceSet testSourset = javaConvention.getSourceSets()
+		                                      .getByName(SourceSet.TEST_SOURCE_SET_NAME);
 
 		FileCollection testClasspath = project.files(mainSourset.getAllSource()
 		                                             .getSrcDirs().toArray())
@@ -79,16 +82,17 @@ class GwtLibPlugin implements Plugin<Project> {
 		testSourset.setRuntimeClasspath(testClasspath);
 
 		Test test = project.getTasks().withType(Test.class).getByName("test");
-		test.getSystemProperties().put("gwt.persistentunitcachedir",
-		                               project.getBuildDir() +
-		                               GwtExtension.DIRECTORY + "/test");
+		test.getSystemProperties()
+		    .put("gwt.persistentunitcachedir",
+		         project.getBuildDir() + GwtExtension.DIRECTORY + "/test");
 	}
 
 	private void includeSourcesToJar(Project project) {
 		Jar                  jarTask        = project.getTasks()
 		                                             .withType(Jar.class)
 		                                             .getByName("jar");
-		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
+		JavaPluginConvention javaConvention = project.getConvention()
+		                                             .getPlugin(JavaPluginConvention.class);
 		SourceSet            mainSourset    = javaConvention.getSourceSets()
 		                                                    .getByName("main");
 		jarTask.from(mainSourset.getAllSource());
@@ -133,21 +137,23 @@ class GwtLibPlugin implements Plugin<Project> {
 
 		if (project.getPlugins().hasPlugin("eclipse") &&
 		    gwtExtension.isGwtPluginEclipse()) {
-			final EclipseModel eclipseModel = project.getExtensions().getByType(EclipseModel.class);
+			final EclipseModel eclipseModel = project.getExtensions()
+			                                         .getByType(EclipseModel.class);
 
 			final EclipseProject eclipseProject = eclipseModel.getProject();
 
 			eclipseProject.natures(ECLIPSE_NATURE);
 			eclipseProject.buildCommand(ECLIPSE_BUILDER_PROJECT_VALIDATOR);
-			eclipseModel.getClasspath().getContainers().add(ECLIPSE_GWT_CONTAINER);
+			eclipseModel.getClasspath().getContainers()
+			            .add(ECLIPSE_GWT_CONTAINER);
 
-			project.getPlugins().withType(GwtPlugin.class,
-			                              new Action<GwtPlugin>() {
-						                      @Override
-						                      public void execute(GwtPlugin warPlugin) {
-						                          eclipseProject.buildCommand(ECLIPSE_BUILDER_WEBAPP_VALIDATOR);
-						                      }
-						                  });
+			project.getPlugins()
+			       .withType(GwtPlugin.class, new Action<GwtPlugin>() {
+			                     @Override
+			                     public void execute(GwtPlugin warPlugin) {
+			                         eclipseProject.buildCommand(ECLIPSE_BUILDER_WEBAPP_VALIDATOR);
+			                     }
+			                 });
 		}
 	}
 }
