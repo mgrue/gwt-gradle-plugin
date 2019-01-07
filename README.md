@@ -259,7 +259,7 @@ gwt {
 		port = 9876
 		/** EXPERIMENTAL: Don't implicitly depend on "client" and "public" when a module doesn't define anydependencies. */
 		enforceStrictResources = false
-		/** Specifies Java source level ("1.6", "1.7").
+		/** Specifies Java source level ("1.6", "1.7"). */
 		sourceLevel = "1.6"
 		/** The level of logging detail (ERROR, WARN, INFO, TRACE, DEBUG, SPAM, ALL) */
 		logLevel = "INFO"
