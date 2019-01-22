@@ -1,8 +1,9 @@
 GWT Gradle Plugin
 ===================
 
-[![Gitter chat](https://badges.gitter.im/gwt-gradle-plugin/gitter.png)](https://gitter.im/gwt-gradle-plugin/community)&nbsp;&nbsp;&nbsp;
-[![Build Status](https://www.travis-ci.org/esoco/gwt-gradle-plugin.svg?branch=master)](https://www.travis-ci.org/esoco/gwt-gradle-plugin)
+[![Build Status](https://www.travis-ci.org/esoco/gwt-gradle-plugin.svg?branch=master)](https://www.travis-ci.org/esoco/gwt-gradle-plugin)&nbsp;&nbsp;&nbsp;
+[ ![Download](https://api.bintray.com/packages/esoco/esoco/gwt-gradle-plugin/images/download.svg) ](https://bintray.com/esoco/esoco/gwt-gradle-plugin/_latestVersion)&nbsp;&nbsp;&nbsp;
+[![Gitter chat](https://badges.gitter.im/gwt-gradle-plugin/gitter.png)](https://gitter.im/gwt-gradle-plugin/community)
 
 Release notes
 -------------
