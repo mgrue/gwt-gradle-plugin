@@ -22,7 +22,9 @@ import de.esoco.gwt.gradle.helper.CompileCommandBuilder;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.gradle.api.Action;
@@ -45,6 +47,8 @@ import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskAction;
 
 import com.google.common.base.Strings;
+
+import javax.annotation.Nonnull;
 
 @CacheableTask
 public class GwtCompileTask extends AbstractTask {
@@ -89,16 +93,9 @@ public class GwtCompileTask extends AbstractTask {
 		options.setLocalWorkers(evalWorkers(options));
 
 		final ConfigurableFileCollection sources = project.files();
-			addSourceSet(sources, project, SourceSet.MAIN_SOURCE_SET_NAME);
+		Set<Project> allProjects = new HashSet<>();
 
-		final Configuration compileClasspath = project.getConfigurations().getByName(
-			JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME);
-		compileClasspath.getAllDependencies().withType(ProjectDependency.class, new Action<ProjectDependency>() {
-			@Override
-			public void execute(ProjectDependency dep) {
-				addSourceSet(sources, dep.getDependencyProject(), SourceSet.MAIN_SOURCE_SET_NAME);
-			}
-		});
+		addSources(project, sources, allProjects);
 
 		ConventionMapping mapping = ((IConventionAware) this).getConventionMapping();
 
@@ -122,15 +119,41 @@ public class GwtCompileTask extends AbstractTask {
 		});
 	}
 
+	@SuppressWarnings("UnstableApiUsage")
+	private void addSources(Project project, final ConfigurableFileCollection sources, final Set<Project> allProjects) {
+		if (allProjects.add(project)) {
+			// wait until the project is fully evaluated before attempting to read the sourceset,
+			// in case user modifies it.
+			// TODO: use Provider<> instead of afterEvaluate.
+			//  This requires only-newer versions of gradle, so we'll leave this in for now,
+			//  and consider using Provider in a future release, to have a window for users of old gradle versions.
+			final Action<? super Project> includeSourceAction = new Action<Project>() {
+				@Override
+				public void execute(Project project) {
+					addSourceSet(sources, project, SourceSet.MAIN_SOURCE_SET_NAME);
+					// recursively add _all_ project dependencies
+					addSources(project, sources, allProjects);
+				}
+			};
+			if (project.getState().getExecuted()) {
+				includeSourceAction.execute(project);
+			} else {
+				project.afterEvaluate(includeSourceAction);
+			}
+		}
+	}
+
 	private void addSourceSet(ConfigurableFileCollection sources, Project project, String sourceSet) {
 		JavaPluginConvention javaConvention = project.getConvention().findPlugin(JavaPluginConvention.class);
-		
+
 		if (javaConvention != null) {
+			project.getLogger().info("Adding {}.sourceSets.main.output and sourceSets.main.allSource.srcDirs to {}", project.getPath(), getPath());
 			SourceSet mainSourceSet = javaConvention.getSourceSets().getByName(sourceSet);
 			sources
-				.from(project.files(mainSourceSet.getOutput().getResourcesDir()))
-				.from(project.files(mainSourceSet.getOutput().getClassesDirs()))
+				.from(project.files(mainSourceSet.getOutput())) // this _should_ include proper task dependencies, but it does not...
 				.from(project.files(mainSourceSet.getAllSource().getSrcDirs()));
+			// add explicit task dependencies, so we rebuild whenever source outputs change.
+			dependsOn(mainSourceSet.getOutput());
 		}
 	}
 
