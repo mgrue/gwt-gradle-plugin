@@ -24,7 +24,7 @@ import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
-import org.gradle.api.plugins.MavenPlugin;
+import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
 import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.bundling.Jar;
@@ -46,7 +46,7 @@ class GwtLibPlugin implements Plugin<Project> {
 	@Override
 	public void apply(Project project) {
 		project.getPlugins().apply(JavaPlugin.class);
-		project.getPlugins().apply(MavenPlugin.class);
+		project.getPlugins().apply(MavenPublishPlugin.class);
 
 		final GwtExtension extension = project.getExtensions()
 		                                      .create(GwtExtension.NAME,
