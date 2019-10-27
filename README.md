@@ -8,6 +8,7 @@ GWT Gradle Plugin
 Release notes
 -------------
 
+* 1.0.10: Compatibility with Gradle 6 (requires Gradle version >= 4.8)
 * 1.0.9: Merged PR #12: Make CompileGwtTask depend on all transitive project dependencies
 * 1.0.8: GWT compile task output can now be cached between builds
 * 1.0.7: adds `gwt-dev` to the WarPlugin.providedCompile dependency to exclude it from WAR
@@ -34,7 +35,7 @@ your projects:
 
 ```groovy
 plugins {
-    id "de.esoco.gwt" version "1.0.7"
+    id "de.esoco.gwt" version "1.0.10"
 }
 ```
 
