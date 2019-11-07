@@ -14,19 +14,20 @@
  */
 package de.esoco.gwt.gradle.task;
 
-import de.esoco.gwt.gradle.action.JavaAction;
-import de.esoco.gwt.gradle.extension.GwtExtension;
-import de.esoco.gwt.gradle.helper.JettyServerBuilder;
-import de.esoco.gwt.gradle.util.ResourceUtils;
+import com.google.common.collect.ImmutableMap;
 
-import java.io.File;
-import java.util.Map;
+import de.esoco.gwt.gradle.command.JettyServerCommand;
+import de.esoco.gwt.gradle.extension.GwtExtension;
+import de.esoco.gwt.gradle.util.ResourceUtils;
 
 import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.bundling.War;
 
-import com.google.common.collect.ImmutableMap;
+import java.io.File;
+
+import java.util.Map;
+
 
 public class GwtRunTask extends AbstractTask {
 
@@ -35,6 +36,7 @@ public class GwtRunTask extends AbstractTask {
 	private File jettyConf;
 
 	public GwtRunTask() {
+
 		setDescription("Run jetty with the GW the GWT modules");
 
 		dependsOn(WarPlugin.WAR_TASK_NAME);
@@ -42,23 +44,28 @@ public class GwtRunTask extends AbstractTask {
 
 	@TaskAction
 	public void exec() throws Exception {
+
 		War warTask = (War) getProject().getTasks().getByName("war");
-		jettyConf = new File(getProject().getBuildDir(), "gwt/conf/jetty-run-conf.xml");
-		Map<String, String> model = new ImmutableMap.Builder<String, String>()
-					.put("__WAR_FILE__", warTask.getArchivePath().getAbsolutePath())
-					.build();
+
+		jettyConf =
+		    new File(getProject().getBuildDir(), "gwt/conf/jetty-run-conf.xml");
+
+		Map<String, String> model =
+		    new ImmutableMap.Builder<String, String>().put("__WAR_FILE__",
+		                                                   warTask
+		                                                   .getArchivePath()
+		                                                   .getAbsolutePath())
+		                                              .build();
+
 		ResourceUtils.copy("/stub.jetty-conf.xml", jettyConf, model);
-		JavaAction jetty = execJetty();
-		jetty.join();
-	}
 
-	private JavaAction execJetty() {
-		GwtExtension extension = getProject().getExtensions().getByType(GwtExtension.class);
-		JettyServerBuilder jettyBuilder = new JettyServerBuilder();
-		jettyBuilder.configure(getProject(), extension.getJetty(), jettyConf);
-		JavaAction jetty = jettyBuilder.buildJavaAction();
-		jetty.execute(this);
-		return jetty;
-	}
+		GwtExtension extension =
+		    getProject().getExtensions().getByType(GwtExtension.class);
 
+		JettyServerCommand command =
+		    new JettyServerCommand(getProject(), extension.getJetty(),
+		                           jettyConf);
+
+		command.execute();
+	}
 }

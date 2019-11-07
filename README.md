@@ -8,6 +8,13 @@ GWT Gradle Plugin
 Release notes
 -------------
 
+* 1.1.0: New features and optimizations:
+    * Java executions now use Gradle standard call Project.javaexec() to address classpath handling issues.
+    * New configuration property `envClasspath` can be set to true to place the execution classpath into the CLASSPATH environment variable instead of a command line parameter. This should fix Windows errors if the command line size exceeds 32K.
+    * Gradle API updated to version 5. Should still be compatible with Gradle 4, please report othe.  
+
+---------
+
 * 1.0.10: Compatibility with Gradle 6 (requires Gradle version >= 4.8)
 * 1.0.9: Merged PR #12: Make CompileGwtTask depend on all transitive project dependencies
 * 1.0.8: GWT compile task output can now be cached between builds
@@ -35,7 +42,7 @@ your projects:
 
 ```groovy
 plugins {
-    id "de.esoco.gwt" version "1.0.10"
+    id "de.esoco.gwt" version "1.1.0"
 }
 ```
 
@@ -199,7 +206,7 @@ gwt {
 		extraArgs = ["-firstArgument", "-secondArgument"]
 
 		/** shown all compile errors */
-        strict = false
+		strict = false
 
 		/** Java args */
 		maxHeapSize="1024m"
@@ -209,6 +216,11 @@ gwt {
 		debugPort = 8000
 		debugSuspend = false
 		javaArgs = ["-Xmx256m", "-Xms256m"]
+		
+		/** If TRUE, use environment variable CLASSPATH instead of an jvm 
+		    argument. This option should be set if "filename or extension 
+		    too long" errors occur in Windows. */ 
+		envClasspath = false
 	}
 }
 ```
@@ -241,6 +253,7 @@ gwt {
 		debugPort = 8000
 		debugSuspend = false
 		javaArgs = ["-Xmx256m", "-Xms256m"]
+		envClasspath = false
 	}
 }
 ```
@@ -271,12 +284,12 @@ gwt {
 		jsInteropMode = "JS"
 		/** Generate and export JsInterop (since GWT 2.8) */
 		generateJsInteropExports = true
-		/** Emit extra information allow chrome dev tools to display Java identifiers in many placesinstead of JavaScript functions. (NONE, ONLY_METHOD_NAME, ABBREVIATED, FULL) */
+		/** Emit extra information allow chrome dev tools to display Java identifiers in many places instead of JavaScript functions. (NONE, ONLY_METHOD_NAME, ABBREVIATED, FULL) */
 		methodNameDisplayMode = "NONE"
 		/** shown all compile errors */
-        strict = false
-        /** disable this internal server */
-        noServer = false
+		strict = false
+		/** disable this internal server */
+		noServer = false
 
 		/** Extra args can be used to experiment arguments */
 		extraArgs = ["-firstArgument", "-secondArgument"]
@@ -289,6 +302,7 @@ gwt {
 		debugPort = 8000
 		debugSuspend = false
 		javaArgs = ["-Xmx256m", "-Xms256m"]
+		envClasspath = false
 	}
 }
 ```

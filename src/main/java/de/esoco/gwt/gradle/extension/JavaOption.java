@@ -19,6 +19,7 @@ import com.google.common.collect.Lists;
 import java.util.Arrays;
 import java.util.List;
 
+
 public class JavaOption {
 
 	private final List<String> javaArgs = Lists.newArrayList();
@@ -26,71 +27,100 @@ public class JavaOption {
 	private String maxHeapSize;
 	private String minHeapSize;
 	private String maxPermSize;
-	private boolean debugJava = false;
-	private int debugPort = 8000;
+
+	private int     debugPort    = 8000;
+	private boolean debugJava    = false;
 	private boolean debugSuspend = false;
 
-	public List<String> getJavaArgs() {
-		return javaArgs;
-	}
-
-	public void setJavaArgs(String... javaArgs) {
-		this.javaArgs.addAll(Arrays.asList(javaArgs));
-	}
-
-	public String getMaxHeapSize() {
-		return maxHeapSize;
-	}
-
-	public void setMaxHeapSize(String maxHeapSize) {
-		this.maxHeapSize = maxHeapSize;
-	}
-
-	public String getMinHeapSize() {
-		return minHeapSize;
-	}
-
-	public void setMinHeapSize(String minHeapSize) {
-		this.minHeapSize = minHeapSize;
-	}
-
-	public String getMaxPermSize() {
-		return maxPermSize;
-	}
-
-	public void setMaxPermSize(String maxPermSize) {
-		this.maxPermSize = maxPermSize;
-	}
-
-	public boolean isDebugJava() {
-		return debugJava;
-	}
-
-	public void setDebugJava(boolean debugJava) {
-		this.debugJava = debugJava;
-	}
+	private boolean envClasspath = false;
 
 	public int getDebugPort() {
+
 		return debugPort;
 	}
 
+	public List<String> getJavaArgs() {
+
+		return javaArgs;
+	}
+
+	public String getMaxHeapSize() {
+
+		return maxHeapSize;
+	}
+
+	public String getMaxPermSize() {
+
+		return maxPermSize;
+	}
+
+	public String getMinHeapSize() {
+
+		return minHeapSize;
+	}
+
+	public boolean isDebugJava() {
+
+		return debugJava;
+	}
+
+	public boolean isDebugSuspend() {
+
+		return debugSuspend;
+	}
+
+	public boolean isEnvClasspath() {
+
+		return envClasspath;
+	}
+
+	public void setDebugJava(boolean debugJava) {
+
+		this.debugJava = debugJava;
+	}
+
 	public void setDebugPort(int debugPort) {
+
 		this.debugPort = debugPort;
 	}
 
 	public void setDebugPort(String debugPort) {
+
 		this.debugPort = Integer.valueOf(debugPort);
 	}
 
-	public boolean isDebugSuspend() {
-		return debugSuspend;
-	}
-
 	public void setDebugSuspend(boolean debugSuspend) {
+
 		this.debugSuspend = debugSuspend;
 	}
 
 	public void setDebugSuspend(String debugSuspend) {
+
 		this.debugSuspend = Boolean.valueOf(debugSuspend);
+	}
+
+	public void setEnvClasspath(boolean envClasspath) {
+
+		this.envClasspath = envClasspath;
+	}
+
+	public void setJavaArgs(String... javaArgs) {
+
+		this.javaArgs.addAll(Arrays.asList(javaArgs));
+	}
+
+	public void setMaxHeapSize(String maxHeapSize) {
+
+		this.maxHeapSize = maxHeapSize;
+	}
+
+	public void setMaxPermSize(String maxPermSize) {
+
+		this.maxPermSize = maxPermSize;
+	}
+
+	public void setMinHeapSize(String minHeapSize) {
+
+		this.minHeapSize = minHeapSize;
 	}
 }

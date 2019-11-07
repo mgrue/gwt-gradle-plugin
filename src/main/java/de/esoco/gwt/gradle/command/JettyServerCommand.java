@@ -12,31 +12,39 @@
  * You should have received a copy of the GNU Lesser General Public License along with gwt-gradle-plugin. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-package de.esoco.gwt.gradle.helper;
+package de.esoco.gwt.gradle.command;
+
+import de.esoco.gwt.gradle.GwtLibPlugin;
+import de.esoco.gwt.gradle.extension.JettyOption;
+import de.esoco.gwt.gradle.util.ResourceUtils;
 
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.plugins.WarPlugin;
 
-import de.esoco.gwt.gradle.GwtLibPlugin;
-import de.esoco.gwt.gradle.action.JavaAction;
-import de.esoco.gwt.gradle.extension.JettyOption;
-import de.esoco.gwt.gradle.util.ResourceUtils;
-
 import java.io.File;
 
-public class JettyServerBuilder extends JavaCommandBuilder {
 
-	public JettyServerBuilder() {
-		setMainClass("org.eclipse.jetty.runner.Runner");
+public class JettyServerCommand extends AbstractCommand {
+
+	public JettyServerCommand(Project project, JettyOption jettyOption,
+	                          File jettyConf) {
+
+		super(project, "org.eclipse.jetty.runner.Runner");
+
+		configure(project, jettyOption, jettyConf);
 	}
 
-	public void configure(Project project, JettyOption jettyOption, File jettyConf) {
+	private void configure(Project project, JettyOption jettyOption,
+	                       File jettyConf) {
+
 		ConfigurationContainer configs = project.getConfigurations();
 
-		Configuration runtimeConf = configs.getByName(WarPlugin.PROVIDED_RUNTIME_CONFIGURATION_NAME);
-		Configuration jettyClassPath = configs.getByName(GwtLibPlugin.CONF_JETTY);
+		Configuration runtimeConf    =
+		    configs.getByName(WarPlugin.PROVIDED_RUNTIME_CONFIGURATION_NAME);
+		Configuration jettyClassPath =
+		    configs.getByName(GwtLibPlugin.CONF_JETTY);
 
 		configureJavaArgs(jettyOption);
 
@@ -44,22 +52,21 @@ public class JettyServerBuilder extends JavaCommandBuilder {
 		addClassPath(runtimeConf.getAsPath());
 
 		if (jettyOption.getLogRequestFile() != null) {
-			ResourceUtils.ensureDir(jettyOption.getLogRequestFile().getParentFile());
+			ResourceUtils.ensureDir(jettyOption.getLogRequestFile()
+			                        .getParentFile());
 			addArg("--log", jettyOption.getLogRequestFile());
 		}
+
 		if (jettyOption.getLogFile() != null) {
 			ResourceUtils.ensureDir(jettyOption.getLogFile().getParentFile());
 			addArg("--out", jettyOption.getLogFile());
 		}
+
 		addArg("--host", jettyOption.getBindAddress());
 		addArg("--port", jettyOption.getPort());
 		addArg("--stop-port", jettyOption.getStopPort());
 		addArg("--stop-key", jettyOption.getStopKey());
 
 		addArg(jettyConf.getAbsolutePath());
-	}
-
-	public JavaAction buildJavaAction() {
-		return new JavaAction(this.toString());
 	}
 }

@@ -14,51 +14,56 @@
  */
 package de.esoco.gwt.gradle.task;
 
-import de.esoco.gwt.gradle.action.JavaAction;
+import com.google.common.base.Strings;
+
+import de.esoco.gwt.gradle.command.CodeServerCommand;
+import de.esoco.gwt.gradle.command.AbstractCommand;
 import de.esoco.gwt.gradle.extension.DevOption;
 import de.esoco.gwt.gradle.extension.GwtExtension;
-import de.esoco.gwt.gradle.helper.CodeServerBuilder;
 import de.esoco.gwt.gradle.util.ResourceUtils;
 
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.tasks.TaskAction;
 
-import com.google.common.base.Strings;
 
 public class GwtCodeServerTask extends AbstractTask {
 
 	public static final String NAME = "gwtCodeServer";
 
 	public GwtCodeServerTask() {
+
 		setDescription("Run CodeServer in SuperDevMode");
 
-		dependsOn(JavaPlugin.COMPILE_JAVA_TASK_NAME, JavaPlugin.PROCESS_RESOURCES_TASK_NAME);
+		dependsOn(JavaPlugin.COMPILE_JAVA_TASK_NAME,
+		          JavaPlugin.PROCESS_RESOURCES_TASK_NAME);
+	}
+
+	public void configureCodeServer(final Project project,
+	                                final GwtExtension extention) {
+
+		final DevOption options = extention.getDev();
+
+		options.init(project);
 	}
 
 	@TaskAction
 	public void exec() {
-		GwtExtension extension = getProject().getExtensions().getByType(GwtExtension.class);
+
+		GwtExtension extension =
+		    getProject().getExtensions().getByType(GwtExtension.class);
+
 		if (!Strings.isNullOrEmpty(extension.getSourceLevel()) &&
-			Strings.isNullOrEmpty(extension.getDev().getSourceLevel())) {
+		    Strings.isNullOrEmpty(extension.getDev().getSourceLevel())) {
 			extension.getDev().setSourceLevel(extension.getSourceLevel());
 		}
 
 		ResourceUtils.ensureDir(extension.getDev().getLauncherDir());
 
-		CodeServerBuilder sdmBuilder = new CodeServerBuilder();
-		if (!extension.getGwtVersion().startsWith("2.6")) {
-			sdmBuilder.addArg("-launcherDir", extension.getDev().getLauncherDir());
-		}
-		sdmBuilder.configure(getProject(), extension.getDev(), extension.getModule());
+		AbstractCommand command =
+		    new CodeServerCommand(getProject(), extension,
+		                          extension.getModule());
 
-		JavaAction sdmAction = sdmBuilder.buildJavaAction();
-		sdmAction.execute(this);
-		sdmAction.join();
-	}
-
-	public void configureCodeServer(final Project project, final GwtExtension extention) {
-		final DevOption options = extention.getDev();
-		options.init(project);
+		command.execute();
 	}
 }

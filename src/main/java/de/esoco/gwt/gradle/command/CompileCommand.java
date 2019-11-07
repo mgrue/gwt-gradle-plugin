@@ -12,37 +12,54 @@
  * You should have received a copy of the GNU Lesser General Public License along with gwt-gradle-plugin. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-package de.esoco.gwt.gradle.helper;
+package de.esoco.gwt.gradle.command;
 
 import de.esoco.gwt.gradle.GwtLibPlugin;
-import de.esoco.gwt.gradle.action.JavaAction;
 import de.esoco.gwt.gradle.extension.CompilerOption;
 import de.esoco.gwt.gradle.extension.GwtExtension;
-
-import java.io.File;
-import java.util.Collection;
 
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.plugins.JavaPlugin;
 
-public class CompileCommandBuilder extends JavaCommandBuilder {
+import java.io.File;
 
-	public CompileCommandBuilder() {
-		setMainClass("com.google.gwt.dev.Compiler");
+import java.util.Collection;
+
+
+public class CompileCommand extends AbstractCommand {
+
+	public CompileCommand(Project project, CompilerOption compilerOptions,
+	                      FileCollection sources, File war,
+	                      Collection<String> modules) {
+
+		super(project, "com.google.gwt.dev.Compiler");
+
+		configure(project, compilerOptions, sources, war, modules);
 	}
 
-	public void configure(Project project, CompilerOption compilerOptions, FileCollection sources, File war,
-		Collection<String> modules) {
-		Configuration sdmConf = project.getConfigurations().getByName(GwtLibPlugin.CONF_GWT_SDK);
-		Configuration compileConf = project.getConfigurations().getByName(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME);
+	private void configure(Project project, CompilerOption compilerOptions,
+	                       FileCollection sources, File war,
+	                       Collection<String> modules) {
+
+		Configuration sdmConf     =
+		    project.getConfigurations().getByName(GwtLibPlugin.CONF_GWT_SDK);
+		Configuration compileConf =
+		    project.getConfigurations()
+		           .getByName(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME);
 
 		configureJavaArgs(compilerOptions);
-		addJavaArgs("-Dgwt.persistentunitcachedir=" + project.getBuildDir() + "/" + 
-		            GwtExtension.DIRECTORY + "/work/cache");
+		addJavaArgs("-Dgwt.persistentunitcachedir=" + project.getBuildDir() +
+		            "/" + GwtExtension.DIRECTORY + "/work/cache");
 
 		for (File sourceDir : sources) {
+			addClassPath(sourceDir.getAbsolutePath());
+		}
+
+		Collection<File> deps = getDependencySourceDirs(project);
+
+		for (File sourceDir : deps) {
 			addClassPath(sourceDir.getAbsolutePath());
 		}
 
@@ -58,23 +75,31 @@ public class CompileCommandBuilder extends JavaCommandBuilder {
 		addArg("-logLevel", compilerOptions.getLogLevel());
 		addArg("-localWorkers", compilerOptions.getLocalWorkers());
 		addArgIf(compilerOptions.getStrict(), "-strict");
-		addArgIf(compilerOptions.getFailOnError(), "-failOnError", "-nofailOnError");
+		addArgIf(compilerOptions.getFailOnError(), "-failOnError",
+		         "-nofailOnError");
 		addArg("-sourceLevel", compilerOptions.getSourceLevel());
-		addArgIf(compilerOptions.getDraftCompile(), "-draftCompile", "-nodraftCompile");
+		addArgIf(compilerOptions.getDraftCompile(), "-draftCompile",
+		         "-nodraftCompile");
 		addArg("-optimize", compilerOptions.getOptimize());
 		addArg("-style", compilerOptions.getStyle());
-		addArgIf(compilerOptions.getCompileReport(), "-compileReport", "-nocompileReport");
+		addArgIf(compilerOptions.getCompileReport(), "-compileReport",
+		         "-nocompileReport");
 		addArgIf(compilerOptions.getIncremental(), "-incremental");
-		addArgIf(compilerOptions.getCheckAssertions(), "-checkAssertions", "-nocheckAssertions");
-		addArgIf(compilerOptions.getCheckCasts(), "-XcheckCasts", "-XnocheckCasts");
-		addArgIf(compilerOptions.getEnforceStrictResources(), "-XenforceStrictResources",
-			"-XnoenforceStrictResources");
-		addArgIf(compilerOptions.getClassMetadata(), "-XclassMetadata", "-XnoclassMetadata");
+		addArgIf(compilerOptions.getCheckAssertions(), "-checkAssertions",
+		         "-nocheckAssertions");
+		addArgIf(compilerOptions.getCheckCasts(), "-XcheckCasts",
+		         "-XnocheckCasts");
+		addArgIf(compilerOptions.getEnforceStrictResources(),
+		         "-XenforceStrictResources", "-XnoenforceStrictResources");
+		addArgIf(compilerOptions.getClassMetadata(), "-XclassMetadata",
+		         "-XnoclassMetadata");
 
-		addArgIf(compilerOptions.getOverlappingSourceWarnings(), "-overlappingSourceWarnings",
-			"-nooverlappingSourceWarnings");
-		addArgIf(compilerOptions.getSaveSource(), "-saveSource", "-nosaveSource");
-		addArg("-XmethodNameDisplayMode", compilerOptions.getMethodNameDisplayMode());
+		addArgIf(compilerOptions.getOverlappingSourceWarnings(),
+		         "-overlappingSourceWarnings", "-nooverlappingSourceWarnings");
+		addArgIf(compilerOptions.getSaveSource(), "-saveSource",
+		         "-nosaveSource");
+		addArg("-XmethodNameDisplayMode",
+		       compilerOptions.getMethodNameDisplayMode());
 		addArg("-XjsInteropMode", compilerOptions.getJsInteropMode());
 
 		if (compilerOptions.getGenerateJsInteropExports()) {
@@ -85,14 +110,14 @@ public class CompileCommandBuilder extends JavaCommandBuilder {
 					addArg("-includeJsInteropExports", arg);
 				}
 			}
-	
+
 			if (compilerOptions.getExcludeJsInteropExports() != null) {
 				for (String arg : compilerOptions.getExcludeJsInteropExports()) {
 					addArg("-excludeJsInteropExports", arg);
 				}
 			}
 		}
-	
+
 		if (compilerOptions.getExtraArgs() != null) {
 			for (String arg : compilerOptions.getExtraArgs()) {
 				addArg(arg);
@@ -102,9 +127,5 @@ public class CompileCommandBuilder extends JavaCommandBuilder {
 		for (String module : modules) {
 			addArg(module);
 		}
-	}
-
-	public JavaAction buildJavaAction() {
-		return new JavaAction(this.toString());
 	}
 }
