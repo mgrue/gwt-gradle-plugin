@@ -11,7 +11,7 @@ Release notes
 * 1.1.0: New features and optimizations:
     * Java executions now use Gradle standard call Project.javaexec() to address classpath handling issues.
     * New configuration property `envClasspath` can be set to true to place the execution classpath into the CLASSPATH environment variable instead of a command line parameter. This should fix Windows errors if the command line size exceeds 32K.
-    * Gradle API updated to version 5. Should still be compatible with Gradle 4, please report othe.  
+    * Gradle API updated to version 5. Should still be compatible with Gradle 4, please report otherwise.  
 
 ---------
 
