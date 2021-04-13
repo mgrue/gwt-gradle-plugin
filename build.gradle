@@ -12,6 +12,7 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'java-library'
 apply plugin: 'eclipse'
+apply plugin: 'java-gradle-plugin'
 apply plugin: 'com.gradle.plugin-publish';
 apply plugin: 'maven-publish'
 apply plugin: 'groovy'
@@ -44,6 +45,20 @@ artifacts {
     archives javadocJar, sourceJar
 }
 
+gradlePlugin {
+	plugins {
+		gwtPlugin {
+			id = 'de.esoco.gwt'
+			implementationClass = 'de.esoco.gwt.gradle.GwtPlugin'
+		}
+		gwtLibPlugin {
+			id = 'de.esoco.gwt-lib'
+			implementationClass = 'de.esoco.gwt.gradle.GwtLibPlugin'
+		}
+
+	}
+}
+
 pluginBundle {
 	website = 'https://github.com/esoco/gwt-gradle-plugin'
 	vcsUrl = 'https://github.com/esoco/gwt-gradle-plugin.git'
@@ -52,11 +67,9 @@ pluginBundle {
 
 	plugins {
 		gwtPlugin {
-			id = 'de.esoco.gwt'
 			displayName = 'Gradle GWT plugin'
 		}
 		gwtLibPlugin {
-			id = 'de.esoco.gwt-lib'
 			displayName = 'Gradle GWT lib plugin'
 		}
 	}
