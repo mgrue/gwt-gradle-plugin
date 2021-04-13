@@ -189,17 +189,11 @@ public class GwtCompileTask extends AbstractTask {
 		    project.getConvention().findPlugin(JavaPluginConvention.class);
 
 		if (javaConvention != null) {
-			project.getLogger()
-			       .info("Adding {}.sourceSets.main.output and sourceSets.main.allSource.srcDirs to {}",
-			             project.getPath(), getPath());
-
-			SourceSet mainSourceSet =
-			    javaConvention.getSourceSets().getByName(sourceSet);
-
-			sources.from(project.files(mainSourceSet.getOutput())) // this _should_ include proper task dependencies, but it does not...
-			       .from(project.files(mainSourceSet.getAllSource()
-			                           .getSrcDirs()));
-
+			project.getLogger().info("Adding {}.sourceSets.main.output and sourceSets.main.allSource.srcDirs to {}", project.getPath(), getPath());
+			SourceSet mainSourceSet = javaConvention.getSourceSets().getByName(sourceSet);
+			sources
+				.from(project.files(mainSourceSet.getOutput().getFiles())) // this _should_ include proper task dependencies, but it does not...
+				.from(project.files(mainSourceSet.getAllSource().getSrcDirs()));
 			// add explicit task dependencies, so we rebuild whenever source outputs change.
 			dependsOn(mainSourceSet.getOutput());
 		}
