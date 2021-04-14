@@ -1,19 +1,21 @@
 buildscript {
-    repositories { 
-    	jcenter() 
-		maven { url "https://plugins.gradle.org/m2/" } 
+    repositories {
+    	jcenter()
+		maven { url "https://plugins.gradle.org/m2/" }
     }
-    dependencies { 
+    dependencies {
     	classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
-		classpath "com.gradle.publish:plugin-publish-plugin:0.10.0" 
+		classpath "com.gradle.publish:plugin-publish-plugin:0.10.0"
 	}
 }
 
 apply plugin: 'java'
 apply plugin: 'java-library'
 apply plugin: 'eclipse'
+apply plugin: 'java-gradle-plugin'
 apply plugin: 'com.gradle.plugin-publish';
 apply plugin: 'maven-publish'
+apply plugin: 'groovy'
 
 group = 'de.esoco.gwt'
 
@@ -27,6 +29,7 @@ repositories {
 dependencies {
 	compile gradleApi()
 	compile "com.google.guava:guava:23.5-jre"
+	testCompile 'org.spockframework:spock-core:1.3-groovy-2.5', gradleTestKit()
 }
 
 task javadocJar(type: Jar) {
@@ -42,6 +45,20 @@ artifacts {
     archives javadocJar, sourceJar
 }
 
+gradlePlugin {
+	plugins {
+		gwtPlugin {
+			id = 'de.esoco.gwt'
+			implementationClass = 'de.esoco.gwt.gradle.GwtPlugin'
+		}
+		gwtLibPlugin {
+			id = 'de.esoco.gwt-lib'
+			implementationClass = 'de.esoco.gwt.gradle.GwtLibPlugin'
+		}
+
+	}
+}
+
 pluginBundle {
 	website = 'https://github.com/esoco/gwt-gradle-plugin'
 	vcsUrl = 'https://github.com/esoco/gwt-gradle-plugin.git'
@@ -50,11 +67,9 @@ pluginBundle {
 
 	plugins {
 		gwtPlugin {
-			id = 'de.esoco.gwt'
 			displayName = 'Gradle GWT plugin'
 		}
 		gwtLibPlugin {
-			id = 'de.esoco.gwt-lib'
 			displayName = 'Gradle GWT lib plugin'
 		}
 	}

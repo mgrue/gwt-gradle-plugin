@@ -22,6 +22,9 @@ import de.esoco.gwt.gradle.extension.GwtExtension;
 
 import org.gradle.api.Action;
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.artifacts.Dependency;
+import org.gradle.api.artifacts.ProjectDependency;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.ConventionMapping;
@@ -165,12 +168,8 @@ public class GwtCompileTask extends AbstractTask {
 
 					@Override
 					public void execute(Project project) {
-
-						addSourceSet(sources, project,
+						addSourceSet(sources, project, allProjects,
 						             SourceSet.MAIN_SOURCE_SET_NAME);
-
-						// recursively add _all_ project dependencies
-						addSources(project, sources, allProjects);
 					}
 				};
 
@@ -183,25 +182,24 @@ public class GwtCompileTask extends AbstractTask {
 	}
 
 	private void addSourceSet(ConfigurableFileCollection sources,
-	                          Project project, String sourceSet) {
+							  Project project, final Set<Project> allProjects, String sourceSet) {
 
 		JavaPluginConvention javaConvention =
 		    project.getConvention().findPlugin(JavaPluginConvention.class);
 
 		if (javaConvention != null) {
-			project.getLogger()
-			       .info("Adding {}.sourceSets.main.output and sourceSets.main.allSource.srcDirs to {}",
-			             project.getPath(), getPath());
+			project.getLogger().info("Adding {}.sourceSets.main.output and sourceSets.main.allSource.srcDirs to {}", project.getPath(), getPath());
+			SourceSet mainSourceSet = javaConvention.getSourceSets().getByName(sourceSet);
+			sources
+				.from(project.files(mainSourceSet.getOutput())) // this _should_ include proper task dependencies, but it does not...
+				.from(project.files(mainSourceSet.getAllSource().getSrcDirs()));
+			final Configuration config = project.getConfigurations().getByName(mainSourceSet.getCompileClasspathConfigurationName());
+			for (Dependency dep : config.getAllDependencies()) {
+				if (dep instanceof ProjectDependency) {
+					addSources(((ProjectDependency) dep).getDependencyProject(), sources, allProjects);
+				}
+			}
 
-			SourceSet mainSourceSet =
-			    javaConvention.getSourceSets().getByName(sourceSet);
-
-			sources.from(project.files(mainSourceSet.getOutput())) // this _should_ include proper task dependencies, but it does not...
-			       .from(project.files(mainSourceSet.getAllSource()
-			                           .getSrcDirs()));
-
-			// add explicit task dependencies, so we rebuild whenever source outputs change.
-			dependsOn(mainSourceSet.getOutput());
 		}
 	}
 
