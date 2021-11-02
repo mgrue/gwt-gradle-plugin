@@ -184,6 +184,10 @@ public abstract class AbstractCommand {
 
 						spec.jvmArgs(javaArgs);
 						spec.args(args);
+
+						if (javaOptions.getExecutable() != null) {
+							spec.setExecutable(javaOptions.getExecutable());
+						}
 					}
 				});
 		execResult.assertNormalExitValue().rethrowFailure();

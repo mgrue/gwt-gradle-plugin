@@ -34,9 +34,16 @@ public class JavaOption {
 
 	private boolean envClasspath = false;
 
+	private Object executable;
+
 	public int getDebugPort() {
 
 		return debugPort;
+	}
+
+	public Object getExecutable() {
+
+		return executable;
 	}
 
 	public List<String> getJavaArgs() {
@@ -102,6 +109,11 @@ public class JavaOption {
 	public void setEnvClasspath(boolean envClasspath) {
 
 		this.envClasspath = envClasspath;
+	}
+
+	public void setExecutable(Object executable) {
+
+		this.executable = executable;
 	}
 
 	public void setJavaArgs(String... javaArgs) {
