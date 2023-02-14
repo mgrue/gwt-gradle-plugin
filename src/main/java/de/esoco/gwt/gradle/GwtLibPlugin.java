@@ -36,8 +36,7 @@ import org.gradle.plugins.ide.eclipse.model.EclipseProject;
 public
 class GwtLibPlugin implements Plugin<Project> {
 	static public final String CONF_GWT_SDK = "gwtSdk";
-	static public final String CONF_JETTY   = "jettyConf";
-
+	static public final String CONF_JETTY = "jettyConf";
 	static private final String ECLIPSE_NATURE                    = "com.gwtplugins.gwt.eclipse.core.gwtNature";
 	static private final String ECLIPSE_GWT_CONTAINER             = "com.gwtplugins.gwt.eclipse.core.GWT_CONTAINER";
 	static private final String ECLIPSE_BUILDER_PROJECT_VALIDATOR = "com.gwtplugins.gwt.eclipse.core.gwtProjectValidator";
@@ -67,20 +66,20 @@ class GwtLibPlugin implements Plugin<Project> {
 		JavaPluginConvention javaConvention = project.getConvention()
 		                                             .getPlugin(JavaPluginConvention.class);
 
-		SourceSet mainSourset = javaConvention.getSourceSets()
+		SourceSet mainSourceSet = javaConvention.getSourceSets()
 		                                      .getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-		SourceSet testSourset = javaConvention.getSourceSets()
+		SourceSet testSourceSet = javaConvention.getSourceSets()
 		                                      .getByName(SourceSet.TEST_SOURCE_SET_NAME);
 
-		FileCollection testClasspath = project.files(mainSourset.getAllSource()
+		FileCollection testClasspath = project.files(mainSourceSet.getAllSource()
 		                                             .getSrcDirs().toArray())
-		                                      .plus(project.files(testSourset
+		                                      .plus(project.files(testSourceSet
 		                                                          .getAllSource()
 		                                                          .getSrcDirs()
 		                                                          .toArray()))
-		                                      .plus(testSourset
+		                                      .plus(testSourceSet
 		                                            .getRuntimeClasspath());
-		testSourset.setRuntimeClasspath(testClasspath);
+		testSourceSet.setRuntimeClasspath(testClasspath);
 
 		Test test = project.getTasks().withType(Test.class).getByName("test");
 		test.getSystemProperties()
@@ -100,33 +99,36 @@ class GwtLibPlugin implements Plugin<Project> {
 	}
 
 	private void initDependencies(Project project, GwtExtension extension) {
+		String gwtGroup		  = extension.getGwtGroup();
 		String gwtVersion     = extension.getGwtVersion();
 		String jettyVersion   = extension.getJettyVersion();
-		String sGwtUser       = "com.google.gwt:gwt-user:" + gwtVersion;
-		String sGwtCodeserver = "com.google.gwt:gwt-codeserver:" +
-		                        gwtVersion;
+		String sGwtUser       = gwtGroup + ":gwt-user:" + gwtVersion;
+		String sGwtCodeserver = gwtGroup + ":gwt-codeserver:" + gwtVersion;
 
 		DependencyHandler dependencies = project.getDependencies();
 		dependencies.add(CONF_GWT_SDK, sGwtCodeserver);
-		dependencies.add(CONF_GWT_SDK, sGwtUser);
 		dependencies.add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME,
 		                 sGwtCodeserver);
-		dependencies.add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME, sGwtUser);
-		dependencies.add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME, sGwtUser);
+
+		if(extension.isGwtUserLib()) {
+			dependencies.add(CONF_GWT_SDK, sGwtUser);
+			dependencies.add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME, sGwtUser);
+			dependencies.add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME, sGwtUser);
+		}
 
 		if (extension.isGwtElementalLib()) {
 			dependencies.add(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME,
-			                 "com.google.gwt:gwt-elemental:" + gwtVersion);
+					gwtGroup + ":gwt-elemental:" + gwtVersion);
 		}
 
 		if (extension.isGwtServletLib()) {
 			dependencies.add(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME,
-			                 "com.google.gwt:gwt-servlet:" + gwtVersion);
+			                 gwtGroup + ":gwt-servlet:" + gwtVersion);
 		}
 
 		if (project.getPlugins().hasPlugin(WarPlugin.class)) {
 			dependencies.add(WarPlugin.PROVIDED_COMPILE_CONFIGURATION_NAME,
-			                 "com.google.gwt:gwt-dev:" + gwtVersion);
+					gwtGroup + ":gwt-dev:" + gwtVersion);
 		}
 		
 		dependencies.add(CONF_JETTY,

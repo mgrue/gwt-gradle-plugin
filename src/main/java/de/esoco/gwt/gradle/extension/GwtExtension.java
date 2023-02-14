@@ -27,8 +27,9 @@ public class GwtExtension {
 	
 	public static final String NAME = "gwt";
 	public static final String DIRECTORY = "gwt";
-
 	private String gwtVersion = "2.8.2";
+	private String gwtGroup = "com.google.gwt";
+	private boolean gwtUserLib = true;
 	private boolean gwtServletLib = false;
 	private boolean gwtElementalLib = false;
 	private boolean gwtPluginEclipse = true;
@@ -140,5 +141,21 @@ public class GwtExtension {
 
 	public void module(String... modules) {
 		this.module.addAll(Arrays.asList(modules));
+	}
+
+	public String getGwtGroup() {
+		return gwtGroup;
+	}
+
+	public void setGwtGroup(String gwtGroup) {
+		this.gwtGroup = gwtGroup;
+	}
+
+	public boolean isGwtUserLib() {
+		return gwtUserLib;
+	}
+
+	public void setGwtUserLib(boolean gwtUserLib) {
+		this.gwtUserLib = gwtUserLib;
 	}
 }
